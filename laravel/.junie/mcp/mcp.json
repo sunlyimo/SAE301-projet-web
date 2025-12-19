@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/usr/bin/php",
+            "args": [
+                "/home/jeanpierre/Cours/Enseignements/IUT2026/SAE35/groupetest/www-dev/laravel/example/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
