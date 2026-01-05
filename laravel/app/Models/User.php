@@ -22,8 +22,6 @@ class User extends Authenticatable
         'UTI_PRENOM',
         'UTI_EMAIL',
         'UTI_DATE_NAISSANCE',
-        'UTI_ADRESSE',
-        'UTI_TELEPHONE',
         'password',
     ];
 
