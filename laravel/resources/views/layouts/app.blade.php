@@ -6,7 +6,6 @@
     <title>CartoRun - @yield('title')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-white font-sans antialiased text-gray-900">
     <nav class="relative bg-white border-b border-gray-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
@@ -41,12 +40,27 @@
                 </div>
 
                 <div class="flex items-center gap-6">
-                    <a href="/login" class="text-sm font-semibold text-black hover:text-blue-600 transition-colors duration-300">
-                        Se connecter
-                    </a>
-                    <a href="/register" class="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-black text-white text-sm font-bold hover:bg-blue-600 transition-all duration-300 shadow-md active:scale-95">
-                        S'inscrire
-                    </a>
+                    @guest
+                        <a href="/login" class="text-sm font-semibold text-black hover:text-blue-600 transition-colors duration-300">
+                            Se connecter
+                        </a>
+                        <a href="/register" class="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-black text-white text-sm font-bold hover:bg-blue-600 transition-all duration-300 shadow-md active:scale-95">
+                            S'inscrire
+                        </a>
+                    @endguest
+
+                    @auth
+                        <a href="/profile" class="text-sm font-semibold text-black hover:text-blue-600 transition-colors duration-300">
+                            Voir mon profil
+                        </a>
+                        
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-black text-white text-sm font-bold hover:bg-blue-600 transition-all duration-300 shadow-md active:scale-95">
+                                Se déconnecter
+                            </button>
+                        </form>
+                    @endauth
                 </div>
             </div>
         </div>
