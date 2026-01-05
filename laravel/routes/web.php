@@ -9,6 +9,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/repair', function() {
+    Artisan::call('view:clear');
+    Artisan::call('cache:clear');
+    return "le cache a été vidé";
+});
+
 Route::get('/logs/{file}', function (string $file) {
   if ($file === 'laravel') {
     $content = Storage::disk('laravelLog')->get('laravel.log');
