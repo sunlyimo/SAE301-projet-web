@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('UTI_NOM');
             $table->string('UTI_PRENOM');
             $table->date('UTI_DATE_NAISSANCE');
-            $table->string('UTI_ADRESSE');
-            $table->string('UTI_TELEPHONE', 20);
+            $table->string('UTI_ADRESSE')->nullable(); 
+            $table->string('UTI_TELEPHONE', 20)->nullable();
             $table->string('password'); 
             $table->rememberToken();
             $table->timestamps();
