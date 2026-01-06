@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-600 shadow-lg transition-all active:scale-95">
+        <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-lg hover:bg-green-600 shadow-lg transition-all active:scale-95">
             Finaliser l'inscription
         </button>
     </form>

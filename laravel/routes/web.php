@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\CourseController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -58,4 +59,6 @@ Route::middleware('auth')->group(function () {
     return Redirect::back();
   }) -> name("logs.delete");
 });
+
+Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 

@@ -22,8 +22,8 @@
                     @php
                         $links = [
                             'Accueil' => '/',
-                            'Contact' => '#',
-                            'À propos' => '#',
+                            'Contact' => '/contact',
+                            'À propos' => '/about',
                             'Raids' => '/raids',
                             'Courses' => '/courses',
                             'Clubs' => '/clubs'
