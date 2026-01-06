@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\RacesController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,6 +18,8 @@ Route::get('/repair', function() {
     Artisan::call('cache:clear');
     return "le cache a été vidé";
 });
+
+Route::get('/courses', [RacesController::class,'showRaces'])->name('races');
 
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);

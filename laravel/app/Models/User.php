@@ -22,14 +22,14 @@ class User extends Authenticatable
         'UTI_PRENOM',
         'UTI_EMAIL',
         'UTI_DATE_NAISSANCE',
-        'password',
+        'UTI_MOT_DE_PASSE',
     ];
 
     /**
      * Les attributs cachés (pour la sécurité).
      */
     protected $hidden = [
-        'password',
+        'UTI_MOT_DE_PASSE',
         'remember_token',
     ];
 
@@ -39,7 +39,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'password' => 'hashed',
+            'UTI_MOT_DE_PASSE' => 'hashed',
             'UTI_DATE_NAISSANCE' => 'date',
         ];
     }

@@ -28,8 +28,21 @@
         </div>
 
         <div>
-            <label class="block text-sm font-semibold text-gray-700">Adresse</label>
-            <input type="text" name="UTI_ADRESSE" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            <label class="block text-sm font-semibold text-gray-700">Nom Utilisateur</label>
+            <input type="text" name="UTI_NOM_UTILISATEUR" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700">Rue</label>
+            <input type="text" name="UTI_RUE" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+        </div>
+        <div>
+            <label class="block text-sm font-semibold text-gray-700">Code Postale</label>
+            <input type="text" name="UTI_CODE_POSTALE" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+        </div>
+        <div>
+            <label class="block text-sm font-semibold text-gray-700">VILLE</label>
+            <input type="text" name="UTI_VILLE" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
         </div>
 
         <div>
@@ -39,8 +52,10 @@
 
         <div>
             <label class="block text-sm font-semibold text-gray-700">Mot de passe</label>
-            <input type="password" name="password" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            <input type="password" name="UTI_MOT_DE_PASSE" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
         </div>
+
+
 
         <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-600 shadow-lg hover:shadow-blue-200 transition-all active:scale-95">
             Finaliser l'inscription
