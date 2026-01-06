@@ -11,7 +11,8 @@ class RaidController extends Controller
 {
     public function create() /* affichage du formulaire */
     {
-        return view('raids.create', compact('clubs', 'responsables'));
+        //return view('raids.create', compact('clubs', 'responsables'));
+        return view('raid-create');
     }
 
     public function store(Request $request) /* ajout d'un nouveau raid à la base de données */
