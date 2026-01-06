@@ -87,7 +87,7 @@
 
                     <div class="flex flex-col gap-2 group">
                         <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
-                            Adresse postale
+                            Rue
                             <button type="button" onclick="enableField('UTI_ADRESSE')" class="text-black hover:text-green-600 transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                             </button>
