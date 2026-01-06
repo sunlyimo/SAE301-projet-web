@@ -112,8 +112,15 @@
                 <input type="checkbox" id="toggle-licence" class="sr-only peer" onchange="
                     const f = document.getElementById('licence-field');
                     f.classList.toggle('hidden', !this.checked);
-                    if (!this.checked) f.querySelectorAll('input, select').forEach(el => el.value='');
-                ">
+                    const inputs = f.querySelectorAll('input, select');
+                    if (this.checked) inputs.forEach(el => el.setAttribute('required',''));
+                    else {
+                        inputs.forEach(el => {
+                            el.removeAttribute('required');
+                            el.value='';
+                        });
+                    }
+                " {{ $licenceActive ? 'checked' : '' }}>
                 <div class="w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-blue-500 transition-colors"></div>
                 <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform peer-checked:translate-x-5"></div>
             </label>
@@ -129,6 +136,9 @@
                         <option value="{{ $club->CLU_ID }}" {{ $selectedClub == $club->CLU_ID ? 'selected' : '' }}>{{ $club->CLU_NOM . ' (' . $club->UTI_VILLE . ')' }}</option>
                     @endforeach
                 </select>
+                @error('CLU_ID')
+                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                @enderror
             </div>
 
             <div>

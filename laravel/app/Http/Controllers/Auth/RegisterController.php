@@ -27,7 +27,7 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
-        $request->validate([
+        $rules = [
             'UTI_NOM' => 'required|string|max:50',
             'UTI_PRENOM' => 'required|string|max:50',
             'UTI_EMAIL' => 'required|string|email|max:100',
@@ -38,9 +38,15 @@ class RegisterController extends Controller
             'UTI_VILLE' => 'required|string|max:50',
             'UTI_TELEPHONE' => 'nullable|string|max:16',
             'UTI_MOT_DE_PASSE' => 'required|string|min:8',
-            'UTI_LICENCE' => 'nullable|string|max:15',
-            'CLU_ID' => 'nullable|exists:vik_club,CLU_ID',
-        ], [
+        ];
+
+        if ($request->filled('UTI_LICENCE') || $request->has('UTI_CLUB')) {
+            $rules['UTI_LICENCE'] = 'required|string|max:15';
+            $rules['CLU_ID'] = 'required|exists:vik_club,CLU_ID';
+        }
+
+
+        $request->validate($rules, [
             'UTI_NOM.max' => "La taille maximal du nom est de 50 caractère",
             'UTI_PRENOM.max' => "La taille maximal du prénom est de 50 caractère",
             'UTI_EMAIL.max' => "La taille maximal du mail est de 100 caractère",
@@ -53,6 +59,17 @@ class RegisterController extends Controller
             'UTI_MOT_DE_PASSE.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
             'UTI_LICENCE.max' => "La taille maximal de la licence est de 15 caractère",
             'CLU_ID.exists' => "Ce club n'existe pas.",
+            'UTI_NOM.required'            => 'Ce champ est obligatoire',
+            'UTI_PRENOM.required'         => 'Ce champ est obligatoire',
+            'UTI_EMAIL.required'          => 'Ce champ est obligatoire',
+            'UTI_NOM_UTILISATEUR.required' => 'Ce champ est obligatoire',
+            'UTI_DATE_NAISSANCE.required' => 'Ce champ est obligatoire',
+            'UTI_RUE.required'            => 'Ce champ est obligatoire',
+            'UTI_CODE_POSTAL.required'    => 'Ce champ est obligatoire',
+            'UTI_VILLE.required'          => 'Ce champ est obligatoire',
+            'UTI_LICENCE.required'        => 'Ce champ est obligatoire',
+            'CLU_ID.required'             => 'Ce champ est obligatoire',
+            'UTI_MOT_DE_PASSE.required'   => 'Ce champ est obligatoire',
         ]);
 
         DB::transaction(function() use ($request) {
