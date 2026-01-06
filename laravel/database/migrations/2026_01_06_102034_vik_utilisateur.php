@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('vik_utilisateur', function (Blueprint $table) {
             $table->increments('UTI_ID')->primary();
-            $table->char('UTI_EMAIL', 32);
+            $table->char('UTI_EMAIL', 100);
             $table->char('UTI_NOM', 50);
             $table->char('UTI_PRENOM', 50);
             $table->date('UTI_DATE_NAISSANCE')->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->char('UTI_VILLE', 50)->nullable();
             $table->char('UTI_TELEPHONE', 16)->nullable();
             $table->char('UTI_LICENCE', 15)->nullable();
-            $table->char('UTI_NOM_UTILISATEUR', 255);
+            $table->char('UTI_NOM_UTILISATEUR', 50);
             $table->char('UTI_MOT_DE_PASSE', 255)->nullable();
             $table->timestamps();
         });

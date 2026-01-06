@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedInteger('UTI_ID')->primary();
             $table->unsignedInteger('CLU_ID')->nullable();
             $table->char('CRR_PPS', 32)->nullable();
-            $table->char('UTI_EMAIL', 32)->nullable();
+            $table->char('UTI_EMAIL', 100)->nullable();
             $table->char('UTI_NOM', 50)->nullable();
             $table->char('UTI_PRENOM', 50)->nullable();
             $table->date('UTI_DATE_NAISSANCE')->nullable();
@@ -24,8 +24,8 @@ return new class extends Migration
             $table->char('UTI_VILLE', 50)->nullable();
             $table->char('UTI_TELEPHONE', 16)->nullable();
             $table->char('UTI_LICENCE', 15)->nullable();
-            $table->char('UTI_NOM_UTILISATEUR', 255);
-            $table->char('UTI_MOT_DE_PASSE', 32)->nullable();
+            $table->char('UTI_NOM_UTILISATEUR', 50);
+            $table->char('UTI_MOT_DE_PASSE', 255)->nullable();
         });
     }
 
