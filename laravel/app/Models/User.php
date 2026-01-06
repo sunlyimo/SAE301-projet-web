@@ -23,6 +23,12 @@ class User extends Authenticatable
         'UTI_EMAIL',
         'UTI_DATE_NAISSANCE',
         'UTI_MOT_DE_PASSE',
+        'UTI_NOM_UTILISATEUR',
+        'UTI_RUE',
+        'UTI_CODE_POSTAL',
+        'UTI_VILLE',
+        'UTI_TELEPHONE',
+        'UTI_LICENCE',
     ];
 
     /**
@@ -51,5 +57,13 @@ class User extends Authenticatable
     public function getEmailAttribute()
     {
         return $this->UTI_EMAIL;
+    }
+
+    /**
+     * Indique à Laravel que la colonne du mot de passe est UTI_MOT_DE_PASSE
+     */
+    public function getAuthPassword()
+    {
+        return $this->UTI_MOT_DE_PASSE;
     }
 }

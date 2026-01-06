@@ -27,6 +27,7 @@ class RegisterController extends Controller
             'UTI_NOM' => 'required|string|max:255',
             'UTI_PRENOM' => 'required|string|max:255',
             'UTI_EMAIL' => 'required|string|email|max:255|unique:VIK_UTILISATEUR,UTI_EMAIL',
+            'UTI_NOM_UTILISATEUR' => 'required|string|max:50|unique:VIK_UTILISATEUR,UTI_NOM_UTILISATEUR',
             'UTI_DATE_NAISSANCE' => 'required|date',
             'UTI_RUE' => 'required|string|max:100',
             'UTI_CODE_POSTAL' => 'required|string|max:10',
@@ -41,6 +42,7 @@ class RegisterController extends Controller
             'UTI_NOM' => $request->UTI_NOM,
             'UTI_PRENOM' => $request->UTI_PRENOM,
             'UTI_EMAIL' => $request->UTI_EMAIL,
+            'UTI_NOM_UTILISATEUR' => $request->UTI_NOM_UTILISATEUR,
             'UTI_DATE_NAISSANCE' => $request->UTI_DATE_NAISSANCE,
             'UTI_RUE' => $request->UTI_RUE,
             'UTI_CODE_POSTAL' => $request->UTI_CODE_POSTAL,
@@ -50,6 +52,7 @@ class RegisterController extends Controller
             'UTI_LICENCE' => $request->UTI_LICENCE,
             'UTI_NOM_UTILISATEUR' => $request->UTI_NOM_UTILISATEUR,
         ]);
+
 
         return redirect()->route('login')->with('success', 'Votre compte a été créé avec succès. Veuillez vous connecter.');
     }

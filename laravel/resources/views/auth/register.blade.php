@@ -6,25 +6,29 @@
     
     <form method="POST" action="/register" class="space-y-5">
         @csrf
+        
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-700">Nom</label>
-                <input type="text" name="UTI_NOM" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">
+                <input type="text" name="UTI_NOM" value="{{ old('UTI_NOM') }}" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700">Prénom</label>
-                <input type="text" name="UTI_PRENOM" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">
+                <input type="text" name="UTI_PRENOM" value="{{ old('UTI_PRENOM') }}" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
             </div>
         </div>
 
         <div>
-            <label class="block text-sm font-semibold text-gray-700">Email (Identifiant)</label>
-            <input type="email" name="UTI_EMAIL" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            <label class="block text-sm font-semibold text-gray-700">Nom d'utilisateur (Pseudo)</label>
+            <input type="text" name="UTI_NOM_UTILISATEUR" value="{{ old('UTI_NOM_UTILISATEUR') }}" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all @error('UTI_NOM_UTILISATEUR') border-red-500 @enderror">
+            @error('UTI_NOM_UTILISATEUR')
+                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+            @enderror
         </div>
 
         <div>
-            <label class="block text-sm font-semibold text-gray-700">Date de naissance</label>
-            <input type="date" name="UTI_DATE_NAISSANCE" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            <label class="block text-sm font-semibold text-gray-700">Email</label>
+            <input type="email" name="UTI_EMAIL" value="{{ old('UTI_EMAIL') }}" required class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
         </div>
 
         <div>
