@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS VIK_COUREUR
    UTI_NOM CHAR(50) NULL  ,
    UTI_PRENOM CHAR(50) NULL  ,
    UTI_DATE_NAISSANCE DATE NULL  ,
-   UTI_ADRESSE CHAR(50) NULL  ,
+   UTI_RUE CHAR(50) NULL  ,
+   UTI_CODE_POSTAL CHAR(6) NULL  ,
+   UTI_VILLE CHAR(50) NULL  ,
    UTI_TELEPHONE CHAR(16) NULL  ,
    UTI_LICENCE CHAR(15) NULL  ,
    UTI_NOM_UTILISATEUR CHAR(255) NOT NULL  ,
@@ -101,7 +103,9 @@ CREATE TABLE IF NOT EXISTS VIK_ADMINISTRATEUR
    UTI_NOM CHAR(50) NULL  ,
    UTI_PRENOM CHAR(50) NULL  ,
    UTI_DATE_NAISSANCE DATE NULL  ,
-   UTI_ADRESSE CHAR(50) NULL  ,
+   UTI_RUE CHAR(50) NULL  ,
+   UTI_CODE_POSTAL CHAR(6) NULL  ,
+   UTI_VILLE CHAR(50) NULL  ,
    UTI_TELEPHONE CHAR(16) NULL  ,
    UTI_LICENCE CHAR(15) NULL  ,
    UTI_NOM_UTILISATEUR CHAR(255) NOT NULL  ,
@@ -121,7 +125,9 @@ CREATE TABLE IF NOT EXISTS VIK_RESPONSABLE_RAID
    UTI_NOM CHAR(50) NULL  ,
    UTI_PRENOM CHAR(50) NULL  ,
    UTI_DATE_NAISSANCE DATE NULL  ,
-   UTI_ADRESSE CHAR(50) NULL  ,
+   UTI_RUE CHAR(50) NULL  ,
+   UTI_CODE_POSTAL CHAR(6) NULL  ,
+   UTI_VILLE CHAR(50) NULL  ,
    UTI_TELEPHONE CHAR(16) NULL  ,
    UTI_LICENCE CHAR(15) NULL  ,
    UTI_NOM_UTILISATEUR CHAR(255) NOT NULL  ,
@@ -141,7 +147,9 @@ CREATE TABLE IF NOT EXISTS VIK_UTILISATEUR
    UTI_NOM CHAR(50) NULL  ,
    UTI_PRENOM CHAR(50) NULL  ,
    UTI_DATE_NAISSANCE DATE NULL  ,
-   UTI_ADRESSE CHAR(50) NULL  ,
+   UTI_RUE CHAR(50) NULL  ,
+   UTI_CODE_POSTAL CHAR(6) NULL  ,
+   UTI_VILLE CHAR(50) NULL  ,
    UTI_TELEPHONE CHAR(16) NULL  ,
    UTI_LICENCE CHAR(15) NULL  ,
    UTI_NOM_UTILISATEUR CHAR(255) NOT NULL  ,
@@ -195,7 +203,9 @@ CREATE TABLE IF NOT EXISTS VIK_CLUB
  (
    CLU_ID INTEGER(4) NOT NULL  ,
    CLU_NOM CHAR(50) NULL  ,
-   CLU_ADRESSE CHAR(100) NULL  
+   UTI_RUE CHAR(50) NULL  ,
+   UTI_CODE_POSTAL CHAR(6) NULL  ,
+   UTI_VILLE CHAR(50) NULL
    , PRIMARY KEY (CLU_ID) 
  ) 
  comment = "";
@@ -260,7 +270,9 @@ CREATE TABLE IF NOT EXISTS VIK_RESPONSABLE_COURSE
    UTI_NOM CHAR(50) NULL  ,
    UTI_PRENOM CHAR(50) NULL  ,
    UTI_DATE_NAISSANCE DATE NULL  ,
-   UTI_ADRESSE CHAR(50) NULL  ,
+   UTI_RUE CHAR(50) NULL  ,
+   UTI_CODE_POSTAL CHAR(6) NULL  ,
+   UTI_VILLE CHAR(50) NULL  ,
    UTI_TELEPHONE CHAR(16) NULL  ,
    UTI_LICENCE CHAR(15) NULL  ,
    UTI_NOM_UTILISATEUR CHAR(255) NOT NULL  ,
@@ -281,7 +293,9 @@ CREATE TABLE IF NOT EXISTS VIK_RESPONSABLE_CLUB
    UTI_NOM CHAR(50) NULL  ,
    UTI_PRENOM CHAR(50) NULL  ,
    UTI_DATE_NAISSANCE DATE NULL  ,
-   UTI_ADRESSE CHAR(50) NULL  ,
+   UTI_RUE CHAR(50) NULL  ,
+   UTI_CODE_POSTAL CHAR(6) NULL  ,
+   UTI_VILLE CHAR(50) NULL  ,
    UTI_TELEPHONE CHAR(16) NULL  ,
    UTI_LICENCE CHAR(15) NULL  ,
    UTI_NOM_UTILISATEUR CHAR(255) NOT NULL  ,
@@ -431,10 +445,10 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ===================================================
 -- 1. TABLES DE RÉFÉRENCE (SANS DÉPENDANCES)
 -- ===================================================
-INSERT INTO VIK_CLUB (CLU_ID, CLU_NOM, CLU_ADRESSE) VALUES
-(1,'Club Rouen','1 Rue de la Paix, Rouen'),
-(2,'Club Caen','10 Avenue du Stade, Caen'),
-(3,'Club Lyon','5 Boulevard des Sports, Lyon');
+INSERT INTO VIK_CLUB (CLU_ID, CLU_NOM, CLU_RUE, CLU_CODE_POSTAL, CLU_VILLE) VALUES
+(1,'Club Rouen','1 Rue de la Paix','76000', 'Rouen'),
+(2,'Club Caen','10 Avenue du Stade','14000', 'Caen'),
+(3,'Club Lyon','5 Boulevard des Sports','69000', 'Lyon');
 
 INSERT INTO VIK_COURSE_TYPE (TYP_ID, TYP_DESCRIPTION) VALUES
 (1,'Course de vitesse'), (2,'Course d’endurance'), (3,'Course en relais'), (4,'Course en équipe'), (5,'Course enfants');
@@ -445,59 +459,61 @@ INSERT INTO VIK_TRANCHE_DIFFICULTE (DIF_NIVEAU, DIF_DESCRIPTION) VALUES
 -- ===================================================
 -- 2. TABLE PARENTE : VIK_UTILISATEUR (50 membres + 1 Admin)
 -- ===================================================
-INSERT INTO VIK_UTILISATEUR (UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_ADRESSE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE)
+INSERT INTO vik_utilisateur
+(UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE, UTI_CODE_POSTAL, UTI_VILLE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE)
 VALUES
-(1,'Robin.Paul@mail.fr','Paul','Robin','2005-08-08','Rouen','0600000018','18018','rpaul','pass123'),
-(2,'Lemoine.Alice@mail.fr','Alice','Lemoine','2000-11-11','Caen','0600000021','21021','alemoine','pass123'),
-(3,'Fabre.Leo@mail.fr','Leo','Fabre','1998-12-12','Caen','0600000022','22022','lfabre','pass123'),
-(4,'Carpentier.Eva@mail.fr','Eva','Carpentier','2001-01-05','Rouen','0600000023','23023','ecarpentier','pass123'),
-(5,'Dupont.Noah@mail.fr','Noah','Dupont','2002-02-14','Rouen','0600000024','24024','ndupont','pass123'),
-(6,'Renaud.Lina@mail.fr','Lina','Renaud','2003-03-23','Caen','0600000025','25025','lrenaud','pass123'),
-(7,'Gautier.Hugo@mail.fr','Hugo','Gautier','1999-04-30','Caen','0600000026','26026','hgautier','pass123'),
-(8,'Morel.Zoé@mail.fr','Zoé','Morel','2004-05-15','Rouen','0600000027','27027','zmorel','pass123'),
-(9,'Perrin.Théo@mail.fr','Théo','Perrin','2005-06-21','Rouen','0600000028','28028','tperrin','pass123'),
-(10,'Marchand.Aurélie@mail.fr','Aurélie','Marchand','1997-07-07','Caen','0600000029','29029','amarchand','pass123'),
-(11,'Blanchard.Max@mail.fr','Max','Blanchard','2000-08-08','Lyon','0600000030','30030','mblanchard','pass123'),
-(12,'Dufour.Clara@mail.fr','Clara','Dufour','2001-09-09','Caen','0600000031','31031','cdufour','pass123'),
-(13,'Rousseau.Jules@mail.fr','Jules','Rousseau','1998-10-10','Caen','0600000032','32032','jrousseau','pass123'),
-(14,'Leclerc.Lina@mail.fr','Lina','Leclerc','2002-11-11','Rouen','0600000033','33033','lleclerc','pass123'),
-(15,'Fayard.Lucas@mail.fr','Lucas','Fayard','1999-12-12','Rouen','0600000034','34034','lfayard','pass123'),
-(16,'Noel.Eva@mail.fr','Eva','Noel','2000-01-01','Caen','0600000035','35035','enoel','pass123'),
-(17,'Barbier.Tom@mail.fr','Tom','Barbier','2001-02-02','Caen','0600000036','36036','tbarbier','pass123'),
-(18,'Louis.Alice@mail.fr','Alice','Louis','2003-03-03','Rouen','0600000037','37037','alouis','pass123'),
-(19,'Guillaume.Noah@mail.fr','Noah','Guillaume','2002-04-04','Rouen','0600000038','38038','nguillaume','pass123'),
-(20,'Pons.Lina@mail.fr','Lina','Pons','2004-05-05','Caen','0600000039','39039','lpons','pass123'),
-(21,'Martinez.Hugo@mail.fr','Hugo','Martinez','2000-06-06','Caen','0600000040','40040','hmartinez','pass123'),
-(22,'Jacquet.Zoé@mail.fr','Zoé','Jacquet','2001-07-07','Rouen','0600000041','41041','zjacquet','pass123'),
-(23,'Benoit.Théo@mail.fr','Théo','Benoit','1999-08-08','Rouen','0600000042','42042','tbenoit','pass123'),
-(24,'Fournier.Aurélie@mail.fr','Aurélie','Fournier','2003-09-09','Caen','0600000043','43043','afournier','pass123'),
-(25,'Meyer.Max@mail.fr','Max','Meyer','2002-10-10','Caen','0600000044','44044','mmeyer','pass123'),
-(26,'Henry.Clara@mail.fr','Clara','Henry','2000-11-11','Rouen','0600000045','45045','chenry','pass123'),
-(27,'Legrand.Jules@mail.fr','Jules','Legrand','2001-12-12','Rouen','0600000046','46046','jlegrand','pass123'),
-(28,'Lopez.Lina@mail.fr','Lina','Lopez','2004-01-01','Caen','0600000047','47047','llopez','pass123'),
-(29,'Riviere.Hugo@mail.fr','Hugo','Riviere','2002-02-02','Caen','0600000048','48048','hriviere','pass123'),
-(30,'Olivier.Zoé@mail.fr','Zoé','Olivier','2003-03-03','Rouen','0600000049','49049','zolivier','pass123'),
-(31,'Fontaine.Théo@mail.fr','Théo','Fontaine','2000-04-04','Rouen','0600000050','50050','tfontaine','pass123'),
-(32,'Dupuis.Marie@mail.fr','Marie','Dupuis','2003-05-05','Caen','0600000051','51051','mdupuis','pass123'),
-(33,'Marchal.Léo@mail.fr','Léo','Marchal','2001-06-06','Rouen','0600000052','52052','lmarchal','pass123'),
-(34,'Fernandez.Alice@mail.fr','Alice','Fernandez','2002-07-07','Caen','0600000053','53053','afernandez','pass123'),
-(35,'Garnier.Noah@mail.fr','Noah','Garnier','2004-08-08','Rouen','0600000054','54054','ngarnier','pass123'),
-(36,'Chevalier.Lina@mail.fr','Lina','Chevalier','2003-09-09','Caen','0600000055','55055','lchevalier','pass123'),
-(37,'Colin.Hugo@mail.fr','Hugo','Colin','2000-10-10','Rouen','0600000056','56056','hcolin','pass123'),
-(38,'Blondel.Eva@mail.fr','Eva','Blondel','2002-11-11','Caen','0600000057','57057','eblondel','pass123'),
-(39,'Baron.Max@mail.fr','Max','Baron','2001-12-12','Rouen','0600000058','58058','mbaron','pass123'),
-(40,'Philippe.Alice@mail.fr','Alice','Philippe','2004-01-01','Caen','0600000059','59059','aphilippe','pass123'),
-(41,'Perrier.Noah@mail.fr','Noah','Perrier','2000-02-02','Rouen','0600000060','60060','nperrier','pass123'),
-(42,'Guillet.Lina@mail.fr','Lina','Guillet','2003-03-03','Caen','0600000061','61061','lguillet','pass123'),
-(43,'Renard.Hugo@mail.fr','Hugo','Renard','2001-04-04','Rouen','0600000062','62062','hrenard','pass123'),
-(44,'Henry.Léo@mail.fr','Léo','Henry','2002-05-05','Caen','0600000063','63063','lhenry','pass123'),
-(45,'Mallet.Alice@mail.fr','Alice','Mallet','2003-06-06','Rouen','0600000064','64064','amallet','pass123'),
-(46,'Adam.Noah@mail.fr','Noah','Adam','2000-07-07','Caen','0600000065','65065','nadam','pass123'),
-(47,'Lucas.Hugo@mail.fr','Hugo','Lucas','2001-08-08','Rouen','0600000066','66066','hlucas','pass123'),
-(48,'Giraud.Eva@mail.fr','Eva','Giraud','2002-09-09','Caen','0600000067','67067','egiraud','pass123'),
-(49,'Pierre.Lina@mail.fr','Lina','Pierre','2004-10-10','Rouen','0600000068','68068','lpierre','pass123'),
-(50,'Martin.Hugo@mail.fr','Hugo','Martin','2003-11-11','Caen','0600000069','69069','hmartin','pass123'),
-(100,'admin.vikazim@mail.fr','Admin','Vikazim','1980-01-01','Rouen','0600000000','10000','admin_sys','Root123!');
+(1,'Robin.Paul@mail.fr','Paul','Robin','2005-08-08','Rue des Lilas','76000','Rouen','0600000018','18018','rpaul','pass123'),
+(2,'Lemoine.Alice@mail.fr','Alice','Lemoine','2000-11-11','Avenue des Fleurs','14000','Caen','0600000021','21021','alemoine','pass123'),
+(3,'Fabre.Leo@mail.fr','Leo','Fabre','1998-12-12','Boulevard du Parc','14000','Caen','0600000022','22022','lfabre','pass123'),
+(4,'Carpentier.Eva@mail.fr','Eva','Carpentier','2001-01-05','Rue de l’Église','76000','Rouen','0600000023','23023','ecarpentier','pass123'),
+(5,'Dupont.Noah@mail.fr','Noah','Dupont','2002-02-14','Impasse du Moulin','76000','Rouen','0600000024','24024','ndupont','pass123'),
+(6,'Renaud.Lina@mail.fr','Lina','Renaud','2003-03-23','Rue des Érables','14000','Caen','0600000025','25025','lrenaud','pass123'),
+(7,'Gautier.Hugo@mail.fr','Hugo','Gautier','1999-04-30','Chemin des Vignes','14000','Caen','0600000026','26026','hgautier','pass123'),
+(8,'Morel.Zoé@mail.fr','Zoé','Morel','2004-05-15','Rue du Château','76000','Rouen','0600000027','27027','zmorel','pass123'),
+(9,'Perrin.Théo@mail.fr','Théo','Perrin','2005-06-21','Rue des Cerisiers','76000','Rouen','0600000028','28028','tperrin','pass123'),
+(10,'Marchand.Aurélie@mail.fr','Aurélie','Marchand','1997-07-07','Avenue Victor Hugo','14000','Caen','0600000029','29029','amarchand','pass123'),
+(11,'Blanchard.Max@mail.fr','Max','Blanchard','2000-08-08','Rue du Pont','69000','Lyon','0600000030','30030','mblanchard','pass123'),
+(12,'Dufour.Clara@mail.fr','Clara','Dufour','2001-09-09','Rue des Acacias','14000','Caen','0600000031','31031','cdufour','pass123'),
+(13,'Rousseau.Jules@mail.fr','Jules','Rousseau','1998-10-10','Place de la Liberté','14000','Caen','0600000032','32032','jrousseau','pass123'),
+(14,'Leclerc.Lina@mail.fr','Lina','Leclerc','2002-11-11','Rue des Tilleuls','76000','Rouen','0600000033','33033','lleclerc','pass123'),
+(15,'Fayard.Lucas@mail.fr','Lucas','Fayard','1999-12-12','Boulevard Saint-Michel','76000','Rouen','0600000034','34034','lfayard','pass123'),
+(16,'Noel.Eva@mail.fr','Eva','Noel','2000-01-01','Rue du Soleil','14000','Caen','0600000035','35035','enoel','pass123'),
+(17,'Barbier.Tom@mail.fr','Tom','Barbier','2001-02-02','Rue des Peupliers','14000','Caen','0600000036','36036','tbarbier','pass123'),
+(18,'Louis.Alice@mail.fr','Alice','Louis','2003-03-03','Rue des Marronniers','76000','Rouen','0600000037','37037','alouis','pass123'),
+(19,'Guillaume.Noah@mail.fr','Noah','Guillaume','2002-04-04','Avenue de la Gare','76000','Rouen','0600000038','38038','nguillaume','pass123'),
+(20,'Pons.Lina@mail.fr','Lina','Pons','2004-05-05','Rue des Bouleaux','14000','Caen','0600000039','39039','lpons','pass123'),
+(21,'Martinez.Hugo@mail.fr','Hugo','Martinez','2000-06-06','Rue de la Fontaine','14000','Caen','0600000040','40040','hmartinez','pass123'),
+(22,'Jacquet.Zoé@mail.fr','Zoé','Jacquet','2001-07-07','Rue des Ormes','76000','Rouen','0600000041','41041','zjacquet','pass123'),
+(23,'Benoit.Théo@mail.fr','Théo','Benoit','1999-08-08','Chemin du Lac','76000','Rouen','0600000042','42042','tbenoit','pass123'),
+(24,'Fournier.Aurélie@mail.fr','Aurélie','Fournier','2003-09-09','Rue du Stade','14000','Caen','0600000043','43043','afournier','pass123'),
+(25,'Meyer.Max@mail.fr','Max','Meyer','2002-10-10','Rue de la Montagne','14000','Caen','0600000044','44044','mmeyer','pass123'),
+(26,'Henry.Clara@mail.fr','Clara','Henry','2000-11-11','Avenue de la République','76000','Rouen','0600000045','45045','chenry','pass123'),
+(27,'Legrand.Jules@mail.fr','Jules','Legrand','2001-12-12','Rue des Roses','76000','Rouen','0600000046','46046','jlegrand','pass123'),
+(28,'Lopez.Lina@mail.fr','Lina','Lopez','2004-01-01','Rue de la Paix','14000','Caen','0600000047','47047','llopez','pass123'),
+(29,'Riviere.Hugo@mail.fr','Hugo','Riviere','2002-02-02','Impasse des Fleurs','14000','Caen','0600000048','48048','hriviere','pass123'),
+(30,'Olivier.Zoé@mail.fr','Zoé','Olivier','2003-03-03','Rue du Verger','76000','Rouen','0600000049','49049','zolivier','pass123'),
+(31,'Fontaine.Théo@mail.fr','Théo','Fontaine','2000-04-04','Boulevard du Nord','76000','Rouen','0600000050','50050','tfontaine','pass123'),
+(32,'Dupuis.Marie@mail.fr','Marie','Dupuis','2003-05-05','Rue des Lilas Bleus','14000','Caen','0600000051','51051','mdupuis','pass123'),
+(33,'Marchal.Léo@mail.fr','Léo','Marchal','2001-06-06','Rue de l’École','76000','Rouen','0600000052','52052','lmarchal','pass123'),
+(34,'Fernandez.Alice@mail.fr','Alice','Fernandez','2002-07-07','Rue des Primevères','14000','Caen','0600000053','53053','afernandez','pass123'),
+(35,'Garnier.Noah@mail.fr','Noah','Garnier','2004-08-08','Chemin des Pins','76000','Rouen','0600000054','54054','ngarnier','pass123'),
+(36,'Chevalier.Lina@mail.fr','Lina','Chevalier','2003-09-09','Rue de la Plage','14000','Caen','0600000055','55055','lchevalier','pass123'),
+(37,'Colin.Hugo@mail.fr','Hugo','Colin','2000-10-10','Rue des Violettes','76000','Rouen','0600000056','56056','hcolin','pass123'),
+(38,'Blondel.Eva@mail.fr','Eva','Blondel','2002-11-11','Rue de la Gare','14000','Caen','0600000057','57057','eblondel','pass123'),
+(39,'Baron.Max@mail.fr','Max','Baron','2001-12-12','Avenue des Champs','76000','Rouen','0600000058','58058','mbaron','pass123'),
+(40,'Philippe.Alice@mail.fr','Alice','Philippe','2004-01-01','Rue du Levant','14000','Caen','0600000059','59059','aphilippe','pass123'),
+(41,'Perrier.Noah@mail.fr','Noah','Perrier','2000-02-02','Rue du Marché','76000','Rouen','0600000060','60060','nperrier','pass123'),
+(42,'Guillet.Lina@mail.fr','Lina','Guillet','2003-03-03','Rue des Hortensias','14000','Caen','0600000061','61061','lguillet','pass123'),
+(43,'Renard.Hugo@mail.fr','Hugo','Renard','2001-04-04','Boulevard de l’Ouest','76000','Rouen','0600000062','62062','hrenard','pass123'),
+(44,'Henry.Léo@mail.fr','Léo','Henry','2002-05-05','Rue de la Croix','14000','Caen','0600000063','63063','lhenry','pass123'),
+(45,'Mallet.Alice@mail.fr','Alice','Mallet','2003-06-06','Rue des Jonquilles','76000','Rouen','0600000064','64064','amallet','pass123'),
+(46,'Adam.Noah@mail.fr','Noah','Adam','2000-07-07','Rue du Jardin','14000','Caen','0600000065','65065','nadam','pass123'),
+(47,'Lucas.Hugo@mail.fr','Hugo','Lucas','2001-08-08','Rue de la Mare','76000','Rouen','0600000066','66066','hlucas','pass123'),
+(48,'Giraud.Eva@mail.fr','Eva','Giraud','2002-09-09','Avenue des Écoles','14000','Caen','0600000067','67067','egiraud','pass123'),
+(49,'Pierre.Lina@mail.fr','Lina','Pierre','2004-10-10','Rue des Peupliers Blancs','76000','Rouen','0600000068','68068','lpierre','pass123'),
+(50,'Martin.Hugo@mail.fr','Hugo','Martin','2003-11-11','Rue de la Source','14000','Caen','0600000069','69069','hmartin','pass123'),
+(100,'admin.vikazim@mail.fr','Admin','Vikazim','1980-01-01','Rue des Lilas','76000','Rouen','0600000000','10000','admin_sys','Root123!');
+
 
 -- ===================================================
 -- 3. TABLES SPÉCIALISÉES (HÉRITAGE TOTAL) - CORRIGÉ
@@ -511,7 +527,9 @@ INSERT INTO VIK_ADMINISTRATEUR
   UTI_NOM,
   UTI_PRENOM,
   UTI_DATE_NAISSANCE,
-  UTI_ADRESSE,
+  UTI_RUE ,
+   UTI_CODE_POSTAL ,
+   UTI_VILLE ,
   UTI_TELEPHONE,
   UTI_LICENCE,
   UTI_NOM_UTILISATEUR,
@@ -523,7 +541,9 @@ SELECT
   UTI_NOM,
   UTI_PRENOM,
   UTI_DATE_NAISSANCE,
-  UTI_ADRESSE,
+  UTI_RUE ,
+   UTI_CODE_POSTAL ,
+   UTI_VILLE ,
   UTI_TELEPHONE,
   UTI_LICENCE,
   UTI_NOM_UTILISATEUR,
@@ -533,14 +553,22 @@ WHERE UTI_ID = 100;
 
 
 -- COUREURS (Ajout manuel de CLU_ID car non présent dans le parent)
-INSERT INTO VIK_COUREUR (UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_ADRESSE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE, CLU_ID, CRR_PPS)
-SELECT UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_ADRESSE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE, 
+INSERT INTO VIK_COUREUR (UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE ,
+   UTI_CODE_POSTAL ,
+   UTI_VILLE , UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE, CLU_ID, CRR_PPS)
+SELECT UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE ,
+   UTI_CODE_POSTAL ,
+   UTI_VILLE , UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE, 
        (UTI_ID % 3) + 1, NULL 
 FROM VIK_UTILISATEUR WHERE UTI_ID <= 50;
 
 -- RESPONSABLES CLUB (Ajout manuel de CLU_ID)
-INSERT INTO VIK_RESPONSABLE_CLUB (UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_ADRESSE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE, CLU_ID)
-SELECT UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_ADRESSE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE, 1
+INSERT INTO VIK_RESPONSABLE_CLUB (UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE ,
+   UTI_CODE_POSTAL ,
+   UTI_VILLE , UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE, CLU_ID)
+SELECT UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE ,
+   UTI_CODE_POSTAL ,
+   UTI_VILLE , UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE, 1
 FROM VIK_UTILISATEUR WHERE UTI_ID = 2;
 
 -- RESPONSABLES RAID (Structure identique à VIK_UTILISATEUR)
@@ -551,7 +579,9 @@ INSERT INTO VIK_RESPONSABLE_RAID
   UTI_NOM,
   UTI_PRENOM,
   UTI_DATE_NAISSANCE,
-  UTI_ADRESSE,
+  UTI_RUE ,
+   UTI_CODE_POSTAL ,
+   UTI_VILLE ,
   UTI_TELEPHONE,
   UTI_LICENCE,
   UTI_NOM_UTILISATEUR,
@@ -563,7 +593,9 @@ SELECT
   UTI_NOM,
   UTI_PRENOM,
   UTI_DATE_NAISSANCE,
-  UTI_ADRESSE,
+  UTI_RUE ,
+   UTI_CODE_POSTAL ,
+   UTI_VILLE ,
   UTI_TELEPHONE,
   UTI_LICENCE,
   UTI_NOM_UTILISATEUR,
@@ -580,7 +612,9 @@ INSERT INTO VIK_RESPONSABLE_COURSE
   UTI_NOM,
   UTI_PRENOM,
   UTI_DATE_NAISSANCE,
-  UTI_ADRESSE,
+  UTI_RUE ,
+   UTI_CODE_POSTAL ,
+   UTI_VILLE ,
   UTI_TELEPHONE,
   UTI_LICENCE,
   UTI_NOM_UTILISATEUR,
@@ -592,7 +626,9 @@ SELECT
   UTI_NOM,
   UTI_PRENOM,
   UTI_DATE_NAISSANCE,
-  UTI_ADRESSE,
+  UTI_RUE ,
+   UTI_CODE_POSTAL ,
+   UTI_VILLE ,
   UTI_TELEPHONE,
   UTI_LICENCE,
   UTI_NOM_UTILISATEUR,

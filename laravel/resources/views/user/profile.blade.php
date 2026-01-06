@@ -29,7 +29,6 @@
             </div>
             <div>
                 <h1 class="text-4xl font-black text-gray-900 tracking-tight">{{ $user->UTI_NOM_UTILISATEUR }}</h1>
-                <p class="text-gray-500 font-medium">Membre depuis {{ $user->created_at->format('M Y') }}</p>
             </div>
         </div>
 
@@ -87,12 +86,34 @@
 
                     <div class="flex flex-col gap-2 group">
                         <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
-                            Adresse postale
-                            <button type="button" onclick="enableField('UTI_ADRESSE')" class="text-black hover:text-green-600 transition-colors">
+                            Rue
+                            <button type="button" onclick="enableField('UTI_RUE')" class="text-black hover:text-green-600 transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                             </button>
                         </label>
-                        <input type="text" id="UTI_ADRESSE" name="UTI_ADRESSE" value="{{ $user->UTI_ADRESSE }}" readonly
+                        <input type="text" id="UTI_RUE" name="UTI_RUE" value="{{ $user->UTI_RUE }}" readonly
+                            class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all font-medium text-gray-800 pointer-events-none cursor-default">
+                    </div>
+
+                    <div class="flex flex-col gap-2 group">
+                        <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
+                            Code Postal
+                            <button type="button" onclick="enableField('UTI_CODE_POSTAL')" class="text-black hover:text-green-600 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+                        </label>
+                        <input type="text" id="UTI_CODE_POSTAL" name="UTI_CODE_POSTAL" value="{{ $user->UTI_CODE_POSTAL }}" readonly
+                            class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all font-medium text-gray-800 pointer-events-none cursor-default">
+                    </div>
+
+                    <div class="flex flex-col gap-2 group">
+                        <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
+                            Ville
+                            <button type="button" onclick="enableField('UTI_VILLE')" class="text-black hover:text-green-600 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+                        </label>
+                        <input type="text" id="UTI_VILLE" name="UTI_VILLE" value="{{ $user->UTI_VILLE }}" readonly
                             class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all font-medium text-gray-800 pointer-events-none cursor-default">
                     </div>
 

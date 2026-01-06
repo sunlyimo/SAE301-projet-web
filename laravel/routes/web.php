@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\RaidController;
 
 
 Route::get('/', function () {
@@ -33,6 +34,8 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
+    Route::post('/raids', [RaidController::class, 'store'])->name('raids.store');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
     Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.edit');
@@ -68,5 +71,9 @@ Route::middleware('auth')->group(function () {
   }) -> name("logs.delete");
 });
 
-Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+Route::get('/races', [CourseController::class, 'index'])->name('races.index');
+
+Route::get('/about', function () {
+    return view('about.about');
+})->name('about');
 
