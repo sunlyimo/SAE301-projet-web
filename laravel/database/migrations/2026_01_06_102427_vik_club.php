@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('vik_club', function (Blueprint $table) {
             $table->increments('CLU_ID')->primary();
             $table->char('CLU_NOM', 50)->nullable();
-            $table->char('UTI_RUE', 100)->nullable();
-            $table->char('UTI_CODE_POSTAL', 10)->nullable();
-            $table->char('UTI_VILLE', 50)->nullable();
+            $table->char('CLU_RUE', 100)->nullable();
+            $table->char('CLU_CODE_POSTAL', 10)->nullable();
+            $table->char('CLU_VILLE', 50)->nullable();
 
         });
     }
