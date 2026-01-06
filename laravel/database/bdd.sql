@@ -445,7 +445,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ===================================================
 -- 1. TABLES DE RÉFÉRENCE (SANS DÉPENDANCES)
 -- ===================================================
-INSERT INTO VIK_CLUB (CLU_ID, CLU_NOM, UTI_RUE, UTI_CODE_POSTAL, UTI_VILLE) VALUES
+INSERT INTO VIK_CLUB (CLU_ID, CLU_NOM, CLU_RUE, CLU_CODE_POSTAL, CLU_VILLE) VALUES
 (1,'Club Rouen','1 Rue de la Paix','76000', 'Rouen'),
 (2,'Club Caen','10 Avenue du Stade','14000', 'Caen'),
 (3,'Club Lyon','5 Boulevard des Sports','69000', 'Lyon');
