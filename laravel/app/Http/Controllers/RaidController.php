@@ -37,6 +37,6 @@ class RaidController extends Controller
 
         Raid::create($validated);
 
-        return redirect()->route('raids.index')->with('success', 'Raid créé avec succès !');
+        return redirect('/')->with('success', 'Raid créé avec succès !');
     }
 }
