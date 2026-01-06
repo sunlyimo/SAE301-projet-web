@@ -73,7 +73,7 @@
 
     <footer class="bg-gray-200 text-gray-900 py-12" style="padding: 50px 0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-row md:flex-col justify-between items-start gap-12">
+            <div class="flex flex-col md:flex-row justify-between items-start gap-12">
                 <!-- Logo and Social Media (Left) -->
                 <div class="flex flex-col items-start flex-shrink-0">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-16 w-auto mb-6">
@@ -97,32 +97,32 @@
                         <h3 class="text-lg font-bold mb-4 text-gray-900">Liens utiles</h3>
                         <ul class="space-y-2">
                             <li>
-                                <a href="https://www.orienteering.sport/" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
+                                <a href="https://orienteering.sport" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
                                     Fédération Internationale d'Orientation (IOF)
                                 </a>
                             </li>
                             <li>
-                                <a href="https://www.youtube.com/@orienteering" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
+                                <a href="https://www.youtube.com/c/IOFOrienteering/videos" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
                                     Chaîne Youtube de l'IOF
                                 </a>
                             </li>
                             <li>
-                                <a href="https://www.ffcorientation.fr/" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
+                                <a href="https://www.ffcorientation.fr" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
                                     Fédération Française de Course d'Orientation (FFCO)
                                 </a>
                             </li>
                             <li>
-                                <a href="https://www.ffcorientation.fr/classement/" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
+                                <a href="https://cn.ffcorientation.fr/classement/" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
                                     Classement national
                                 </a>
                             </li>
                             <li>
-                                <a href="https://lnco.fr/" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
+                                <a href="https://liguenormandiecoursedorientation.fr" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
                                     Ligue de Normandie de Course d'Orientation (LNCO)
                                 </a>
                             </li>
                             <li>
-                                <a href="https://cdco14.fr/" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
+                                <a href="http://www.cdco14.fr" target="_blank" class="text-gray-900 hover:text-green-600 transition-colors duration-300">
                                     Comité Départemental de Course d'Orientation (CDCO)
                                 </a>
                             </li>
