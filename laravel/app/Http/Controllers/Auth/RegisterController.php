@@ -27,21 +27,24 @@ class RegisterController extends Controller
             'UTI_NOM' => 'required|string|max:255',
             'UTI_PRENOM' => 'required|string|max:255',
             'UTI_EMAIL' => 'required|string|email|max:255|unique:VIK_UTILISATEUR,UTI_EMAIL',
+            'UTI_NOM_UTILISATEUR' => 'required|string|max:50|unique:VIK_UTILISATEUR,UTI_NOM_UTILISATEUR',
             'UTI_DATE_NAISSANCE' => 'required|date',
             'UTI_ADRESSE' => 'nullable|string|max:500',
             'UTI_TELEPHONE' => 'nullable|string|max:20',
-            'password' => 'required|string|min:8',
+            'UTI_MOT_DE_PASSE' => 'required|string|min:8',
         ]);
 
         User::create([
             'UTI_NOM' => $request->UTI_NOM,
             'UTI_PRENOM' => $request->UTI_PRENOM,
             'UTI_EMAIL' => $request->UTI_EMAIL,
+            'UTI_NOM_UTILISATEUR' => $request->UTI_NOM_UTILISATEUR,
             'UTI_DATE_NAISSANCE' => $request->UTI_DATE_NAISSANCE,
             'UTI_ADRESSE' => $request->UTI_ADRESSE,
             'UTI_TELEPHONE' => $request->UTI_TELEPHONE,
-            'password' => Hash::make($request->password),
+            'UTI_MOT_DE_PASSE' => Hash::make($request->UTI_MOT_DE_PASSE),
         ]);
+
 
         return redirect()->route('login')->with('success', 'Votre compte a été créé avec succès. Veuillez vous connecter.');
     }

@@ -18,15 +18,17 @@ Route::get('/repair', function() {
     return "le cache a été vidé";
 });
 
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+});
 
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-Route::get('/logs/{file}', function (string $file) {
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/logs/{file}', function (string $file) {
   if ($file === 'laravel') {
     $content = Storage::disk('laravelLog')->get('laravel.log');
     return view('log', [
@@ -51,8 +53,9 @@ Route::get('/logs/{file}', function (string $file) {
   }
 });
 
-Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
-  Storage::disk($disk)->delete($file);
-  return Redirect::back();
-}) -> name("logs.delete");
+  Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
+    Storage::disk($disk)->delete($file);
+    return Redirect::back();
+  }) -> name("logs.delete");
+});
 
