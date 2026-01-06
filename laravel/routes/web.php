@@ -67,5 +67,9 @@ Route::middleware('auth')->group(function () {
   }) -> name("logs.delete");
 });
 
-Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+Route::get('/races', [CourseController::class, 'index'])->name('races.index');
+
+Route::get('/about', function () {
+    return view('about.about');
+})->name('about');
 
