@@ -25,7 +25,7 @@
                             'Contact' => '/contact',
                             'À propos' => '/about',
                             'Raids' => '/raids',
-                            'Courses' => '/courses',
+                            'Courses' => '/races',
                             'Clubs' => '/clubs'
                         ];
                     @endphp
