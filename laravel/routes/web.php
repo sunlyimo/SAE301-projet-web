@@ -39,3 +39,6 @@ Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
   return Redirect::back();
 }) -> name("logs.delete");
 
+use App\Http\Controllers\RaidController;
+
+Route::get('/raids',[RaidController::class, 'showRaid']);
