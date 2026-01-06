@@ -7,14 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class Raid extends Model
 {
-    public function getFuturRaid() {
-        $raids = DB::table("VIK_RAID")        
-                    ->whereRaw('rai_raid_date_debut > sysdate')
-                    ->get();
+    public static function getFuturRaid() {
+
+        $raids = Raid::where("RAI_RAID_DATE_DEBUT", ">", now())->get(); // Le now et le > ne marhce peut être pas
         return $raids;
     }
 
-    protected $table = 'VIK_RAID';
+    protected $table = 'vik_raid';
     
     protected $primaryKey = 'RAI_ID';
 
