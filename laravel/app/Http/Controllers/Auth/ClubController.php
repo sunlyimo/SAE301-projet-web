@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Club;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClubController extends Controller
 {
@@ -16,11 +17,19 @@ class ClubController extends Controller
 
     public function create()
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent créer des clubs.');
+        }
+
         return view('clubs.create');
     }
 
     public function store(Request $request)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent créer des clubs.');
+        }
+
         $request->validate([
             'CLU_NOM' => 'required|string|max:50',
             'CLU_RUE' => 'required|string|max:100',
@@ -40,11 +49,19 @@ class ClubController extends Controller
 
     public function edit(Club $club)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent modifier des clubs.');
+        }
+
         return view('clubs.edit', compact('club'));
     }
 
     public function update(Request $request, Club $club)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent modifier des clubs.');
+        }
+
         $request->validate([
             'CLU_NOM' => 'required|string|max:50',
             'CLU_RUE' => 'required|string|max:100',
@@ -59,6 +76,10 @@ class ClubController extends Controller
 
     public function destroy(Club $club)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent supprimer des clubs.');
+        }
+
         $club->delete();
 
         return redirect()->route('clubs.index')->with('success', 'Le club a été supprimé avec succès.');

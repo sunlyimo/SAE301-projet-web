@@ -10,9 +10,11 @@
 <div class="club-container club-content">
     <div class="club-header">
         <h1 class="club-title">Clubs</h1>
-        <a href="{{ route('clubs.create') }}" class="club-btn">
-            Ajouter un club
-        </a>
+        @if(Auth::check() && Auth::user()->isAdmin())
+            <a href="{{ route('clubs.create') }}" class="club-btn">
+                Ajouter un club
+            </a>
+        @endif
     </div>
 
     @if(session('success'))
@@ -42,12 +44,14 @@
                             <td>{{ $club->CLU_VILLE }}</td>
                             <td class="club-actions">
                                 <a href="{{ route('clubs.show', $club) }}" class="club-link">Voir</a>
-                                <a href="{{ route('clubs.edit', $club) }}" class="club-link">Modifier</a>
-                                <form method="POST" action="{{ route('clubs.destroy', $club) }}" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="club-delete-btn" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce club ?')">Supprimer</button>
-                                </form>
+                                @if(Auth::check() && Auth::user()->isAdmin())
+                                    <a href="{{ route('clubs.edit', $club) }}" class="club-link">Modifier</a>
+                                    <form method="POST" action="{{ route('clubs.destroy', $club) }}" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="club-delete-btn" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce club ?')">Supprimer</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
