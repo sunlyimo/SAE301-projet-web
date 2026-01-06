@@ -9,7 +9,6 @@
 
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
 
-                <!-- Header -->
                 <div class="card-header bg-primary bg-gradient text-white p-4 border-0">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-person-running fa-2x me-3"></i>
@@ -20,7 +19,6 @@
                     </div>
                 </div>
 
-                <!-- Body -->
                 <div class="card-body p-4 p-md-5">
                     @if($errors->any())
                         <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
@@ -35,7 +33,6 @@
                     <form action="{{ route('raids.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <!-- Section 1: Infos générales -->
                         <div class="d-flex align-items-center mb-4">
                             <span class="badge bg-primary rounded-pill me-2 p-2">1</span>
                             <h5 class="mb-0 fw-bold text-primary section-title">Informations générales</h5>
@@ -63,7 +60,6 @@
                             </div>
                         </div>
 
-                        <!-- Section 2: Dates clés -->
                         <div class="d-flex align-items-center mb-4 mt-5">
                             <span class="badge bg-primary rounded-pill me-2 p-2">2</span>
                             <h5 class="mb-0 fw-bold text-primary section-title">Dates clés</h5>
@@ -98,7 +94,6 @@
                             </div>
                         </div>
 
-                        <!-- Section 3: Responsables -->
                         <div class="d-flex align-items-center mb-4 mt-5">
                             <span class="badge bg-primary rounded-pill me-2 p-2">3</span>
                             <h5 class="mb-0 fw-bold text-primary section-title">Responsables</h5>
@@ -109,8 +104,8 @@
                                 <div class="form-floating">
                                     <select name="CLU_ID" id="CLU_ID" class="form-select">
                                         <option value="">Choisir un club...</option>
-                                        @foreach($clubs ?? [] as $club)
-                                            <option value="{{ $club->CLU_ID }}">{{ $club->CLU_NOM }}</option>
+                                        @foreach($clubs ?? [] as $id => $name)
+                                            <option value="{{ $id }}" {{ old('CLU_ID') == $id ? 'selected' : '' }}>{{ $name }}</option>
                                         @endforeach
                                     </select>
                                     <label for="CLU_ID">Club Organisateur</label>
@@ -120,8 +115,8 @@
                                 <div class="form-floating">
                                     <select name="UTI_ID" id="UTI_ID" class="form-select">
                                         <option value="">Choisir un responsable...</option>
-                                        @foreach($users ?? [] as $user)
-                                            <option value="{{ $user->UTI_ID }}">{{ $user->UTI_PRENOM }} {{ $user->UTI_NOM }}</option>
+                                        @foreach($responsables ?? [] as $id => $name)
+                                            <option value="{{ $id }}" {{ old('UTI_ID') == $id ? 'selected' : '' }}>{{ $name }}</option>
                                         @endforeach
                                     </select>
                                     <label for="UTI_ID">Responsable</label>
@@ -129,7 +124,29 @@
                             </div>
                         </div>
 
-                        <!-- Image de couverture -->
+                        <div class="d-flex align-items-center mb-4 mt-5">
+                            <span class="badge bg-primary rounded-pill me-2 p-2">4</span>
+                            <h5 class="mb-0 fw-bold text-primary section-title">Contact</h5>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" name="RAI_CONTACT" id="RAI_CONTACT" value="{{ old('RAI_CONTACT') }}" 
+                                           class="form-control @error('RAI_CONTACT') is-invalid @enderror" placeholder="Email">
+                                    <label for="RAI_CONTACT"><i class="fas fa-envelope me-1"></i> Email</label>
+                                    @error('RAI_CONTACT') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel" name="RAI_TELEPHONE" id="RAI_TELEPHONE" value="{{ old('RAI_TELEPHONE') }}" 
+                                           class="form-control" placeholder="Téléphone">
+                                    <label for="RAI_TELEPHONE"><i class="fas fa-phone me-1"></i> Téléphone (optionnel)</label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="mb-5">
                             <label class="form-label fw-bold text-muted small">IMAGE DE COUVERTURE</label>
                             <div class="input-group">
@@ -137,7 +154,6 @@
                             </div>
                         </div>
 
-                        <!-- Boutons -->
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm py-3 rounded-3">
