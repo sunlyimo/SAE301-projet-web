@@ -22,10 +22,13 @@ class User extends Authenticatable
         'UTI_PRENOM',
         'UTI_EMAIL',
         'UTI_DATE_NAISSANCE',
-        'UTI_ADRESSE',
-        'UTI_TELEPHONE',
         'UTI_MOT_DE_PASSE',
         'UTI_NOM_UTILISATEUR',
+        'UTI_RUE',
+        'UTI_CODE_POSTAL',
+        'UTI_VILLE',
+        'UTI_TELEPHONE',
+        'UTI_LICENCE',
     ];
 
     /**
