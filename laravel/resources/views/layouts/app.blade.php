@@ -6,7 +6,7 @@
     <title>CartoRun - @yield('title')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-white font-sans antialiased text-gray-900">
+<body class="bg-white font-sans antialiased text-gray-900 flex flex-col min-h-screen">
     <nav class="relative bg-white border-b border-gray-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
@@ -67,11 +67,13 @@
         </div>
     </nav>
 
-    @yield('content')
+    <main class="flex-1">
+        @yield('content')
+    </main>
 
-    <footer class="bg-gray-200 text-gray-900 py-12 mt-auto">
+    <footer class="bg-gray-200 text-gray-900 py-12" style="padding: 50px 0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-start gap-12">
+            <div class="flex flex-row md:flex-col justify-between items-start gap-12">
                 <!-- Logo and Social Media (Left) -->
                 <div class="flex flex-col items-start flex-shrink-0">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-16 w-auto mb-6">
