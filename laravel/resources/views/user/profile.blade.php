@@ -29,7 +29,6 @@
             </div>
             <div>
                 <h1 class="text-4xl font-black text-gray-900 tracking-tight">{{ $user->UTI_NOM_UTILISATEUR }}</h1>
-                <p class="text-gray-500 font-medium">Membre depuis {{ $user->created_at->format('M Y') }}</p>
             </div>
         </div>
 
