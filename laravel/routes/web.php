@@ -4,10 +4,12 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
+use App\Http\Controllers\RaidController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\RaidController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\CourseController;
 
 
 Route::get('/', function () {
@@ -26,12 +28,15 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
-
+    
     Route::get('/raids',[RaidController::class, 'showRaid']);
 });
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::patch('/profile', [UserController::class, 'update'])->name('user.update');
     Route::get('/logs/{file}', function (string $file) {
   if ($file === 'laravel') {
     $content = Storage::disk('laravelLog')->get('laravel.log');
@@ -63,4 +68,5 @@ Route::middleware('auth')->group(function () {
   }) -> name("logs.delete");
 });
 
+Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 

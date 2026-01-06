@@ -13,14 +13,14 @@
     <form method="POST" action="/login" class="space-y-4">
         @csrf
         <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" name="UTI_EMAIL" required class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 border-gray-300">
+            <label class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
+            <input type="text" name="UTI_NOM_UTILISATEUR" value="{{ old('UTI_NOM_UTILISATEUR') }}" required class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 border-gray-300">
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">Mot de passe</label>
-            <input type="password" name="password" required class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 border-gray-300">
+            <input type="password" name="UTI_MOT_DE_PASSE" required class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 border-gray-300">
         </div>
-        <button type="submit" class="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition-all">
+        <button type="submit" class="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-all">
             Se connecter
         </button>
     </form>

@@ -11,23 +11,26 @@ class LoginController extends Controller {
     }
 
     public function login(Request $request) {
-        $credentials = [
-            'UTI_EMAIL' => $request->UTI_EMAIL,
-            'password' => $request->password,
-        ];
+    $request->validate([
+        'UTI_NOM_UTILISATEUR' => 'required|string',
+        'UTI_MOT_DE_PASSE' => 'required|string',
+    ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/');
-        }
+    $credentials = [
+        'UTI_NOM_UTILISATEUR' => $request->UTI_NOM_UTILISATEUR,
+        'password' => $request->UTI_MOT_DE_PASSE,
+    ];
 
-        return back()->withErrors(['email' => 'Identifiants invalides.']);
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return redirect()->intended('/');
     }
 
-    public function logout(Request $request) {
+        return back()->withErrors(['UTI_NOM_UTILISATEUR' => 'Identifiants invalides.'])->withInput();
+    }
+
+    public function logout() {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
+        return redirect('/')->with('success', 'Vous avez été déconnecté.');
     }
 }
