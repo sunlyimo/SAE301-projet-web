@@ -29,9 +29,13 @@ class RegisterController extends Controller
             'UTI_EMAIL' => 'required|string|email|max:255|unique:VIK_UTILISATEUR,UTI_EMAIL',
             'UTI_NOM_UTILISATEUR' => 'required|string|max:50|unique:VIK_UTILISATEUR,UTI_NOM_UTILISATEUR',
             'UTI_DATE_NAISSANCE' => 'required|date',
-            'UTI_ADRESSE' => 'nullable|string|max:500',
+            'UTI_RUE' => 'required|string|max:100',
+            'UTI_CODE_POSTAL' => 'required|string|max:10',
+            'UTI_VILLE' => 'required|string|max:50',
             'UTI_TELEPHONE' => 'nullable|string|max:20',
             'UTI_MOT_DE_PASSE' => 'required|string|min:8',
+            'UTI_LICENCE' => 'nullable|string|max:15',
+            'UTI_NOM_UTILISATEUR' => 'required|string|max:255|unique:VIK_UTILISATEUR,UTI_NOM_UTILISATEUR',
         ]);
 
         User::create([
@@ -40,9 +44,13 @@ class RegisterController extends Controller
             'UTI_EMAIL' => $request->UTI_EMAIL,
             'UTI_NOM_UTILISATEUR' => $request->UTI_NOM_UTILISATEUR,
             'UTI_DATE_NAISSANCE' => $request->UTI_DATE_NAISSANCE,
-            'UTI_ADRESSE' => $request->UTI_ADRESSE,
+            'UTI_RUE' => $request->UTI_RUE,
+            'UTI_CODE_POSTAL' => $request->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $request->UTI_VILLE,
             'UTI_TELEPHONE' => $request->UTI_TELEPHONE,
-            'UTI_MOT_DE_PASSE' => Hash::make($request->UTI_MOT_DE_PASSE),
+            'UTI_MOT_DE_PASSE' => Hash::make($request->password),
+            'UTI_LICENCE' => $request->UTI_LICENCE,
+            'UTI_NOM_UTILISATEUR' => $request->UTI_NOM_UTILISATEUR,
         ]);
 
 
