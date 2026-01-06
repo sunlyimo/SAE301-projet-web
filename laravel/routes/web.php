@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\RaidController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -61,4 +62,25 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+
+// Raid routes - protected by auth middleware
+Route::middleware('auth')->group(function () {
+    Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
+    Route::post('/raids', [RaidController::class, 'store'])->name('raids.store');
+});
+
+// API routes for search functionality
+Route::middleware('auth')->prefix('api')->group(function () {
+    Route::get('/clubs/search', [RaidController::class, 'searchClubs'])->name('api.clubs.search');
+    Route::get('/users/search', [RaidController::class, 'searchUsers'])->name('api.users.search');
+});
+
+// Placeholder routes for club and user details pages
+Route::get('/clubs/{id}', function ($id) {
+    return "Page de détails du club (ID: {$id}) - À implémenter";
+})->name('clubs.show');
+
+Route::get('/users/{id}', function ($id) {
+    return "Page de détails de l'utilisateur (ID: {$id}) - À implémenter";
+})->name('users.show');
 
