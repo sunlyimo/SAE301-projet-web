@@ -22,9 +22,10 @@ class ClubController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'manager_name' => 'required|string|max:255',
+            'CLU_NOM' => 'required|string|max:50',
+            'CLU_RUE' => 'required|string|max:100',
+            'CLU_CODE_POSTAL' => 'required|string|max:6',
+            'CLU_VILLE' => 'required|string|max:50',
         ]);
 
         Club::create($request->all());
@@ -45,9 +46,10 @@ class ClubController extends Controller
     public function update(Request $request, Club $club)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'manager_name' => 'required|string|max:255',
+            'CLU_NOM' => 'required|string|max:50',
+            'CLU_RUE' => 'required|string|max:100',
+            'CLU_CODE_POSTAL' => 'required|string|max:6',
+            'CLU_VILLE' => 'required|string|max:50',
         ]);
 
         $club->update($request->all());

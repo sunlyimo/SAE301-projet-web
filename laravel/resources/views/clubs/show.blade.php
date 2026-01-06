@@ -9,7 +9,7 @@
 @section('content')
 <div class="club-container club-content">
     <div class="mb-6">
-        <h1 class="club-title">{{ $club->name }}</h1>
+        <h1 class="club-title">{{ $club->CLU_NOM }}</h1>
     </div>
 
     <div class="club-card">
@@ -20,15 +20,19 @@
                     <dl class="club-details-dl">
                         <div>
                             <dt class="club-details-dt">Nom</dt>
-                            <dd class="club-details-dd">{{ $club->name }}</dd>
+                            <dd class="club-details-dd">{{ $club->CLU_NOM }}</dd>
                         </div>
                         <div>
-                            <dt class="club-details-dt">Adresse</dt>
-                            <dd class="club-details-dd">{{ $club->address }}</dd>
+                            <dt class="club-details-dt">Rue</dt>
+                            <dd class="club-details-dd">{{ $club->CLU_RUE }}</dd>
                         </div>
                         <div>
-                            <dt class="club-details-dt">Responsable</dt>
-                            <dd class="club-details-dd">{{ $club->manager_name }}</dd>
+                            <dt class="club-details-dt">Code Postal</dt>
+                            <dd class="club-details-dd">{{ $club->CLU_CODE_POSTAL }}</dd>
+                        </div>
+                        <div>
+                            <dt class="club-details-dt">Ville</dt>
+                            <dd class="club-details-dd">{{ $club->CLU_VILLE }}</dd>
                         </div>
                     </dl>
                 </div>

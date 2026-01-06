@@ -27,17 +27,19 @@
                 <thead>
                     <tr>
                         <th>Nom</th>
-                        <th>Adresse</th>
-                        <th>Responsable</th>
+                        <th>Rue</th>
+                        <th>Code Postal</th>
+                        <th>Ville</th>
                         <th class="text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($clubs as $club)
                         <tr>
-                            <td>{{ $club->name }}</td>
-                            <td>{{ $club->address }}</td>
-                            <td>{{ $club->manager_name }}</td>
+                            <td>{{ $club->CLU_NOM }}</td>
+                            <td>{{ $club->CLU_RUE }}</td>
+                            <td>{{ $club->CLU_CODE_POSTAL }}</td>
+                            <td>{{ $club->CLU_VILLE }}</td>
                             <td class="club-actions">
                                 <a href="{{ route('clubs.show', $club) }}" class="club-link">Voir</a>
                                 <a href="{{ route('clubs.edit', $club) }}" class="club-link">Modifier</a>

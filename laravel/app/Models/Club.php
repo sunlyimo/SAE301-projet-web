@@ -6,9 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Club extends Model
 {
+    protected $table = 'vik_club';
+
+    protected $primaryKey = 'CLU_ID';
+
     protected $fillable = [
-        'name',
-        'address',
-        'manager_name',
+        'CLU_NOM',
+        'CLU_RUE',
+        'CLU_CODE_POSTAL',
+        'CLU_VILLE',
     ];
 }

@@ -18,25 +18,33 @@
                 @csrf
 
                 <div class="club-form-group">
-                    <label for="name" class="club-label">Nom du club</label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="club-input" required>
-                    @error('name')
+                    <label for="CLU_NOM" class="club-label">Nom du club</label>
+                    <input type="text" name="CLU_NOM" id="CLU_NOM" value="{{ old('CLU_NOM') }}" class="club-input" required>
+                    @error('CLU_NOM')
                         <p class="club-error">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="club-form-group">
-                    <label for="address" class="club-label">Adresse</label>
-                    <input type="text" name="address" id="address" value="{{ old('address') }}" class="club-input" required>
-                    @error('address')
+                    <label for="CLU_RUE" class="club-label">Rue</label>
+                    <input type="text" name="CLU_RUE" id="CLU_RUE" value="{{ old('CLU_RUE') }}" class="club-input" required>
+                    @error('CLU_RUE')
                         <p class="club-error">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="club-form-group">
-                    <label for="manager_name" class="club-label">Nom du responsable</label>
-                    <input type="text" name="manager_name" id="manager_name" value="{{ old('manager_name') }}" class="club-input" required>
-                    @error('manager_name')
+                    <label for="CLU_CODE_POSTAL" class="club-label">Code Postal</label>
+                    <input type="text" name="CLU_CODE_POSTAL" id="CLU_CODE_POSTAL" value="{{ old('CLU_CODE_POSTAL') }}" class="club-input" required>
+                    @error('CLU_CODE_POSTAL')
+                        <p class="club-error">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="club-form-group">
+                    <label for="CLU_VILLE" class="club-label">Ville</label>
+                    <input type="text" name="CLU_VILLE" id="CLU_VILLE" value="{{ old('CLU_VILLE') }}" class="club-input" required>
+                    @error('CLU_VILLE')
                         <p class="club-error">{{ $message }}</p>
                     @enderror
                 </div>
