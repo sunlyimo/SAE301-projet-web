@@ -66,3 +66,7 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/races', [CourseController::class, 'index'])->name('races.index');
 
+Route::get('/about', function () {
+    return view('about.about');
+})->name('about');
+
