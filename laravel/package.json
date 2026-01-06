@@ -3,8 +3,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "dev": "node node_modules/vite/bin/vite.js",
+        "build": "node node_modules/vite/bin/vite.js build"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
