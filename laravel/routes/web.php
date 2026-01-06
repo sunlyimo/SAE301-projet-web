@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ClubController;
 use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function () {
@@ -55,4 +56,6 @@ Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
   Storage::disk($disk)->delete($file);
   return Redirect::back();
 }) -> name("logs.delete");
+
+Route::resource('clubs', ClubController::class);
 

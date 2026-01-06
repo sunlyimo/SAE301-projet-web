@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CartoRun - @yield('title')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
 </head>
 <body class="bg-white font-sans antialiased text-gray-900">
     <nav class="relative bg-white border-b border-gray-100 shadow-sm">
