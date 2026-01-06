@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\View;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ClubController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\CourseController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,15 +21,20 @@ Route::get('/repair', function() {
     return "le cache a été vidé";
 });
 
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+});
 
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-Route::get('/logs/{file}', function (string $file) {
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::patch('/profile', [UserController::class, 'update'])->name('user.update');
+    Route::get('/logs/{file}', function (string $file) {
   if ($file === 'laravel') {
     $content = Storage::disk('laravelLog')->get('laravel.log');
     return view('log', [
@@ -58,4 +65,11 @@ Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
 }) -> name("logs.delete");
 
 Route::resource('clubs', ClubController::class);
+  Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
+    Storage::disk($disk)->delete($file);
+    return Redirect::back();
+  }) -> name("logs.delete");
+});
+
+Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 
