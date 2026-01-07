@@ -28,7 +28,7 @@
                     {{-- Le Chef --}}
                     <li class="flex items-center justify-between p-3 bg-yellow-50 rounded-xl border border-yellow-100">
                         <div>
-                            <span class="font-bold text-gray-900">{{ $equipe->chef->UTI_PRENOM }} {{ $equipe->chef->UTI_NOM }}</span>
+                            <span class="font-bold text-gray-900">{{ $membre->utilisateur->UTI_NOM_UTILISATEUR }} {{ $equipe->chef->UTI_PRENOM }} {{ $equipe->chef->UTI_NOM }}</span>
                             <span class="block text-xs text-yellow-600 font-bold uppercase">Chef d'équipe</span>
                         </div>
                         <span class="text-xl">👑</span>
@@ -38,7 +38,7 @@
                     @foreach($equipe->membres as $membre)
                         <li class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
                             <div>
-                                <span class="font-bold text-gray-900">{{ $membre->utilisateur->UTI_PRENOM }} {{ $membre->utilisateur->UTI_NOM }}</span>
+                                <span class="font-bold text-gray-900">{{ $membre->utilisateur->UTI_NOM_UTILISATEUR }}</span>
                                 <span class="block text-xs text-gray-400 font-bold uppercase">Membre</span>
                             </div>
                         </li>
@@ -55,7 +55,6 @@
                 <form action="{{ route('teams.add', [$equipe->RAI_ID, $equipe->COU_ID, $equipe->EQU_ID]) }}" method="POST">
                     @csrf
                     <div class="mb-4">
-                        {{-- Changement ici : name="pseudo" et type="text" --}}
                         <input type="text" name="pseudo" placeholder="Ex: Viking76" 
                             class="w-full p-4 rounded-xl border-2 border-gray-200 focus:border-black outline-none transition-colors font-bold" required>
                         
