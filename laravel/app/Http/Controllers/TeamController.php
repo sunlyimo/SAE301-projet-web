@@ -87,7 +87,14 @@ class TeamController extends Controller
                                    ->where('UTI_ID', $equipe->UTI_ID)
                                    ->exists();
 
-        $nbParticipants = $equipe->membres()->count() + ($chefParticipe ? 1 : 0);
+        // Compter les membres (excluant le chef)
+        $nbMembres = Appartient::where('RAI_ID', $rai_id)
+                               ->where('COU_ID', $cou_id)
+                               ->where('EQU_ID', $equ_id)
+                               ->where('UTI_ID', '!=', $equipe->UTI_ID)
+                               ->count();
+
+        $nbParticipants = $nbMembres + ($chefParticipe ? 1 : 0);
 
         if ($nbParticipants >= $course->COU_PARTICIPANT_PAR_EQUIPE_MAX) {
             return back()->withErrors(['pseudo' => "L'équipe est complète !"]);
@@ -144,9 +151,15 @@ class TeamController extends Controller
             return back()->with('success', "Vous ne participez plus à la course.");
         } else {
             // Le chef ne participe pas, on l'ajoute
-            $nbParticipants = $equipe->membres()->count();
+            // Compter les membres (excluant le chef)
+            $nbMembres = Appartient::where('RAI_ID', $rai_id)
+                                   ->where('COU_ID', $cou_id)
+                                   ->where('EQU_ID', $equ_id)
+                                   ->where('UTI_ID', '!=', $equipe->UTI_ID)
+                                   ->count();
 
-            if ($nbParticipants >= $course->COU_PARTICIPANT_PAR_EQUIPE_MAX) {
+            // Le chef va être ajouté, donc on vérifie si nbMembres + 1 dépasse le max
+            if (($nbMembres + 1) > $course->COU_PARTICIPANT_PAR_EQUIPE_MAX) {
                 return back()->withErrors(['chef' => "L'équipe est complète ! Impossible d'ajouter le chef comme participant."]);
             }
 
