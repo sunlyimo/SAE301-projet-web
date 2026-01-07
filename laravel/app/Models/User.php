@@ -125,4 +125,17 @@ class User extends Authenticatable
     public function coureur() {
         return $this->hasOne(Coureur::class, 'UTI_ID', 'UTI_ID');
     }
+
+    public function resultats()
+    {
+
+        return $this->hasManyThrough(
+            Resultat::class,
+            Appartient::class,
+            'UTI_ID',
+            'EQU_ID',
+            'UTI_ID',
+            'EQU_ID'
+        );
+    }
 }
