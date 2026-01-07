@@ -1,0 +1,307 @@
+/* Styles pour les vues des clubs */
+
+.club-container {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .club-container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .club-container {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+.club-content {
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+}
+
+.club-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.club-title {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.club-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #16a34a;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    transition: all 0.15s ease-in-out;
+}
+
+.club-btn:hover {
+    background-color: #15803d;
+}
+
+.club-btn-blue {
+    background-color: #2563eb;
+}
+
+.club-btn-blue:hover {
+    background-color: #1d4ed8;
+}
+
+.club-card {
+    background-color: #ffffff;
+    overflow: hidden;
+    border: 1px solid #d0d1d4;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border-radius: 0.5rem;
+}
+
+.club-card-content {
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-bottom: 1px solid #d0d1d4;
+}
+
+.club-table {
+    min-width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.club-table th {
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    background-color: #f9fafb;
+}
+
+.club-table th.text-right {
+    text-align: right;
+}
+
+.club-table td {
+    padding: 1rem 1.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #374151;
+    border-bottom: 1px solid #d0d1d4;
+}
+
+.club-table td:first-child {
+    font-weight: 500;
+    color: #111827;
+}
+
+.club-actions {
+    padding: 1rem 1.5rem;
+    text-align: right;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+}
+
+.club-link {
+    color: #4f46e5;
+    margin-right: 0.75rem;
+}
+
+.club-link:hover {
+    color: #4338ca;
+}
+
+.club-delete-btn {
+    color: #dc2626;
+}
+
+.club-delete-btn:hover {
+    color: #b91c1c;
+}
+
+.club-form-group {
+    margin-bottom: 1rem;
+}
+
+.club-label {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.club-input {
+    margin-top: 0.25rem;
+    display: block;
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: #374151;
+}
+
+.club-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.club-error {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #dc2626;
+}
+
+.club-form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.club-cancel-link {
+    color: #6b7280;
+}
+
+.club-cancel-link:hover {
+    color: #374151;
+}
+
+.club-success-alert {
+    margin-bottom: 1rem;
+    background-color: #dcfce7;
+    border: 1px solid #16a34a;
+    color: #166534;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    position: relative;
+}
+
+.club-details-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .club-details-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.club-details-section h3 {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 500;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.club-details-dl {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.club-details-dt {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.club-details-dd {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #111827;
+}
+
+.club-details-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.club-details-actions .club-btn {
+    margin-left: 0.75rem;
+}
+
+.club-details-actions .club-delete-btn {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.15s ease-in-out;
+}
+
+.club-details-actions .club-delete-btn:hover {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+}
+
+/* Styles pour les champs responsable */
+.club-responsable-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.25rem;
+}
+
+.club-responsable-field {
+    flex: 1;
+}
+
+.club-responsable-field .club-input {
+    margin-top: 0;
+}
+
+.club-responsable-email {
+    margin-top: 0.5rem;
+}
+
+.club-responsable-email .club-input {
+    width: 100%;
+}
+
+.club-responsable-username {
+    margin-top: 0.5rem;
+}
+
+.club-responsable-username .club-input {
+    width: 100%;
+}

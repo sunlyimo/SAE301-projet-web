@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\DB;
 
 class RaidController extends Controller
 {
+    public function index() {
+        return view('raids.raid')
+        ->with('raids',Raid::getFuturRaid());
+    }
+
     public function create() /* affichage du formulaire */
     {
         $clubs = DB::table('VIK_CLUB')->orderBy('CLU_NOM')->pluck('CLU_NOM', 'CLU_ID');
