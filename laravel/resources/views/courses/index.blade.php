@@ -167,23 +167,23 @@
                         </div>
                     </div>
 
-                    <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
-                        <h4 class="text-xs font-black text-yellow-600 uppercase tracking-widest mb-3 border-b border-yellow-200 pb-1">Format & Capacité</h4>
-                        <div class="grid grid-cols-3 gap-2 text-center divide-x divide-yellow-200">
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <h4 class="text-xs font-black text-gray-600 uppercase tracking-widest mb-3 border-b border-gray-200 pb-1">Format & Capacité</h4>
+                        <div class="grid grid-cols-3 gap-2 text-center divide-x divide-gray-200">
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">Par Équipe</p>
                                 <p class="font-black text-lg text-gray-800">{{ $course->COU_PARTICIPANT_PAR_EQUIPE_MAX }}</p>
-                                <p class="text-[10px] text-gray-400">pers. max</p>
+                                <p class="text-[14px] text-gray-400">pers. max</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">Participants</p>
                                 <p class="font-black text-lg text-gray-800">0 <span class="text-xs font-normal text-gray-400">/ {{ $course->COU_PARTICIPANT_MAX }}</span></p>
-                                <p class="text-[10px] text-gray-400">Min: {{ $course->COU_PARTICIPANT_MIN }}</p>
+                                <p class="text-[14px] text-gray-400">Min: {{ $course->COU_PARTICIPANT_MIN }}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">Équipes</p>
                                 <p class="font-black text-lg text-gray-800">0 <span class="text-xs font-normal text-gray-400">/ {{ $course->COU_EQUIPE_MAX }}</span></p>
-                                <p class="text-[10px] text-gray-400">Min: {{ $course->COU_EQUIPE_MIN }}</p>
+                                <p class="text-[14px] text-gray-400">Min: {{ $course->COU_EQUIPE_MIN }}</p>
                             </div>
                         </div>
                     </div>
