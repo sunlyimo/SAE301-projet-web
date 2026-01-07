@@ -97,6 +97,14 @@ class CourseController extends Controller
         $courses = Course::where('RAI_ID', $raid_id)
                         ->with(['type', 'responsable'])
                         ->get();
+
+        // Ajouter manuellement le comptage des équipes pour chaque course
+        foreach ($courses as $course) {
+            $course->equipes_count = \App\Models\Equipe::where('RAI_ID', $course->RAI_ID)
+                                                        ->where('COU_ID', $course->COU_ID)
+                                                        ->count();
+        }
+
         return view('courses.index', compact('courses', 'raid'));
     }
 

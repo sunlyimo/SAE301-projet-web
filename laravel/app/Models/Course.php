@@ -64,6 +64,15 @@ class Course extends Model
         return $this->belongsTo(Raid::class, 'RAI_ID', 'RAI_ID');
     }
 
+    /**
+     * Relation avec les équipes de cette course
+     */
+    public function equipes()
+    {
+        return $this->hasMany(Equipe::class, 'COU_ID', 'COU_ID')
+                    ->where('vik_equipe.RAI_ID', $this->RAI_ID);
+    }
+
     public function equipeDuUser()
     {
         $userId = auth()->id();
