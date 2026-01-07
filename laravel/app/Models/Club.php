@@ -9,9 +9,7 @@ class Club extends Model
 {
     use HasFactory;
     protected $table = 'vik_club';
-
     protected $primaryKey = 'CLU_ID';
-    
 
     protected $fillable = [
         'CLU_NOM',
@@ -19,6 +17,11 @@ class Club extends Model
         'CLU_CODE_POSTAL',
         'CLU_VILLE',
     ];
+
+    public function responsable()
+    {
+        return $this->hasOne(\App\Models\ResponsableClub::class, 'CLU_ID', 'CLU_ID');
+    }
 }
 
 

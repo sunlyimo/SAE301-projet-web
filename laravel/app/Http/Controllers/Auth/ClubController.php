@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Club;
+use App\Models\ResponsableClub;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,13 +13,17 @@ class ClubController extends Controller
 {
     public function index()
     {
-        $clubs = Club::all();
+        $clubs = Club::with('responsable')->get();
         return view('clubs.index', compact('clubs'));
     }
 
     public function create()
     {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
+        if (!Auth::check()) {
+            abort(403, 'Veuillez vous connecter pour accéder à cette page.');
+        }
+
+        if (!Auth::user()->isAdmin()) {
             abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent créer des clubs.');
         }
 
@@ -35,15 +41,219 @@ class ClubController extends Controller
             'CLU_RUE' => 'required|string|max:100',
             'CLU_CODE_POSTAL' => 'required|string|max:6',
             'CLU_VILLE' => 'required|string|max:50',
+            'RESP_NOM' => 'required|string|max:50',
+            'RESP_PRENOM' => 'required|string|max:50',
+            'RESP_EMAIL' => 'required|email|max:100',
+            'RESP_NOM_UTILISATEUR' => 'required|string|max:255|unique:vik_responsable_club,UTI_NOM_UTILISATEUR',
         ]);
 
-        Club::create($request->all());
+        $club = Club::create([
+            'CLU_NOM' => $request->CLU_NOM,
+            'CLU_RUE' => $request->CLU_RUE,
+            'CLU_CODE_POSTAL' => $request->CLU_CODE_POSTAL,
+            'CLU_VILLE' => $request->CLU_VILLE,
+        ]);
 
-        return redirect()->route('clubs.index')->with('success', 'Le club a été ajouté avec succès.');
+        // Créer le responsable du club
+        $responsableId = ResponsableClub::max('UTI_ID') + 1; // Générer un nouvel ID
+        ResponsableClub::create([
+            'UTI_ID' => $responsableId,
+            'CLU_ID' => $club->CLU_ID,
+            'UTI_NOM' => $request->RESP_NOM,
+            'UTI_PRENOM' => $request->RESP_PRENOM,
+            'UTI_EMAIL' => $request->RESP_EMAIL,
+            'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
+        ]);
+
+        // Générer un token fictif pour simuler l'invitation
+        $token = md5($club->CLU_ID . $responsableId . time());
+
+        return redirect()->route('clubs.created', [
+            'club' => $club->CLU_ID,
+            'token' => $token
+        ]);
+    }
+
+    public function showCreated($clubId, $token)
+    {
+        $club = Club::with('responsable')->findOrFail($clubId);
+
+        return view('clubs.created', compact('club', 'token'));
+    }
+
+    public function showFakeMailbox($clubId, $token)
+    {
+        $club = Club::with('responsable')->findOrFail($clubId);
+
+        if (!$club->responsable) {
+            abort(404, 'Responsable non trouvé');
+        }
+
+        return view('emails.fake-mailbox', compact('club', 'token'));
+    }
+
+    public function showResponsableRegistration($clubId, $token)
+    {
+        $club = Club::with('responsable')->findOrFail($clubId);
+
+        if (!$club->responsable) {
+            abort(404, 'Responsable non trouvé');
+        }
+
+        return view('auth.responsable-register', compact('club', 'token'));
+    }
+
+    public function quickValidateResponsable($clubId, $token)
+    {
+        $club = Club::with('responsable')->findOrFail($clubId);
+
+        if (!$club->responsable) {
+            abort(404, 'Responsable non trouvé');
+        }
+
+        $responsable = $club->responsable;
+
+        // Générer des données par défaut pour la validation automatique
+        $defaultData = [
+            'UTI_DATE_NAISSANCE' => now()->subYears(25)->format('Y-m-d'), // Date de naissance par défaut (25 ans)
+            'UTI_LICENCE' => 'AUTO' . str_pad($responsable->UTI_ID, 4, '0', STR_PAD_LEFT), // Licence automatique
+            'UTI_RUE' => 'Rue à définir',
+            'UTI_CODE_POSTAL' => '00000',
+            'UTI_VILLE' => 'Ville à définir',
+            'UTI_TELEPHONE' => '0102030405', // 10 caractères maximum
+            'password' => 'TempPass123!', // Mot de passe temporaire
+        ];
+
+        // Mettre à jour le responsable avec les données par défaut
+        $responsable->update($defaultData);
+
+        // Créer l'utilisateur dans vik_utilisateur
+        User::create([
+            'UTI_NOM' => $responsable->UTI_NOM,
+            'UTI_PRENOM' => $responsable->UTI_PRENOM,
+            'UTI_EMAIL' => $responsable->UTI_EMAIL,
+            'UTI_DATE_NAISSANCE' => $defaultData['UTI_DATE_NAISSANCE'],
+            'UTI_MOT_DE_PASSE' => bcrypt($defaultData['password']),
+            'UTI_NOM_UTILISATEUR' => $responsable->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $defaultData['UTI_RUE'],
+            'UTI_CODE_POSTAL' => $defaultData['UTI_CODE_POSTAL'],
+            'UTI_VILLE' => $defaultData['UTI_VILLE'],
+            'UTI_TELEPHONE' => $defaultData['UTI_TELEPHONE'],
+            'UTI_LICENCE' => $defaultData['UTI_LICENCE'],
+        ]);
+
+        return redirect()->route('responsable.quick-validated', [
+            'club' => $club->CLU_ID,
+            'token' => $token
+        ]);
+    }
+
+    public function refuseResponsable($clubId, $token)
+    {
+        $club = Club::with('responsable')->findOrFail($clubId);
+
+        if (!$club->responsable) {
+            abort(404, 'Responsable non trouvé');
+        }
+
+        $responsable = $club->responsable;
+
+        // Générer un token pour la notification admin
+        $adminToken = md5($club->CLU_ID . $responsable->UTI_ID . 'admin' . time());
+
+        return redirect()->route('admin.refusal-notification', [
+            'club_id' => $club->CLU_ID,
+            'token' => $adminToken
+        ]);
+    }
+
+    public function showAdminRefusalNotification($clubId, $token)
+    {
+        $club = Club::with('responsable')->findOrFail($clubId);
+
+        return view('emails.admin-refusal-notification', compact('club', 'token'));
+    }
+
+    public function recreateClub($clubId, $token)
+    {
+        $club = Club::findOrFail($clubId);
+
+        $params = [
+            'CLU_NOM' => $club->CLU_NOM,
+            'CLU_RUE' => $club->CLU_RUE,
+            'CLU_CODE_POSTAL' => $club->CLU_CODE_POSTAL,
+            'CLU_VILLE' => $club->CLU_VILLE,
+        ];
+
+        $url = route('clubs.create', $params);
+        session(['url.intended' => $url]);
+
+        return redirect('/login');
+    }
+
+    public function showQuickValidated($clubId, $token)
+    {
+        $club = Club::with('responsable')->findOrFail($clubId);
+
+        return view('auth.quick-validated', compact('club', 'token'));
+    }
+
+    public function completeResponsableRegistration(Request $request)
+    {
+        $request->validate([
+            'club_id' => 'required|exists:vik_club,CLU_ID',
+            'responsable_id' => 'required|exists:vik_responsable_club,UTI_ID',
+            'UTI_DATE_NAISSANCE' => 'required|date',
+            'UTI_LICENCE' => 'required|string|max:15',
+            'UTI_RUE' => 'required|string|max:100',
+            'UTI_CODE_POSTAL' => 'required|string|max:10',
+            'UTI_VILLE' => 'required|string|max:50',
+            'UTI_TELEPHONE' => 'required|string|max:16',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $club = Club::findOrFail($request->club_id);
+        $responsable = $club->responsable;
+
+        if (!$responsable || $responsable->UTI_ID != $request->responsable_id) {
+            abort(404, 'Responsable non trouvé');
+        }
+
+        // Mettre à jour le responsable avec les informations complètes
+        $responsable->update([
+            'UTI_DATE_NAISSANCE' => $request->UTI_DATE_NAISSANCE,
+            'UTI_LICENCE' => $request->UTI_LICENCE,
+            'UTI_RUE' => $request->UTI_RUE,
+            'UTI_CODE_POSTAL' => $request->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $request->UTI_VILLE,
+            'UTI_TELEPHONE' => $request->UTI_TELEPHONE,
+            'UTI_MOT_DE_PASSE' => bcrypt($request->password),
+        ]);
+
+        // Créer l'utilisateur dans vik_utilisateur
+        $user = User::create([
+            'UTI_NOM' => $responsable->UTI_NOM,
+            'UTI_PRENOM' => $responsable->UTI_PRENOM,
+            'UTI_EMAIL' => $responsable->UTI_EMAIL,
+            'UTI_DATE_NAISSANCE' => $responsable->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => bcrypt($request->password),
+            'UTI_NOM_UTILISATEUR' => $responsable->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $responsable->UTI_RUE,
+            'UTI_CODE_POSTAL' => $responsable->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $responsable->UTI_VILLE,
+            'UTI_TELEPHONE' => $responsable->UTI_TELEPHONE,
+            'UTI_LICENCE' => $responsable->UTI_LICENCE,
+        ]);
+
+        // Connecter automatiquement l'utilisateur
+        Auth::login($user);
+
+        return redirect('/')->with('success', 'Votre inscription a été finalisée avec succès ! Bienvenue.');
     }
 
     public function show(Club $club)
     {
+        $club->load('responsable');
         return view('clubs.show', compact('club'));
     }
 
@@ -52,6 +262,8 @@ class ClubController extends Controller
         if (!Auth::check() || !Auth::user()->isAdmin()) {
             abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent modifier des clubs.');
         }
+
+        $club->load('responsable');
 
         return view('clubs.edit', compact('club'));
     }
@@ -67,9 +279,29 @@ class ClubController extends Controller
             'CLU_RUE' => 'required|string|max:100',
             'CLU_CODE_POSTAL' => 'required|string|max:6',
             'CLU_VILLE' => 'required|string|max:50',
+            'RESP_NOM' => 'required|string|max:50',
+            'RESP_PRENOM' => 'required|string|max:50',
+            'RESP_EMAIL' => 'required|email|max:100',
+            'RESP_NOM_UTILISATEUR' => 'required|string|max:255',
         ]);
 
-        $club->update($request->all());
+        // Mettre à jour le club
+        $club->update([
+            'CLU_NOM' => $request->CLU_NOM,
+            'CLU_RUE' => $request->CLU_RUE,
+            'CLU_CODE_POSTAL' => $request->CLU_CODE_POSTAL,
+            'CLU_VILLE' => $request->CLU_VILLE,
+        ]);
+
+        // Mettre à jour le responsable
+        if ($club->responsable) {
+            $club->responsable->update([
+                'UTI_NOM' => $request->RESP_NOM,
+                'UTI_PRENOM' => $request->RESP_PRENOM,
+                'UTI_EMAIL' => $request->RESP_EMAIL,
+                'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
+            ]);
+        }
 
         return redirect()->route('clubs.index')->with('success', 'Le club a été modifié avec succès.');
     }
@@ -80,8 +312,33 @@ class ClubController extends Controller
             abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent supprimer des clubs.');
         }
 
+        // Charger la relation responsable
+        $club->load('responsable');
+
+        // Si le club a un responsable, le convertir en utilisateur normal
+        if ($club->responsable) {
+            // Créer un utilisateur normal avec les données du responsable
+            User::create([
+                'UTI_NOM' => $club->responsable->UTI_NOM,
+                'UTI_PRENOM' => $club->responsable->UTI_PRENOM,
+                'UTI_EMAIL' => $club->responsable->UTI_EMAIL,
+                'UTI_DATE_NAISSANCE' => $club->responsable->UTI_DATE_NAISSANCE,
+                'UTI_MOT_DE_PASSE' => $club->responsable->UTI_MOT_DE_PASSE ?: bcrypt('password123'), // Mot de passe par défaut si null
+                'UTI_NOM_UTILISATEUR' => $club->responsable->UTI_NOM_UTILISATEUR,
+                'UTI_RUE' => $club->responsable->UTI_RUE,
+                'UTI_CODE_POSTAL' => $club->responsable->UTI_CODE_POSTAL,
+                'UTI_VILLE' => $club->responsable->UTI_VILLE,
+                'UTI_TELEPHONE' => $club->responsable->UTI_TELEPHONE,
+                'UTI_LICENCE' => $club->responsable->UTI_LICENCE,
+            ]);
+
+            // Supprimer le responsable de la table vik_responsable_club
+            $club->responsable->delete();
+        }
+
+        // Supprimer le club
         $club->delete();
 
-        return redirect()->route('clubs.index')->with('success', 'Le club a été supprimé avec succès.');
+        return redirect()->route('clubs.index')->with('success', 'Le club a été supprimé avec succès. Le responsable est maintenant un utilisateur normal.');
     }
 }

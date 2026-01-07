@@ -32,6 +32,7 @@
                         <th>Rue</th>
                         <th>Code Postal</th>
                         <th>Ville</th>
+                        <th>Responsable</th>
                         <th class="text-right">Actions</th>
                     </tr>
                 </thead>
@@ -42,6 +43,21 @@
                             <td>{{ $club->CLU_RUE }}</td>
                             <td>{{ $club->CLU_CODE_POSTAL }}</td>
                             <td>{{ $club->CLU_VILLE }}</td>
+                            <td>
+                                @if($club->responsable && $club->responsable->UTI_DATE_NAISSANCE)
+                                    <span class="text-green-600 font-medium">
+                                        {{ $club->responsable->UTI_PRENOM }} {{ $club->responsable->UTI_NOM }}
+                                    </span>
+                                @elseif($club->responsable)
+                                    <span class="text-orange-600">
+                                        <em>En attente de validation</em>
+                                    </span>
+                                @else
+                                    <span class="text-gray-500">
+                                        <em>Non assigné</em>
+                                    </span>
+                                @endif
+                            </td>
                             <td class="club-actions">
                                 <a href="{{ route('clubs.show', $club) }}" class="club-link">Voir</a>
                                 @if(Auth::check() && Auth::user()->isAdmin())
@@ -56,7 +72,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center text-gray-500">Aucun club trouvé.</td>
+                            <td colspan="6" class="text-center text-gray-500">Aucun club trouvé.</td>
                         </tr>
                     @endforelse
                 </tbody>

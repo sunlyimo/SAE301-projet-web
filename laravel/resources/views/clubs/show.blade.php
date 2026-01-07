@@ -36,6 +36,28 @@
                         </div>
                     </dl>
                 </div>
+
+                <div>
+                    <h3 class="club-details-section">Responsable</h3>
+                    <dl class="club-details-dl">
+                        <div>
+                            <dt class="club-details-dt">Nom</dt>
+                            <dd class="club-details-dd">{{ $club->responsable ? $club->responsable->UTI_NOM : 'Non défini' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="club-details-dt">Prénom</dt>
+                            <dd class="club-details-dd">{{ $club->responsable ? $club->responsable->UTI_PRENOM : 'Non défini' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="club-details-dt">Email</dt>
+                            <dd class="club-details-dd">{{ $club->responsable ? $club->responsable->UTI_EMAIL : 'Non défini' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="club-details-dt">Nom d'utilisateur</dt>
+                            <dd class="club-details-dd">{{ $club->responsable ? $club->responsable->UTI_NOM_UTILISATEUR : 'Non défini' }}</dd>
+                        </div>
+                    </dl>
+                </div>
             </div>
 
             <div class="club-details-actions">

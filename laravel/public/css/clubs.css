@@ -266,3 +266,34 @@
     background-color: #b91c1c;
     border-color: #b91c1c;
 }
+
+/* Styles pour les champs responsable */
+.club-responsable-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.25rem;
+}
+
+.club-responsable-field {
+    flex: 1;
+}
+
+.club-responsable-field .club-input {
+    margin-top: 0;
+}
+
+.club-responsable-email {
+    margin-top: 0.5rem;
+}
+
+.club-responsable-email .club-input {
+    width: 100%;
+}
+
+.club-responsable-username {
+    margin-top: 0.5rem;
+}
+
+.club-responsable-username .club-input {
+    width: 100%;
+}
