@@ -195,38 +195,31 @@
                     </div>
 
                 </div>
-
-                <div class="p-5 pt-0 mt-auto">
                 @php 
                     $monEquipe = $course->equipeDuUser(); 
                 @endphp
-
-                @if($monEquipe)
-                    {{-- Deja inscrit --}}
-                    <a href="{{ route('teams.show', [$course->RAI_ID, $course->COU_ID, $monEquipe->EQU_ID]) }}" 
-                    class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg flex justify-center items-center group text-sm">
-                        <span>VOIR MON ÉQUIPE</span>
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                    </a>
-
-                @elseif($canManage)
-                    {{-- Responsable (Raid ou Course) --}}
-                    <div class="flex gap-2">
-                        <a href="{{ route('courses.inscription', [$course->RAI_ID, $course->COU_ID]) }}" class="flex-1 bg-black text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-lg flex justify-center items-center group text-sm">
-                            <span>S'inscrire</span>
+                <div class="flex gap-2">
+                    @if($monEquipe)
+                        <a href="{{ route('teams.show', [$course->RAI_ID, $course->COU_ID, $monEquipe->EQU_ID]) }}" 
+                           class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg flex justify-center items-center group text-sm uppercase tracking-tighter">
+                            <span>Voir mon équipe</span>
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                         </a>
-                        {{-- Le bouton modifier est visible pour les deux rôles --}}
-                        <a href="{{ route('courses.edit', [$course->RAI_ID, $course->COU_ID]) }}" class="w-12 bg-gray-100 text-gray-600 rounded-xl flex items-center justify-center hover:bg-yellow-400 hover:text-white transition-all shadow-inner border border-gray-200" title="Modifier">
+                    @else
+                        <a href="{{ route('courses.inscription', [$course->RAI_ID, $course->COU_ID]) }}" 
+                           class="flex-1 bg-black text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-lg flex justify-center items-center group text-sm uppercase tracking-tighter">
+                            <span>S'inscrire (Créer une équipe)</span>
+                            <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </a>
+                    @endif
+                    @if($canManage)
+                        <a href="{{ route('courses.edit', [$course->RAI_ID, $course->COU_ID]) }}" 
+                           class="w-12 bg-gray-100 text-gray-600 rounded-xl flex items-center justify-center hover:bg-yellow-400 hover:text-white transition-all shadow-inner border border-gray-200" 
+                           title="Modifier la course">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         </a>
-                    </div>
-
-                @else
-                    <a href="{{ route('courses.inscription', [$course->RAI_ID, $course->COU_ID]) }}" class="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-lg flex justify-center items-center group text-sm">
-                        <span>S'inscrire (Créer une équipe)</span>
-                        <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                    </a>
-                @endif
+                    @endif
+                </div>
             </div>
 
             </div>
