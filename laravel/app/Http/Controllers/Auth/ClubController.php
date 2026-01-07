@@ -164,10 +164,17 @@ class ClubController extends Controller
         }
 
         $responsable = $club->responsable;
-        $responsable->delete(); // Supprimer l'entrée du responsable qui a refusé
+
+        // Store responsable details in session before deletion so we can show them in the notification view
+        $respData = null;
+        if ($responsable) {
+            $respData = $responsable->only(['UTI_NOM', 'UTI_PRENOM', 'UTI_EMAIL', 'UTI_ID']);
+            session(['refused_responsable' => $respData]);
+            $responsable->delete(); // Supprimer l'entrée du responsable qui a refusé
+        }
 
         // Générer un token pour la notification admin
-        $adminToken = md5($club->CLU_ID . $responsable->UTI_ID . 'admin' . time());
+        $adminToken = md5($club->CLU_ID . ($respData['UTI_ID'] ?? '0') . 'admin' . time());
 
         return redirect()->route('admin.refusal-notification', [
             'club_id' => $club->CLU_ID,
@@ -179,7 +186,10 @@ class ClubController extends Controller
     {
         $club = Club::with('responsable')->findOrFail($clubId);
 
-        return view('emails.admin-refusal-notification', compact('club', 'token'));
+        // Pull refused responsable details (if any) from session and remove it from session
+        $refusedResponsable = session()->pull('refused_responsable', null);
+
+        return view('emails.admin-refusal-notification', compact('club', 'token', 'refusedResponsable'));
     }
 
     public function recreateClub($clubId, $token)
