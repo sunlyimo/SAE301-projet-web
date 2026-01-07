@@ -36,7 +36,7 @@ class RegisterController extends Controller
             'UTI_RUE' => 'required|string|max:100',
             'UTI_CODE_POSTAL' => 'required|string|max:10',
             'UTI_VILLE' => 'required|string|max:50',
-            'UTI_TELEPHONE' => 'nullable|string|max:16',
+            'UTI_TELEPHONE' => 'nullable|string|max:10',
             'UTI_MOT_DE_PASSE' => 'required|string|min:8',
         ];
 
@@ -55,7 +55,7 @@ class RegisterController extends Controller
             'UTI_RUE.max' => "La taille maximal de la rue est de 100 caractère",
             'UTI_CODE_POSTAL.max' => "Mauvais format de code postal",
             'UTI_VILLE.max' => "La taille maximal de la ville est de 50 caractère",
-            'UTI_TELEPHONE.max' => "La taille maximal du téléphone est de 16 caractère",
+            'UTI_TELEPHONE.max' => "La taille maximal du téléphone est de 10 caractère",
             'UTI_MOT_DE_PASSE.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
             'UTI_LICENCE.max' => "La taille maximal de la licence est de 15 caractère",
             'CLU_ID.exists' => "Ce club n'existe pas.",

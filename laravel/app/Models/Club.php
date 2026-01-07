@@ -2,23 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Club extends Model
 {
     use HasFactory;
-
     protected $table = 'vik_club';
 
     protected $primaryKey = 'CLU_ID';
-
-    public $timestamps = false;
+    
 
     protected $fillable = [
         'CLU_NOM',
-        'UTI_RUE',
-        'UTI_CODE_POSTAL',
-        'UTI_VILLE',
+        'CLU_RUE',
+        'CLU_CODE_POSTAL',
+        'CLU_VILLE',
     ];
 }
+
+

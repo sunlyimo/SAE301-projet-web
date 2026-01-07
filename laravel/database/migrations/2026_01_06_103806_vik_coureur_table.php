@@ -22,7 +22,7 @@ return new class extends Migration
             $table->char('UTI_RUE', 100)->nullable();
             $table->char('UTI_CODE_POSTAL', 6)->nullable();
             $table->char('UTI_VILLE', 50)->nullable();
-            $table->char('UTI_TELEPHONE', 16)->nullable();
+            $table->char('UTI_TELEPHONE', 10)->nullable();
             $table->char('UTI_LICENCE', 15)->nullable();
             $table->char('UTI_NOM_UTILISATEUR', 50);
             $table->char('UTI_MOT_DE_PASSE', 255)->nullable();

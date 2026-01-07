@@ -92,66 +92,128 @@
             @enderror
         </div>
 
-        <div>
-            <label class="block text-sm font-semibold text-gray-700">Mot de passe<span class="text-red-500">*</span></label></label>
-            <input type="password" name="UTI_MOT_DE_PASSE" required
-                class="w-full mt-1 p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all @error('UTI_MOT_DE_PASSE') border-red-500 @else border-gray-200 @enderror">
+        <div x-data="{ show: false }">
+            <label class="block text-sm font-semibold text-gray-700">
+                Mot de passe <span class="text-red-500">*</span>
+            </label>
+
+            <div class="relative">
+                <input
+                    :type="show ? 'text' : 'password'"
+                    name="UTI_MOT_DE_PASSE"
+                    required
+                    class="w-full mt-1 p-3 pr-12 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all
+            @error('UTI_MOT_DE_PASSE') border-red-500 @else border-gray-200 @enderror"
+                >
+
+                <button
+                    type="button"
+                    @click="show = !show"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    aria-label="Afficher / masquer le mot de passe"
+                >
+                    <!-- Œil ouvert -->
+                    <svg x-show="!show" xmlns="http://www.w3.org/2000/svg"
+                         class="h-5 w-5"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor"
+                         stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5
+                       c4.477 0 8.268 2.943 9.542 7
+                       -1.274 4.057-5.065 7-9.542 7
+                       -4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+
+                    <!-- Œil barré -->
+                    <svg x-show="show" xmlns="http://www.w3.org/2000/svg"
+                         class="h-5 w-5"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor"
+                         stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M13.875 18.825A10.05 10.05 0 0112 19
+                       c-4.478 0-8.269-2.943-9.543-7
+                       a9.956 9.956 0 012.18-3.568M6.223 6.223
+                       A9.955 9.955 0 0112 5
+                       c4.478 0 8.269 2.943 9.543 7
+                       a9.978 9.978 0 01-4.132 5.411M15 12
+                       a3 3 0 00-3-3" />
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M3 3l18 18" />
+                    </svg>
+                </button>
+            </div>
+
             @error('UTI_MOT_DE_PASSE')
-                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
             @enderror
         </div>
 
+
         @php
         $licenceActive = old('UTI_LICENCE') ? true : false;
-        $selectedClub = old('UTI_CLUB') ?? '';
+        $selectedClub = old('CLU_ID') ?? '';
         @endphp
 
-        <div class="flex items-center justify-between mt-4">
-            <span class="text-sm font-semibold text-gray-700">Renseigner votre licence ?</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="toggle-licence" class="sr-only peer" onchange="
-                    const f = document.getElementById('licence-field');
-                    f.classList.toggle('hidden', !this.checked);
-                    const inputs = f.querySelectorAll('input, select');
-                    if (this.checked) inputs.forEach(el => el.setAttribute('required',''));
-                    else {
-                        inputs.forEach(el => {
-                            el.removeAttribute('required');
-                            el.value='';
-                        });
-                    }
-                " {{ $licenceActive ? 'checked' : '' }}>
-                <div class="w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-blue-500 transition-colors"></div>
-                <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform peer-checked:translate-x-5"></div>
-            </label>
+        <div x-data="{ licenceActive: {{ old('UTI_LICENCE') || old('CLU_ID') ? 'true' : 'false' }} }">
+            <!-- Toggle -->
+            <div class="flex items-center justify-between mt-4">
+                <span class="text-sm font-semibold text-gray-700">Renseigner votre licence ?</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" x-model="licenceActive" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-blue-500 transition-colors"></div>
+                    <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform peer-checked:translate-x-5"></div>
+                </label>
+            </div>
+
+            <!-- Bloc Club + Licence -->
+            <div x-show="licenceActive" x-transition class="mt-2 space-y-2">
+                <!-- Club -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Club</label>
+                    <select
+                        name="CLU_ID"
+                        :required="licenceActive ? true : false"
+                        class="w-full mt-1 p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all
+                @error('UTI_CLUB') border-red-500 @else border-gray-200 @enderror"
+                    >
+                        <option value="">-- Choisissez un club --</option>
+                        @foreach($clubs as $club)
+                            <option value="{{ $club->CLU_ID }}" {{ old('CLU_ID') == $club->CLU_ID ? 'selected' : '' }}>
+                                {{ $club->CLU_NOM . ' (' . $club->UTI_VILLE . ')' }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('CLU_ID')
+                    <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Licence -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Licence</label>
+                    <input
+                        type="text"
+                        name="UTI_LICENCE"
+                        value="{{ old('UTI_LICENCE') }}"
+                        :required="licenceActive ? true : false"
+                        class="w-full mt-1 p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all
+                @error('UTI_LICENCE') border-red-500 @else border-gray-200 @enderror"
+                    >
+                    @error('UTI_LICENCE')
+                    <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
         </div>
 
 
-        <div id="licence-field" class="{{ $licenceActive ? '' : 'hidden' }} mt-2 space-y-2">
-            <div>
-                <label class="block text-sm font-semibold text-gray-700">Club</label>
-                <select name="CLU_ID" class="w-full mt-1 p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all @error('UTI_CLUB') border-red-500 @else border-gray-200 @enderror">
-                    <option value="">-- Choisissez un club --</option>
-                    @foreach($clubs as $club)
-                        <option value="{{ $club->CLU_ID }}" {{ $selectedClub == $club->CLU_ID ? 'selected' : '' }}>{{ $club->CLU_NOM . ' (' . $club->UTI_VILLE . ')' }}</option>
-                    @endforeach
-                </select>
-                @error('CLU_ID')
-                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div>
-                <label class="block text-sm font-semibold text-gray-700">Licence</label>
-                <input type="text" name="UTI_LICENCE" value="{{ old('UTI_LICENCE') }}"
-                       class="w-full mt-1 p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all @error('UTI_LICENCE') border-red-500 @else border-gray-200 @enderror">
-                @error('UTI_LICENCE')
-                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
-
-        <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-lg hover:bg-green-600 shadow-lg hover:shadow-green-200 transition-all active:scale-95">
+        <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-lg hover:bg-green-600 shadow-lg hover:shadow-green-200 transition-all active:scale-95 cursor-pointer">
             Finaliser l'inscription
         </button>
     </form>
