@@ -11,7 +11,9 @@ use App\Http\Controllers\Auth\ClubController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\CourseController;
-
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\InscriptionController;
+use App\Http\Controllers\ContactController;
 
 Route::get('/', function () {
     return view('welcome');
