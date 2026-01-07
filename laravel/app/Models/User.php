@@ -10,7 +10,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'VIK_UTILISATEUR';
+    protected $table = 'vik_utilisateur';
     protected $primaryKey = 'UTI_ID';
 
     /**
@@ -65,5 +65,13 @@ class User extends Authenticatable
     public function getAuthPassword()
     {
         return $this->UTI_MOT_DE_PASSE;
+    }
+
+    /**
+     * Vérifie si l'utilisateur est un administrateur
+     */
+    public function isAdmin()
+    {
+        return Administrateur::where('UTI_ID', $this->UTI_ID)->exists();
     }
 }
