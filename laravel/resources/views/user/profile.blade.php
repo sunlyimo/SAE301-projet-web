@@ -186,7 +186,7 @@
     </div>
 
     <div class="mt-16 border-t border-gray-100 pt-12">
-        <h2 class="text-2xl font-black text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
             Mes Équipes
         </h2>
 
