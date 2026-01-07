@@ -130,15 +130,15 @@
                             <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-3 border-b pb-1">Tarification</h4>
                             <ul class="space-y-2 text-sm">
                                 <li class="flex justify-between">
-                                    <span>Adulte:</span>
+                                    <span>Adulte :</span>
                                     <span class="font-bold text-green-700">{{ number_format($course->COU_PRIX, 2) }} €</span>
                                 </li>
                                 <li class="flex justify-between">
-                                    <span>Enfant:</span>
+                                    <span>Enfant :</span>
                                     <span class="font-bold text-gray-700">{{ $course->COU_PRIX_ENFANT ? number_format($course->COU_PRIX_ENFANT, 2).' €' : '-' }}</span>
                                 </li>
                                 <li class="flex justify-between">
-                                    <span>Repas:</span>
+                                    <span>Repas :</span>
                                     <span class="font-bold text-blue-600">{{ $course->COU_REPAS_PRIX ? number_format($course->COU_REPAS_PRIX, 2).' €' : 'Non inclus' }}</span>
                                 </li>
                                 @if($course->COU_REDUCTION > 0)
@@ -154,16 +154,16 @@
                             <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-3 border-b pb-1">Conditions d'âge</h4>
                             <ul class="space-y-2 text-sm">
                                 <li class="flex justify-between">
-                                    <span>Min global:</span>
+                                    <span>Min global :</span>
                                     <span class="font-bold">{{ $course->COU_AGE_MIN }} ans</span>
                                 </li>
                                 <li class="flex justify-between">
-                                    <span>Seul dès:</span>
+                                    <span>Seul dès :</span>
                                     <span class="font-bold">{{ $course->COU_AGE_SEUL }} ans</span>
                                 </li>
                                 @if($course->COU_AGE_ACCOMPAGNATEUR)
                                 <li class="flex justify-between">
-                                    <span>Accompagnateur:</span>
+                                    <span>Accompagnateur :</span>
                                     <span class="font-bold">{{ $course->COU_AGE_ACCOMPAGNATEUR }} ans</span>
                                 </li>
                                 @endif
