@@ -1,5 +1,14 @@
 @extends('layouts.app')
+<?php
+use Illuminate\Support\Facades\DB;
 
+if (auth()->check() && DB::table('VIK_RESPONSABLE_CLUB')->where('UTI_ID', auth()->id())->exists()) {
+    
+}
+else {
+    //abort(403, 'Accès refusé');
+}
+?>
 @section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -126,7 +135,7 @@
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input type="email" name="RAI_CONTACT" id="RAI_CONTACT" value="{{ old('RAI_CONTACT') }}"
-                                        class="form-control @error('RAI_CONTACT') is-invalid @enderror" disabled placeholder="Email">
+                                        class="form-control @error('RAI_CONTACT') is-invalid @enderror" readonly placeholder="Email">
                                     <label for="RAI_CONTACT"><i class="fas fa-envelope me-1"></i> Email</label>
                                     @error('RAI_CONTACT') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
