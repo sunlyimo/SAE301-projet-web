@@ -105,13 +105,14 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <select name="UTI_ID" id="UTI_ID" class="form-select">
-                                        <option value="">Choisir un responsable...</option>
+                                    <input list="responsable_list" id="responsable_input" class="form-control" placeholder="Rechercher un membre..." autocomplete="off" value="{{ old('responsable_name') }}">
+                                    <datalist id="responsable_list">
                                         @foreach($responsables ?? [] as $resp)
-                                        <option value="{{ $resp->UTI_ID }}">{{ $resp->name }}</option>
+                                            <option value="{{ $resp->name }}"></option>
                                         @endforeach
-                                    </select>
-                                    <label for="UTI_ID">Responsable</label>
+                                    </datalist>
+                                    <input type="hidden" name="UTI_ID" id="UTI_ID" value="{{ old('UTI_ID') }}">
+                                    <label for="responsable_input">Responsable</label>
                                 </div>
                             </div>
                         </div>
