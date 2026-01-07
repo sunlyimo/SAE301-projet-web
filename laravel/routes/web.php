@@ -93,6 +93,8 @@ Route::post('/courses/{rai_id}/{cou_id}/team/join', [InscriptionController::clas
 
 Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
 Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
+Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/toggle-chef', [TeamController::class, 'toggleChefParticipation'])->name('teams.toggle-chef');
+Route::get('/api/users/search', [TeamController::class, 'searchUsers'])->name('users.search');
 
 
 
