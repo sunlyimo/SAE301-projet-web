@@ -4,14 +4,22 @@
 <div class="max-w-6xl mx-auto my-12 p-6">
 
     <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-        <div class="flex justify-between items-center mb-8 pb-6 border-b border-gray-100">
-            <div>
-                <h1 class="text-3xl font-black text-gray-900 uppercase">Mon Équipe #{{ $equipe->EQU_ID }}</h1>
-                <p class="text-gray-500">{{ $course->COU_NOM }} - Course #{{ $equipe->COU_ID }} (Raid #{{ $equipe->RAI_ID }})</p>
-                <div class="mt-2 flex items-center space-x-4">
-                    <span class="text-sm font-bold text-gray-600">
-                        Participants: <span class="text-blue-600">{{ $nbParticipants }}</span> / {{ $course->COU_PARTICIPANT_PAR_EQUIPE_MAX }}
-                    </span>
+        <div class="flex justify-between items-start mb-8 pb-6 border-b border-gray-100">
+            <div class="flex items-start gap-6">
+                @if($equipe->EQU_IMAGE)
+                    <img src="{{ asset('storage/' . $equipe->EQU_IMAGE) }}"
+                         alt="{{ $equipe->EQU_NOM }}"
+                         class="w-24 h-24 object-cover rounded-xl border-2 border-gray-200 shadow-md"
+                         onerror="this.style.display='none'">
+                @endif
+                <div>
+                    <h1 class="text-3xl font-black text-gray-900">{{ $equipe->EQU_NOM ?? 'Mon Équipe #' . $equipe->EQU_ID }}</h1>
+                    <p class="text-gray-500">{{ $course->COU_NOM }} ({{ $raid->RAI_NOM }})</p>
+                    <div class="mt-2 flex items-center space-x-4">
+                        <span class="text-sm font-bold text-gray-600">
+                            Participants: <span class="text-blue-600">{{ $nbParticipants }}</span> / {{ $course->COU_PARTICIPANT_PAR_EQUIPE_MAX }}
+                        </span>
+                    </div>
                 </div>
             </div>
             @if($isChef)
