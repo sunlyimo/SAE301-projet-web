@@ -61,9 +61,9 @@ return new class extends Migration
 
         // Tables de référence (insertOrIgnore pour idempotence)
         DB::table('VIK_CLUB')->insertOrIgnore([
-            ['CLU_ID'=>1,'CLU_NOM'=>'Club Rouen','CLU_RUE'=>'1 Rue de la Paix','CLU_CODE_POSTAL'=>'76000','CLU_VILLE'=>'Rouen'],
-            ['CLU_ID'=>2,'CLU_NOM'=>'Club Caen','CLU_RUE'=>'10 Avenue du Stade','CLU_CODE_POSTAL'=>'14000','CLU_VILLE'=>'Caen'],
-            ['CLU_ID'=>3,'CLU_NOM'=>'Club Lyon','CLU_RUE'=>'5 Boulevard des Sports','CLU_CODE_POSTAL'=>'69000','CLU_VILLE'=>'Lyon'],
+            ['CLU_ID'=>1,'CLU_NOM'=>'Club Rouen','CLU_RUE'=>'1 Rue de la Paix','CLU_CODE_POSTAL'=>'76000','CLU_VILLE'=>'Rouen','created_at'=>now(),'updated_at'=>now()],
+            ['CLU_ID'=>2,'CLU_NOM'=>'Club Caen','CLU_RUE'=>'10 Avenue du Stade','CLU_CODE_POSTAL'=>'14000','CLU_VILLE'=>'Caen','created_at'=>now(),'updated_at'=>now()],
+            ['CLU_ID'=>3,'CLU_NOM'=>'Club Lyon','CLU_RUE'=>'5 Boulevard des Sports','CLU_CODE_POSTAL'=>'69000','CLU_VILLE'=>'Lyon','created_at'=>now(),'updated_at'=>now()],
         ]);
 
         DB::table('VIK_COURSE_TYPE')->insertOrIgnore([
@@ -137,6 +137,14 @@ return new class extends Migration
             ['UTI_ID'=>50,'UTI_EMAIL'=>'Martin.Hugo@mail.fr','UTI_NOM'=>'Hugo','UTI_PRENOM'=>'Martin','UTI_DATE_NAISSANCE'=>'2003-11-11','UTI_RUE'=>'Rue de la Source','UTI_CODE_POSTAL'=>'14000','UTI_VILLE'=>'Caen','UTI_TELEPHONE'=>'0600000069','UTI_LICENCE'=>'69069','UTI_NOM_UTILISATEUR'=>'hmartin','UTI_MOT_DE_PASSE'=>Hash::make($plain)],
         ];
 
+        // add timestamps to users if the table has timestamp columns
+        if (Schema::hasColumn('VIK_UTILISATEUR', 'created_at') && Schema::hasColumn('VIK_UTILISATEUR', 'updated_at')) {
+            foreach ($users as &$u) {
+                $u['created_at'] = $u['created_at'] ?? now();
+                $u['updated_at'] = $u['updated_at'] ?? now();
+            }
+            unset($u);
+        }
         DB::table('VIK_UTILISATEUR')->insertOrIgnore($users);
 
         // Reste des inserts dépendant des utilisateurs

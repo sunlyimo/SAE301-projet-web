@@ -506,18 +506,28 @@
 
                     <div class="mb-4 flex-grow">
                         <p class="text-xs text-gray-400 uppercase font-bold">Participation à :</p>
-                        <p class="text-sm font-bold text-gray-800 truncate" title="{{ $equipe->course->COU_NOM }}">
-                            {{ $equipe->course->COU_NOM }}
+                        <p class="text-sm font-bold text-gray-800 truncate" title="{{ optional($equipe->course)->COU_NOM ?? '—' }}">
+                            {{ optional($equipe->course)->COU_NOM ?? '—' }}
                         </p>
                     </div>
 
                     <div class="mt-auto grid grid-cols-2 gap-2">
 
-                        <a href="{{ route('raids.courses', $equipe->course->RAI_ID) }}"
-                        class="flex items-center justify-center bg-gray-100 text-gray-600 py-2 rounded-lg font-bold text-xs hover:bg-gray-200 transition-colors uppercase tracking-wide"
-                        title="Voir la fiche de la course">
-                            Course
-                        </a>
+                        @php $raiId = $equipe->RAI_ID ?? optional($equipe->course)->RAI_ID; @endphp
+
+                        @if($raiId)
+                            <a href="{{ route('raids.courses', $raiId) }}"
+                               class="flex items-center justify-center bg-gray-100 text-gray-600 py-2 rounded-lg font-bold text-xs hover:bg-gray-200 transition-colors uppercase tracking-wide"
+                               title="Voir la fiche de la course">
+                                Course
+                            </a>
+                        @else
+                            <span
+                                class="flex items-center justify-center bg-gray-100 text-gray-400 py-2 rounded-lg font-bold text-xs uppercase tracking-wide cursor-not-allowed"
+                                title="Course indisponible">
+                                Course
+                            </span>
+                        @endif
 
                         <a href="{{ route('teams.show', [$equipe->RAI_ID, $equipe->COU_ID, $equipe->EQU_ID]) }}"
                         class="flex items-center justify-center bg-black text-white py-2 rounded-lg font-bold text-xs hover:bg-green-600 transition-colors uppercase tracking-wide">
