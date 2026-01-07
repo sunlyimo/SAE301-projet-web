@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
         }
       }
     });
+});
 
 Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
   Storage::disk($disk)->delete($file);
