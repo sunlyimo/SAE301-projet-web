@@ -14,10 +14,10 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\WelcomeController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::get('/', [WelcomeController::class, 'index']);
 
 Route::get('/repair', function() {
     Artisan::call('view:clear');
