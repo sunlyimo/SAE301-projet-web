@@ -75,6 +75,21 @@ Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
 
 Route::resource('clubs', ClubController::class);
 
+// Route pour afficher la page de création réussie
+Route::get('/clubs/created/{club}/{token}', [ClubController::class, 'showCreated'])->name('clubs.created');
+
+// Routes pour l'inscription des responsables
+Route::get('/responsable/mailbox/{club_id}/{token}', [ClubController::class, 'showFakeMailbox'])->name('responsable.mailbox');
+Route::post('/responsable/quick-validate/{club_id}/{token}', [ClubController::class, 'quickValidateResponsable'])->name('responsable.quick-validate');
+Route::post('/responsable/refuse/{club_id}/{token}', [ClubController::class, 'refuseResponsable'])->name('responsable.refuse');
+Route::get('/responsable/quick-validated/{club}/{token}', [ClubController::class, 'showQuickValidated'])->name('responsable.quick-validated');
+Route::get('/responsable/register/{club_id}/{token}', [ClubController::class, 'showResponsableRegistration'])->name('responsable.register');
+Route::post('/responsable/complete-registration', [ClubController::class, 'completeResponsableRegistration'])->name('responsable.complete-registration');
+
+// Route pour la notification de refus à l'admin
+Route::get('/admin/refusal-notification/{club_id}/{token}', [ClubController::class, 'showAdminRefusalNotification'])->name('admin.refusal-notification');
+Route::post('/admin/recreate-club/{club_id}/{token}', [ClubController::class, 'recreateClub'])->name('admin.recreate-club');
+
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
 Route::get('/courses/{rai_id}/{cou_id}/edit', [CourseController::class, 'edit'])->name('courses.edit');

@@ -50,6 +50,36 @@
                     @enderror
                 </div>
 
+                <div class="club-form-group">
+                    <label class="club-label">Responsable du club</label>
+                    <div class="club-responsable-row">
+                        <div class="club-responsable-field">
+                            <input type="text" name="RESP_NOM" id="RESP_NOM" value="{{ old('RESP_NOM', $club->responsable->UTI_NOM ?? '') }}" class="club-input" placeholder="Nom" required>
+                            @error('RESP_NOM')
+                                <p class="club-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="club-responsable-field">
+                            <input type="text" name="RESP_PRENOM" id="RESP_PRENOM" value="{{ old('RESP_PRENOM', $club->responsable->UTI_PRENOM ?? '') }}" class="club-input" placeholder="Prénom" required>
+                            @error('RESP_PRENOM')
+                                <p class="club-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="club-responsable-email">
+                        <input type="email" name="RESP_EMAIL" id="RESP_EMAIL" value="{{ old('RESP_EMAIL', $club->responsable->UTI_EMAIL ?? '') }}" class="club-input" placeholder="Email du responsable" required>
+                        @error('RESP_EMAIL')
+                            <p class="club-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="club-responsable-username">
+                        <input type="text" name="RESP_NOM_UTILISATEUR" id="RESP_NOM_UTILISATEUR" value="{{ old('RESP_NOM_UTILISATEUR', $club->responsable->UTI_NOM_UTILISATEUR ?? '') }}" class="club-input" placeholder="Nom d'utilisateur du responsable" required>
+                        @error('RESP_NOM_UTILISATEUR')
+                            <p class="club-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
                 <div class="club-form-actions">
                     <a href="{{ route('clubs.show', $club) }}" class="club-cancel-link">Annuler</a>
                     <button type="submit" class="club-btn">

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\ResponsableClub;
+use App\Models\Club;
 
 class User extends Authenticatable
 {
@@ -73,5 +75,32 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return Administrateur::where('UTI_ID', $this->UTI_ID)->exists();
+    }
+
+    /**
+     * Vérifie si l'utilisateur est responsable d'un club
+     */
+    public function isResponsable()
+    {
+        return ResponsableClub::where('UTI_ID', $this->UTI_ID)->exists();
+    }
+
+    /**
+     * Récupère le club dont l'utilisateur est responsable
+     */
+    public function getClub()
+    {
+        $responsable = ResponsableClub::where('UTI_ID', $this->UTI_ID)->first();
+        return $responsable ? $responsable->club : null;
+    }
+
+    /**
+     * Vérifie si l'utilisateur est responsable d'un club spécifique
+     */
+    public function isResponsableOf(Club $club)
+    {
+        return ResponsableClub::where('UTI_ID', $this->UTI_ID)
+            ->where('CLU_ID', $club->CLU_ID)
+            ->exists();
     }
 }
