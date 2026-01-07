@@ -126,16 +126,9 @@
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input type="email" name="RAI_CONTACT" id="RAI_CONTACT" value="{{ old('RAI_CONTACT') }}"
-                                        class="form-control @error('RAI_CONTACT') is-invalid @enderror" placeholder="Email">
+                                        class="form-control @error('RAI_CONTACT') is-invalid @enderror" disabled placeholder="Email">
                                     <label for="RAI_CONTACT"><i class="fas fa-envelope me-1"></i> Email</label>
                                     @error('RAI_CONTACT') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="tel" name="RAI_TELEPHONE" id="RAI_TELEPHONE" value="{{ old('RAI_TELEPHONE') }}"
-                                        class="form-control" placeholder="Téléphone">
-                                    <label for="RAI_TELEPHONE"><i class="fas fa-phone me-1"></i> Téléphone (facultatif)</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -171,4 +164,45 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('responsable_input');
+    const hidden = document.getElementById('UTI_ID');
+    const contactEmail = document.getElementById('RAI_CONTACT');
+    const contactPhone = document.getElementById('RAI_TELEPHONE');
+
+    if (!input || !hidden) return;
+
+    const mapping = {};
+    @foreach($responsables ?? [] as $resp)
+        mapping["{!! addslashes($resp->name) !!}"] = { id: "{{ $resp->UTI_ID }}", email: "{{ $resp->UTI_EMAIL ?? '' }}", phone: "{{ $resp->UTI_TELEPHONE ?? '' }}" };
+    @endforeach
+
+    function applyContactForName(name) {
+        const entry = mapping[name];
+        if (entry) {
+            hidden.value = entry.id;
+            if (contactEmail) contactEmail.value = entry.email || '';
+            if (contactPhone) contactPhone.value = entry.phone || '';
+        } else {
+            hidden.value = '';
+        }
+    }
+
+    input.addEventListener('change', function () {
+        applyContactForName(this.value.trim());
+    });
+
+    // clear hidden if user clears input
+    input.addEventListener('input', function () {
+        if (!this.value.trim()) {
+            hidden.value = '';
+            if (contactEmail) contactEmail.value = '';
+            if (contactPhone) contactPhone.value = '';
+        }
+    });
+});
+</script>
+
 @endsection
