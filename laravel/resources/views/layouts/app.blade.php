@@ -29,7 +29,6 @@
                     'Contact' => '/contact',
                     'À propos' => '/about',
                     'Raids' => '/raids',
-                    'Courses' => '/races',
                     'Clubs' => '/clubs'
                     ];
                     @endphp
