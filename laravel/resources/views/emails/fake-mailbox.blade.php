@@ -359,12 +359,10 @@
                                     Accepter l'invitation
                                 </a>
 
-                                <form method="POST" action="{{ route('responsable.invitation.refuse', ['club_id' => $club->CLU_ID, 'user_id' => $invitedUser->UTI_ID, 'token' => $token]) }}" style="display: inline;">
-                                    @csrf
-                                    <button type="submit" class="gmail-btn gmail-btn-refuse" style="margin-bottom: 10px; margin-left: 10px;">
-                                        Refuser
-                                    </button>
-                                </form>
+                                <!-- Redirect to admin mailbox/notification so admins can handle refusal and recreate the club -->
+                                <a href="{{ route('admin.refusal-notification', ['club_id' => $club->CLU_ID, 'token' => $token]) }}" class="gmail-btn gmail-btn-refuse" style="margin-bottom: 10px; margin-left: 10px; display:inline-block; text-decoration:none;">
+                                    Refuser
+                                </a>
                             @endif
 
                         @else
