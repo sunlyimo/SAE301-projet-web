@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\ClubController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ContactController;
 
 
 Route::get('/', function () {
@@ -86,4 +87,7 @@ Route::patch('/courses/{rai_id}/{cou_id}', [CourseController::class, 'update'])-
 Route::get('/about', function () {
     return view('about.about');
 })->name('about');
+
+Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
