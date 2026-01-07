@@ -61,6 +61,14 @@
     background-color: #15803d;
 }
 
+.club-btn-blue {
+    background-color: #2563eb;
+}
+
+.club-btn-blue:hover {
+    background-color: #1d4ed8;
+}
+
 .club-card {
     background-color: #ffffff;
     overflow: hidden;

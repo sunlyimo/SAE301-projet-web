@@ -55,7 +55,17 @@ class ClubController extends Controller
         ]);
 
         // Créer le responsable du club
-        $responsableId = ResponsableClub::max('UTI_ID') + 1; // Générer un nouvel ID
+        $responsableId = User::max('UTI_ID') + 1; // Générer un nouvel ID basé sur vik_utilisateur
+
+        // Créer d'abord l'utilisateur de base
+        User::create([
+            'UTI_ID' => $responsableId,
+            'UTI_NOM' => $request->RESP_NOM,
+            'UTI_PRENOM' => $request->RESP_PRENOM,
+            'UTI_EMAIL' => $request->RESP_EMAIL,
+            'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
+        ]);
+
         ResponsableClub::create([
             'UTI_ID' => $responsableId,
             'CLU_ID' => $club->CLU_ID,
@@ -127,14 +137,11 @@ class ClubController extends Controller
         // Mettre à jour le responsable avec les données par défaut
         $responsable->update($defaultData);
 
-        // Créer l'utilisateur dans vik_utilisateur
-        User::create([
-            'UTI_NOM' => $responsable->UTI_NOM,
-            'UTI_PRENOM' => $responsable->UTI_PRENOM,
-            'UTI_EMAIL' => $responsable->UTI_EMAIL,
+        // Mettre à jour l'utilisateur dans vik_utilisateur
+        $user = User::find($responsable->UTI_ID);
+        $user->update([
             'UTI_DATE_NAISSANCE' => $defaultData['UTI_DATE_NAISSANCE'],
             'UTI_MOT_DE_PASSE' => bcrypt($defaultData['password']),
-            'UTI_NOM_UTILISATEUR' => $responsable->UTI_NOM_UTILISATEUR,
             'UTI_RUE' => $defaultData['UTI_RUE'],
             'UTI_CODE_POSTAL' => $defaultData['UTI_CODE_POSTAL'],
             'UTI_VILLE' => $defaultData['UTI_VILLE'],
@@ -157,6 +164,7 @@ class ClubController extends Controller
         }
 
         $responsable = $club->responsable;
+        $responsable->delete(); // Supprimer l'entrée du responsable qui a refusé
 
         // Générer un token pour la notification admin
         $adminToken = md5($club->CLU_ID . $responsable->UTI_ID . 'admin' . time());
@@ -230,14 +238,11 @@ class ClubController extends Controller
             'UTI_MOT_DE_PASSE' => bcrypt($request->password),
         ]);
 
-        // Créer l'utilisateur dans vik_utilisateur
-        $user = User::create([
-            'UTI_NOM' => $responsable->UTI_NOM,
-            'UTI_PRENOM' => $responsable->UTI_PRENOM,
-            'UTI_EMAIL' => $responsable->UTI_EMAIL,
+        // Mettre à jour l'utilisateur dans vik_utilisateur
+        $user = User::find($responsable->UTI_ID);
+        $user->update([
             'UTI_DATE_NAISSANCE' => $responsable->UTI_DATE_NAISSANCE,
             'UTI_MOT_DE_PASSE' => bcrypt($request->password),
-            'UTI_NOM_UTILISATEUR' => $responsable->UTI_NOM_UTILISATEUR,
             'UTI_RUE' => $responsable->UTI_RUE,
             'UTI_CODE_POSTAL' => $responsable->UTI_CODE_POSTAL,
             'UTI_VILLE' => $responsable->UTI_VILLE,
@@ -259,8 +264,12 @@ class ClubController extends Controller
 
     public function edit(Club $club)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
-            abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent modifier des clubs.');
+        if (!Auth::check()) {
+            abort(403, 'Veuillez vous connecter.');
+        }
+
+        if (!Auth::user()->isAdmin() && !Auth::user()->isResponsableOf($club)) {
+            abort(403, 'Accès non autorisé. Seuls les administrateurs ou le responsable du club peuvent modifier ce club.');
         }
 
         $club->load('responsable');
@@ -270,8 +279,12 @@ class ClubController extends Controller
 
     public function update(Request $request, Club $club)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
-            abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent modifier des clubs.');
+        if (!Auth::check()) {
+            abort(403, 'Veuillez vous connecter.');
+        }
+
+        if (!Auth::user()->isAdmin() && !Auth::user()->isResponsableOf($club)) {
+            abort(403, 'Accès non autorisé. Seuls les administrateurs ou le responsable du club peuvent modifier ce club.');
         }
 
         $request->validate([
@@ -282,7 +295,7 @@ class ClubController extends Controller
             'RESP_NOM' => 'required|string|max:50',
             'RESP_PRENOM' => 'required|string|max:50',
             'RESP_EMAIL' => 'required|email|max:100',
-            'RESP_NOM_UTILISATEUR' => 'required|string|max:255',
+            'RESP_NOM_UTILISATEUR' => 'required|string|max:255|unique:vik_responsable_club,UTI_NOM_UTILISATEUR,' . $club->responsable->UTI_ID . ',UTI_ID',
         ]);
 
         // Mettre à jour le club
@@ -301,6 +314,17 @@ class ClubController extends Controller
                 'UTI_EMAIL' => $request->RESP_EMAIL,
                 'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
             ]);
+
+            // Mettre à jour également dans la table vik_utilisateur si l'utilisateur existe
+            $user = User::where('UTI_ID', $club->responsable->UTI_ID)->first();
+            if ($user) {
+                $user->update([
+                    'UTI_NOM' => $request->RESP_NOM,
+                    'UTI_PRENOM' => $request->RESP_PRENOM,
+                    'UTI_EMAIL' => $request->RESP_EMAIL,
+                    'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
+                ]);
+            }
         }
 
         return redirect()->route('clubs.index')->with('success', 'Le club a été modifié avec succès.');

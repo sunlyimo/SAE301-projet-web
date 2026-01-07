@@ -62,18 +62,20 @@
 
             <div class="club-details-actions">
                 <a href="{{ route('clubs.index') }}" class="club-cancel-link">Retour à la liste</a>
-                @if(Auth::check() && Auth::user()->isAdmin())
+                @if(Auth::check() && (Auth::user()->isAdmin() || Auth::user()->isResponsableOf($club)))
                     <div>
                         <a href="{{ route('clubs.edit', $club) }}" class="club-btn">
                             Modifier
                         </a>
-                        <form method="POST" action="{{ route('clubs.destroy', $club) }}" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="club-delete-btn" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce club ?')">
-                                Supprimer
-                            </button>
-                        </form>
+                        @if(Auth::user()->isAdmin())
+                            <form method="POST" action="{{ route('clubs.destroy', $club) }}" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="club-delete-btn" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce club ?')">
+                                    Supprimer
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 @endif
             </div>

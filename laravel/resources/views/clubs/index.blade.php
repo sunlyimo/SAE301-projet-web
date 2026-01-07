@@ -15,6 +15,11 @@
                 Ajouter un club
             </a>
         @endif
+        @if(Auth::check() && Auth::user()->isResponsable())
+            <a href="{{ route('clubs.show', Auth::user()->getClub()) }}" class="club-btn club-btn-blue">
+                Mon club
+            </a>
+        @endif
     </div>
 
     @if(session('success'))
