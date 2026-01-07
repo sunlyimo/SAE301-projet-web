@@ -18,21 +18,55 @@
 
         @php
             $licenceActive = old('UTI_LICENCE') || $user->UTI_LICENCE ? true : false;
-            $selectedClub = old('CLU_ID', $user->CLU_ID ?? '');
+            $selectedClub = old('CLU_ID') ?? ($user->coureur->CLU_ID ?? '');
         @endphp
 
         <form action="{{ route('user.update') }}" method="POST">
             @csrf
             @method('PATCH')
 
-            <div class="flex items-center gap-8 mb-16">
+            <div class="flex items-center gap-6 mb-16" x-data="{ editing: false, name: '{{ old('UTI_NOM_UTILISATEUR', $user->UTI_NOM_UTILISATEUR) }}' }">
+                {{-- Avatar --}}
                 <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-200 shadow-inner flex-shrink-0">
                     <img src="https://ui-avatars.com/api/?name={{ $user->UTI_NOM_UTILISATEUR }}&size=128&background=random" alt="Avatar">
                 </div>
-                <div>
-                    <h1 class="text-4xl font-black text-gray-900 tracking-tight">{{ $user->UTI_NOM_UTILISATEUR }}</h1>
+
+                {{-- Nom d'utilisateur --}}
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2">
+                        {{-- Titre / Input toggle --}}
+                        <template x-if="!editing">
+                            <h1 class="text-4xl font-black text-gray-900 tracking-tight" x-text="name"></h1>
+                        </template>
+
+                        <template x-if="editing">
+                            <input type="text" x-model="name" name="UTI_NOM_UTILISATEUR"
+                                   class="text-4xl font-black text-gray-900 tracking-tight border-b-2 border-gray-400 focus:outline-none"
+                                   style="background: transparent; padding: 0; margin: 0; line-height: 1;"
+                                   placeholder="Nom d'utilisateur">
+                        </template>
+
+                        {{-- Bouton crayon / valider --}}
+                        <button type="button" @click="editing = !editing" class="text-black hover:text-green-600 transition-colors p-1">
+                            <svg x-show="!editing" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                            <svg x-show="editing" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Message d'erreur --}}
+                    @error('UTI_NOM_UTILISATEUR')
+                    <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
+
+
 
             {{-- Informations personnelles --}}
             <div class="mb-12">
@@ -166,62 +200,99 @@
                 </div>
             </div>
 
-            {{-- Licence & Club --}}
-            <div class="mb-12 pt-4" x-data="{ licenceActive: {{ $licenceActive ? 'true' : 'false' }} }">
+
+            <div x-data="{
+                    licenceActive: {{ $licenceActive ? 'true' : 'false' }},
+                    removeLicence: false
+                }"
+                class="mb-12 pt-4">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Licence & Club</h2>
 
-                @if(!$user->UTI_LICENCE)
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-sm font-semibold text-gray-700">Renseigner votre licence ?</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" x-model="licenceActive" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-blue-500 transition-colors"></div>
-                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform peer-checked:translate-x-5"></div>
-                        </label>
-                    </div>
-                @endif
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-semibold text-gray-700">
+                        Renseigner votre licence ?
+                    </span>
+
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            class="sr-only peer"
+                            x-model="licenceActive"
+                            @change="
+                                if (!licenceActive) {
+                                    $refs.licence.value = '';
+                                    $refs.club.value = '';
+                                    removeLicence = true;
+                                } else removeLicence = false;
+                        ">
+                        <div class="w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-blue-500 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform peer-checked:translate-x-5"></div>
+                    </label>
+                </div>
 
                 <div x-show="licenceActive" x-transition class="space-y-4">
+
                     {{-- Club --}}
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Club</label>
-                        <select name="CLU_ID" :required="licenceActive ? true : false"
-                                class="w-full mt-1 p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all
-                        @error('CLU_ID') border-red-500 @else border-gray-200 @enderror">
+                        <select
+                            name="CLU_ID"
+                            x-ref="club"
+                            :required="licenceActive"
+                            class="w-full mt-1 p-3 bg-gray-50 border rounded-xl">
                             <option value="">-- Choisissez un club --</option>
                             @foreach($clubs as $club)
-                                <option value="{{ $club->CLU_ID }}" {{ $selectedClub == $club->CLU_ID ? 'selected' : '' }}>
-                                    {{ $club->CLU_NOM . ' (' . $club->UTI_VILLE . ')' }}
+                                <option value="{{ $club->CLU_ID }}"
+                                    {{ $selectedClub == $club->CLU_ID ? 'selected' : '' }}>
+                                    {{ $club->CLU_NOM }} ({{ $club->UTI_VILLE }})
                                 </option>
                             @endforeach
                         </select>
-                        @error('CLU_ID') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                        @error('CLU_ID')
+                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     {{-- Licence --}}
                     <div>
                         <label class="block text-sm font-semibold text-gray-700">Licence</label>
-                        <input type="text" name="UTI_LICENCE" value="{{ old('UTI_LICENCE', $user->UTI_LICENCE) }}"
-                               :required="licenceActive ? true : false"
-                               class="w-full mt-1 p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all
-                        @error('UTI_LICENCE') border-red-500 @else border-gray-200 @enderror">
-                        @error('UTI_LICENCE') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                        <input
+                            type="text"
+                            name="UTI_LICENCE"
+                            x-ref="licence"
+                            :required="licenceActive"
+                            value="{{ old('UTI_LICENCE', $user->UTI_LICENCE) }}"
+                            class="w-full mt-1 p-3 bg-gray-50 border rounded-xl">
+                        @error('UTI_LICENCE')
+                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
+
+                {{-- Champ caché pour le controller --}}
+                <input type="hidden" name="remove_licence" :value="removeLicence ? 1 : 0">
             </div>
 
+
+
+
+
             {{-- Mot de passe --}}
-            <div class="mb-12 pt-4" x-data="{ changePassword: false }">
+            <div class="mb-12 pt-4" x-data="{
+                changePassword: {{ $errors->hasAny(['current_password', 'new_password', 'new_password_confirmation']) ? 'true' : 'false' }},
+                resetFields() {
+                    $refs.current.value = '';
+                    $refs.new.value = '';
+                    $refs.confirm.value = '';
+                }
+            }">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Mot de passe</h2>
 
-                {{-- Bouton pour afficher/masquer le formulaire de changement --}}
                 <button type="button"
-                        @click="changePassword = !changePassword;
-                     if(!changePassword) {
-                         $refs.current.value='';
-                         $refs.new.value='';
-                         $refs.confirm.value='';
-                     }"
+                        @click="
+                             if(changePassword) resetFields();
+                             changePassword = !changePassword
+                         "
                         class="mb-4 px-6 py-3 bg-black text-white rounded-xl shadow hover:bg-green-600 transition-colors">
                     Changer le mot de passe
                 </button>
@@ -233,6 +304,7 @@
                     <div x-data="{ show: false }" class="relative">
                         <label class="block text-sm font-semibold text-gray-700">Ancien mot de passe</label>
                         <input type="password" name="current_password" x-ref="current"
+                               :required="changePassword"
                                :type="show ? 'text' : 'password'"
                                class="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                placeholder="Entrez votre ancien mot de passe">
@@ -263,12 +335,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" />
                             </svg>
                         </button>
+                        @error('current_password')
+                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     {{-- Nouveau mot de passe --}}
                     <div x-data="{ show: false }" class="relative">
                         <label class="block text-sm font-semibold text-gray-700">Nouveau mot de passe</label>
                         <input type="password" name="new_password" x-ref="new"
+                               :required="changePassword"
                                :type="show ? 'text' : 'password'"
                                class="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                placeholder="Entrez votre nouveau mot de passe">
@@ -299,12 +375,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" />
                             </svg>
                         </button>
+                        @error('new_password')
+                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     {{-- Confirmation du nouveau mot de passe --}}
                     <div x-data="{ show: false }" class="relative">
                         <label class="block text-sm font-semibold text-gray-700">Confirmer le nouveau mot de passe</label>
                         <input type="password" name="new_password_confirmation" x-ref="confirm"
+                               :required="changePassword"
                                :type="show ? 'text' : 'password'"
                                class="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                placeholder="Confirmez le nouveau mot de passe">
@@ -335,6 +415,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" />
                             </svg>
                         </button>
+                        @error('new_password_confirmation')
+                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
             </div>

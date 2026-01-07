@@ -51,7 +51,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Laravel cherche par défaut une colonne 'email'. 
+     * Laravel cherche par défaut une colonne 'email'.
      * On lui dit d'utiliser 'UTI_EMAIL' à la place.
      */
     public function getEmailAttribute()
@@ -73,5 +73,9 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return Administrateur::where('UTI_ID', $this->UTI_ID)->exists();
+    }
+
+    public function coureur() {
+        return $this->hasOne(Coureur::class, 'UTI_ID', 'UTI_ID');
     }
 }

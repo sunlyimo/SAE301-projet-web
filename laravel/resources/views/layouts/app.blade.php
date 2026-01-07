@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>CartoRun - @yield('title')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
@@ -190,7 +189,7 @@
                 opacity: 1;
             }
         }
-        
+
         .animate-slide-in {
             animation: slide-in 0.3s ease-out;
         }
@@ -205,7 +204,7 @@
                 notif.style.display = 'none';
             }, 300);
         }
-        
+
         setTimeout(() => {
             closeWelcomeNotif();
         }, 1500);
