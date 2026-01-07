@@ -31,7 +31,7 @@ class TeamController extends Controller
     public function addMember(Request $request, $rai_id, $cou_id, $equ_id)
     {
         $request->validate([
-            'pseudo' => 'required|string|exists:vik_utilisateur,UTI_PSEUDO'
+            'pseudo' => 'required|string|exists:vik_utilisateur,UTI_NOM_UTILISATEUR'
         ], [
             'pseudo.exists' => "Ce nom d'utilisateur n'existe pas."
         ]);
@@ -52,7 +52,7 @@ class TeamController extends Controller
             return back()->withErrors(['pseudo' => "L'équipe est complète !"]);
         }
 
-        $userToAdd = User::where('UTI_PSEUDO', $request->pseudo)->first();
+        $userToAdd = User::where('UTI_NOM_UTILISATEUR', $request->pseudo)->first();
 
         if ($userToAdd->UTI_ID == $equipe->UTI_ID) {
             return back()->withErrors(['pseudo' => 'Vous êtes déjà le chef de cette équipe.']);
