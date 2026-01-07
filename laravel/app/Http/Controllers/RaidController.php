@@ -22,7 +22,7 @@ class RaidController extends Controller
             ->orderBy('UTI_NOM')
             ->get();
 
-        return view('raid-create', compact('clubs', 'responsables'));
+        return view('raids/raid-create', compact('clubs', 'responsables'));
     }
 
     public function store(Request $request) /* ajout d'un nouveau raid à la base de données */
