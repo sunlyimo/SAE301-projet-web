@@ -41,12 +41,17 @@
                     <h3 class="club-details-section">Responsable</h3>
                     <dl class="club-details-dl">
                         <div>
-                            <dt class="club-details-dt">Nom</dt>
-                            <dd class="club-details-dd">{{ $club->responsable ? $club->responsable->UTI_NOM : 'Non défini' }}</dd>
-                        </div>
-                        <div>
-                            <dt class="club-details-dt">Prénom</dt>
-                            <dd class="club-details-dd">{{ $club->responsable ? $club->responsable->UTI_PRENOM : 'Non défini' }}</dd>
+                            <dt class="club-details-dt">Nom complet</dt>
+                            <dd class="club-details-dd">
+                                @if($club->responsable)
+                                    {{ $club->responsable->UTI_PRENOM }} {{ $club->responsable->UTI_NOM }}
+                                    @if(!empty($pending))
+                                        <small class="text-orange-600">&nbsp;(en attente de validation)</small>
+                                    @endif
+                                @else
+                                    Non défini
+                                @endif
+                            </dd>
                         </div>
                         <div>
                             <dt class="club-details-dt">Email</dt>

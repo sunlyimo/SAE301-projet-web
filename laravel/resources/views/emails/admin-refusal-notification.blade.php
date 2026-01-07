@@ -295,7 +295,13 @@
                         <ul>
                             <li><strong>Nom du club :</strong> {{ $club->CLU_NOM }}</li>
                             <li><strong>Adresse :</strong> {{ $club->CLU_RUE }}, {{ $club->CLU_CODE_POSTAL }} {{ $club->CLU_VILLE }}</li>
-                            <li><strong>Responsable qui a refusé :</strong> {{ $club->responsable->UTI_NOM }} {{ $club->responsable->UTI_PRENOM }} ({{ $club->responsable->UTI_EMAIL }})</li>
+                            @if($club->responsable)
+                                <li><strong>Responsable qui a refusé :</strong> {{ $club->responsable->UTI_NOM }} {{ $club->responsable->UTI_PRENOM }} ({{ $club->responsable->UTI_EMAIL }})</li>
+                            @elseif(!empty($refusedResponsable))
+                                <li><strong>Responsable qui a refusé :</strong> {{ $refusedResponsable['UTI_NOM'] ?? '' }} {{ $refusedResponsable['UTI_PRENOM'] ?? '' }} ({{ $refusedResponsable['UTI_EMAIL'] ?? '' }})</li>
+                            @else
+                                <li><strong>Responsable qui a refusé :</strong> <em>Aucun responsable enregistré</em></li>
+                            @endif
                         </ul>
                     </div>
 
