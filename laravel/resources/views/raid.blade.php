@@ -4,13 +4,13 @@
 
 @section('content')
 
-<div>
+<div class="max-w-6xl mx-auto my-12 p-6">
     <h1 class="font-extrabold"> Raids </h1>
     <p>Liste des raids disponibles</p>
 
-        <div class="flex flex-wrap">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($raids as $raid)
-                <div class="border border-black-300 rounded-md w-10xs m-2 p-3">
+                <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 hover:shadow-2xl transition-all">
                     <h2 class="font-extrabold"> {{ $raid->RAI_NOM }} </h2>
                     @if($raid->RAI_INSCRI_DATE_DEBUT <= now() && $raid->RAI_INSCRI_DATE_FIN >= now())
                         <p class="font-bold"> Inscription en cours</p>
