@@ -8,11 +8,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <body class="bg-white font-sans antialiased text-gray-900 flex flex-col min-h-screen">
     <nav class="relative bg-white border-b border-gray-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
-                
+
                 <div class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
                     <span class="text-2xl font-bold text-black tracking-tight">
@@ -56,7 +57,7 @@
                         <a href="/profile" class="text-sm font-semibold text-black hover:text-green-600 transition-colors duration-300">
                             Voir mon profil
                         </a>
-                        
+
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
                             <button type="submit" class="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-black text-white text-sm font-bold hover:bg-green-600 transition-all duration-300 shadow-md active:scale-95">
