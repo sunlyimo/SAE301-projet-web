@@ -57,7 +57,7 @@ class UserController extends Controller
         $rules = [
             'UTI_NOM' => 'string|max:50',
             'UTI_PRENOM' => 'string|max:50',
-            'UTI_NOM_UTILISATEUR' => 'string|max:50|unique:vik_utilisateur,UTI_NOM_UTILISATEUR',
+            'UTI_NOM_UTILISATEUR' => 'string|max:50|unique:vik_utilisateur,UTI_NOM_UTILISATEUR,' . $user->UTI_ID . ',UTI_ID',
             'UTI_EMAIL' => 'email|max:100',
             'UTI_TELEPHONE' => 'nullable|string|max:10',
             'UTI_RUE' => 'nullable|string|max:100',

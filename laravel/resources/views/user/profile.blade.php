@@ -28,18 +28,27 @@
             @csrf
             @method('PATCH')
 
-            <div class="flex items-center gap-6 mb-16" x-data="{ editing: false, name: '{{ old('UTI_NOM_UTILISATEUR', $user->UTI_NOM_UTILISATEUR) }}' }">
+            <div class="flex items-center gap-6 mb-16"
+                 x-data="{
+                    editing: {{ $errors->has('UTI_NOM_UTILISATEUR') ? 'true' : 'false' }},
+                    name: '{{ old('UTI_NOM_UTILISATEUR', $user->UTI_NOM_UTILISATEUR) }}'
+                 }">
+
+                {{-- Avatar --}}
                 <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-200 shadow-inner flex-shrink-0">
-                    <img src="https://ui-avatars.com/api/?name={{ $user->UTI_NOM_UTILISATEUR }}&size=128&background=random" alt="Avatar">
+                    <img src="https://ui-avatars.com/api/?name={{ $user->UTI_NOM_UTILISATEUR }}&size=128&background=random"
+                         alt="Avatar">
                 </div>
 
                 {{-- Nom d'utilisateur --}}
                 <div class="flex flex-col">
                     <div class="flex items-center gap-2">
+                        {{-- Affichage du nom --}}
                         <template x-if="!editing">
                             <h1 class="text-4xl font-black text-gray-900 tracking-tight" x-text="name"></h1>
                         </template>
 
+                        {{-- Input pour modifier --}}
                         <template x-if="editing">
                             <input type="text" x-model="name" name="UTI_NOM_UTILISATEUR"
                                    class="text-4xl font-black text-gray-900 tracking-tight border-b-2 border-gray-400 focus:outline-none"
@@ -47,7 +56,9 @@
                                    placeholder="Nom d'utilisateur">
                         </template>
 
-                        <button type="button" @click="editing = !editing" class="text-black hover:text-green-600 transition-colors p-1">
+                        {{-- Bouton crayon / valider --}}
+                        <button type="button" @click="editing = !editing"
+                                class="text-black hover:text-green-600 transition-colors p-1">
                             <svg x-show="!editing" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
@@ -59,11 +70,13 @@
                         </button>
                     </div>
 
+                    {{-- Message d'erreur --}}
                     @error('UTI_NOM_UTILISATEUR')
                     <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                     @enderror
                 </div>
             </div>
+
 
 
 

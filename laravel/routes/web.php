@@ -45,7 +45,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::get('/profile', [UserController::class, 'show'])->name('user.profile');
-    Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::patch('/profile', [UserController::class, 'update'])->name('user.update');
 
     Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
