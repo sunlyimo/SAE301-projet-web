@@ -107,8 +107,8 @@
                                 <div class="form-floating">
                                     <select name="UTI_ID" id="UTI_ID" class="form-select">
                                         <option value="">Choisir un responsable...</option>
-                                        @foreach($responsables ?? [] as $id => $name)
-                                        <option value="{{ $id }}" {{ old('UTI_ID') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                        @foreach($responsables ?? [] as $resp)
+                                        <option value="{{ $resp->UTI_ID }}">{{ $resp->name }}</option>
                                         @endforeach
                                     </select>
                                     <label for="UTI_ID">Responsable</label>

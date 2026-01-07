@@ -11,10 +11,10 @@ class RaidController extends Controller
     public function create() /* affichage du formulaire */
     {
         $clubs = DB::table('VIK_CLUB')->orderBy('CLU_NOM')->pluck('CLU_NOM', 'CLU_ID');
-        $responsables = DB::table('VIK_RESPONSABLE_RAID')
-            ->selectRaw("UTI_ID, CONCAT(UTI_PRENOM, ' ', UTI_NOM) as name")
+        $responsables = DB::table('VIK_UTILISATEUR')
+            ->select('UTI_ID', DB::raw("CONCAT(UTI_PRENOM, ' ', UTI_NOM) as name"))
             ->orderBy('UTI_NOM')
-            ->pluck('name', 'UTI_ID');
+            ->get();
         return view('raid-create', compact('clubs', 'responsables'));
     }
 
