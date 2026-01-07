@@ -103,4 +103,17 @@ class User extends Authenticatable
             ->where('CLU_ID', $club->CLU_ID)
             ->exists();
     }
+
+    public function resultats()
+    {
+
+        return $this->hasManyThrough(
+            Resultat::class, 
+            Appartient::class,
+            'UTI_ID',
+            'EQU_ID',
+            'UTI_ID',
+            'EQU_ID'
+        );
+    }
 }

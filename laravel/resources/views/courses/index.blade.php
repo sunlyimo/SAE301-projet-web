@@ -108,7 +108,6 @@
                 <div class="p-6 space-y-6 flex-grow">
                     <div class="flex items-center justify-between text-sm text-gray-700 bg-blue-50 p-4 rounded-xl border border-blue-100">
                         <div class="flex items-center">
-                            <span class="text-2xl mr-3">📍</span>
                             <div>
                                 <p class="font-bold text-blue-900">Lieu</p>
                                 <p>{{ $course->COU_LIEU }}</p>
@@ -190,6 +189,12 @@
                 </div>
 
                 <div class="p-5 pt-0 mt-auto">
+                    <div class="mb-3">
+                        <a href="{{ route('resultats.index', [$course->RAI_ID, $course->COU_ID]) }}" 
+                           class="w-full flex items-center justify-center gap-2 bg-yellow-400 text-black py-2 rounded-xl font-black text-xs hover:bg-yellow-500 transition-colors uppercase tracking-wide shadow-sm">
+                           Classement
+                        </a>
+                    </div>
                     @php 
                         $monEquipe = $course->equipeDuUser(); 
                     @endphp
