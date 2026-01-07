@@ -53,7 +53,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Laravel cherche par défaut une colonne 'email'. 
+     * Laravel cherche par défaut une colonne 'email'.
      * On lui dit d'utiliser 'UTI_EMAIL' à la place.
      */
     public function getEmailAttribute()
@@ -122,24 +122,20 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function coureur() {
+        return $this->hasOne(Coureur::class, 'UTI_ID', 'UTI_ID');
+    }
+
     public function resultats()
     {
 
         return $this->hasManyThrough(
-            Resultat::class, 
+            Resultat::class,
             Appartient::class,
             'UTI_ID',
             'EQU_ID',
             'UTI_ID',
             'EQU_ID'
         );
-    }
-
-    /**
-     * Relation avec la table Coureur (pour accéder au CRR_PPS)
-     */
-    public function coureur()
-    {
-        return $this->hasOne(Coureur::class, 'UTI_ID', 'UTI_ID');
     }
 }

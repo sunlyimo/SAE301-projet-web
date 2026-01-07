@@ -185,7 +185,7 @@
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">Équipes</p>
-                                <p class="font-black text-lg text-gray-800">0 <span class="text-xs font-normal text-gray-400">/ {{ $course->COU_EQUIPE_MAX }}</span></p>
+                                <p class="font-black text-lg text-gray-800">{{ $course->equipes_count ?? 0 }} <span class="text-xs font-normal text-gray-400">/ {{ $course->COU_EQUIPE_MAX }}</span></p>
                                 <p class="text-[14px] text-gray-400">Min : {{ $course->COU_EQUIPE_MIN }}</p>
                             </div>
                         </div>
