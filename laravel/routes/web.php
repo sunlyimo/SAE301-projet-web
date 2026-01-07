@@ -16,7 +16,6 @@ use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\WelcomeController;
 
-
 Route::get('/', [WelcomeController::class, 'index']);
 
 Route::get('/repair', function() {
