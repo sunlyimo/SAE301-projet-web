@@ -180,7 +180,7 @@
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">Participants</p>
-                                <p class="font-black text-lg text-gray-800">0 <span class="text-xs font-normal text-gray-400">/ {{ $course->COU_PARTICIPANT_MAX }}</span></p>
+                                <p class="font-black text-lg text-gray-800">{{ $course->participants_count ?? 0 }} <span class="text-xs font-normal text-gray-400">/ {{ $course->COU_PARTICIPANT_MAX }}</span></p>
                                 <p class="text-[14px] text-gray-400">Min : {{ $course->COU_PARTICIPANT_MIN }}</p>
                             </div>
                             <div>
