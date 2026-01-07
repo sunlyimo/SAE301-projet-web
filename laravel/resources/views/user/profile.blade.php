@@ -276,29 +276,26 @@
 
 
 
-            {{-- Mot de passe --}}
             <div class="mb-12 pt-4" x-data="{
-                changePassword: {{ $errors->hasAny(['current_password', 'new_password', 'new_password_confirmation']) ? 'true' : 'false' }},
-                resetFields() {
-                    $refs.current.value = '';
-                    $refs.new.value = '';
-                    $refs.confirm.value = '';
-                }
-            }">
+    changePassword: {{ $errors->hasAny(['current_password', 'new_password', 'new_password_confirmation']) ? 'true' : 'false' }},
+    resetFields() {
+        $refs.current.value = '';
+        $refs.new.value = '';
+        $refs.confirm.value = '';
+    }
+}">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Mot de passe</h2>
 
                 <button type="button"
                         @click="
-                             if(changePassword) resetFields();
-                             changePassword = !changePassword
-                         "
+                changePassword = !changePassword;
+                if(!changePassword) resetFields();
+            "
                         class="mb-4 px-6 py-3 bg-black text-white rounded-xl shadow hover:bg-green-600 transition-colors">
                     Changer le mot de passe
                 </button>
 
-                {{-- Formulaire de changement de mot de passe --}}
                 <div x-show="changePassword" x-transition class="flex flex-col gap-4 md:w-1/2">
-
                     {{-- Ancien mot de passe --}}
                     <div x-data="{ show: false }" class="relative">
                         <label class="block text-sm font-semibold text-gray-700">Ancien mot de passe</label>
@@ -310,7 +307,6 @@
                         <button type="button" @click="show = !show"
                                 class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                                 aria-label="Afficher / masquer le mot de passe">
-                            <!-- Œil ouvert -->
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                  stroke-width="2">
@@ -318,25 +314,21 @@
                                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="M2.458 12C3.732 7.943 7.523 5 12 5 c4.477
-                                      0 8.268 2.943 9.542 7 -1.274 4.057-5.065 7-9.542
-                                      7 -4.477 0-8.268-2.943-9.542-7z" />
+                          0 8.268 2.943 9.542 7 -1.274 4.057-5.065 7-9.542
+                          7 -4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
-
-                            <!-- Œil barré -->
                             <svg x-show="show" xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                                  stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="M13.875 18.825A10.05 10.05 0 0112 19 c-4.478
-                                      0-8.269-2.943-9.543-7 a9.956 9.956 0 012.18-3.568M6.223
-                                      6.223 A9.955 9.955 0 0112 5 c4.478 0 8.269 2.943 9.543
-                                      7 a9.978 9.978 0 01-4.132 5.411M15 12 a3 3 0 00-3-3" />
+                          0-8.269-2.943-9.543-7 a9.956 9.956 0 012.18-3.568M6.223
+                          6.223 A9.955 9.955 0 0112 5 c4.478 0 8.269 2.943 9.543
+                          7 a9.978 9.978 0 01-4.132 5.411M15 12 a3 3 0 00-3-3" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" />
                             </svg>
                         </button>
-                        @error('current_password')
-                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                        @enderror
+                        @error('current_password') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Nouveau mot de passe --}}
@@ -350,7 +342,6 @@
                         <button type="button" @click="show = !show"
                                 class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                                 aria-label="Afficher / masquer le mot de passe">
-                            <!-- Œil ouvert -->
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                  stroke-width="2">
@@ -358,25 +349,21 @@
                                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="M2.458 12C3.732 7.943 7.523 5 12 5 c4.477
-                                      0 8.268 2.943 9.542 7 -1.274 4.057-5.065 7-9.542
-                                      7 -4.477 0-8.268-2.943-9.542-7z" />
+                          0 8.268 2.943 9.542 7 -1.274 4.057-5.065 7-9.542
+                          7 -4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
-
-                            <!-- Œil barré -->
                             <svg x-show="show" xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                                  stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="M13.875 18.825A10.05 10.05 0 0112 19 c-4.478
-                                      0-8.269-2.943-9.543-7 a9.956 9.956 0 012.18-3.568M6.223
-                                      6.223 A9.955 9.955 0 0112 5 c4.478 0 8.269 2.943 9.543
-                                      7 a9.978 9.978 0 01-4.132 5.411M15 12 a3 3 0 00-3-3" />
+                          0-8.269-2.943-9.543-7 a9.956 9.956 0 012.18-3.568M6.223
+                          6.223 A9.955 9.955 0 0112 5 c4.478 0 8.269 2.943 9.543
+                          7 a9.978 9.978 0 01-4.132 5.411M15 12 a3 3 0 00-3-3" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" />
                             </svg>
                         </button>
-                        @error('new_password')
-                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                        @enderror
+                        @error('new_password') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Confirmation du nouveau mot de passe --}}
@@ -390,7 +377,6 @@
                         <button type="button" @click="show = !show"
                                 class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                                 aria-label="Afficher / masquer le mot de passe">
-                            <!-- Œil ouvert -->
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                  stroke-width="2">
@@ -398,28 +384,25 @@
                                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="M2.458 12C3.732 7.943 7.523 5 12 5 c4.477
-                                      0 8.268 2.943 9.542 7 -1.274 4.057-5.065 7-9.542
-                                      7 -4.477 0-8.268-2.943-9.542-7z" />
+                          0 8.268 2.943 9.542 7 -1.274 4.057-5.065 7-9.542
+                          7 -4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
-
-                            <!-- Œil barré -->
                             <svg x-show="show" xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                                  stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="M13.875 18.825A10.05 10.05 0 0112 19 c-4.478
-                                      0-8.269-2.943-9.543-7 a9.956 9.956 0 012.18-3.568M6.223
-                                      6.223 A9.955 9.955 0 0112 5 c4.478 0 8.269 2.943 9.543
-                                      7 a9.978 9.978 0 01-4.132 5.411M15 12 a3 3 0 00-3-3" />
+                          0-8.269-2.943-9.543-7 a9.956 9.956 0 012.18-3.568M6.223
+                          6.223 A9.955 9.955 0 0112 5 c4.478 0 8.269 2.943 9.543
+                          7 a9.978 9.978 0 01-4.132 5.411M15 12 a3 3 0 00-3-3" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" />
                             </svg>
                         </button>
-                        @error('new_password_confirmation')
-                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                        @enderror
+                        @error('new_password_confirmation') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
                 </div>
             </div>
+
 
             <div class="mt-16 flex justify-center">
                 <button type="submit" class="bg-black font-bold text-white px-16 py-4 rounded-xl text-lg shadow-xl hover:bg-green-600 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 uppercase tracking-tighter">
@@ -427,14 +410,7 @@
                 </button>
             </div>
         </form>
-
-        <div class="mt-16 flex justify-center">
-            <button type="submit" class="bg-black font-bold text-white px-16 py-4 rounded-xl text-lg shadow-xl hover:bg-green-600 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 uppercase tracking-tighter">
-                Enregistrer les modifications
-            </button>
-        </div>
-    </form>
-
+    </div>
     <div class="mt-24 border-t border-gray-100 pt-12">
         <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
             Historique des Courses
