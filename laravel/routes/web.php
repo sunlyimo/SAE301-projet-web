@@ -32,7 +32,6 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
     
-    Route::get('/raids',[RaidController::class, 'index']);
 });
 
 Route::middleware('auth')->group(function () {
@@ -109,6 +108,10 @@ Route::post('/courses/{rai_id}/{cou_id}/team/join', [InscriptionController::clas
 
 Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
 Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
+Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/toggle-chef', [TeamController::class, 'toggleChefParticipation'])->name('teams.toggle-chef');
+Route::get('/api/users/search', [TeamController::class, 'searchUsers'])->name('users.search');
+
+
 
 Route::get('/about', function () {
     return view('about.about');

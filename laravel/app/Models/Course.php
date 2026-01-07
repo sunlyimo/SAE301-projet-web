@@ -3,11 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Course extends Model
 {
-    protected $table = 'VIK_COURSE';
+    public static function getRaceOfRaid($id)
+    {
+        $courses = DB::table("vik_course")->where("RAI_ID","=",$id)->get();
+        return $courses;
+    }
+
+    protected $table = 'vik_course'; 
     protected $primaryKey = ['RAI_ID', 'COU_ID'];
     
     public $incrementing = false;
