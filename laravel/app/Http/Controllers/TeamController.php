@@ -15,7 +15,7 @@ class TeamController extends Controller
         $equipe = Equipe::where('RAI_ID', $rai_id)
                         ->where('COU_ID', $cou_id)
                         ->where('EQU_ID', $equ_id)
-                        ->with(['chef'])
+                        ->with(['chef.coureur'])
                         ->firstOrFail();
 
         // Charger les membres en excluant le chef d'équipe
@@ -23,7 +23,7 @@ class TeamController extends Controller
             $query->where('RAI_ID', $rai_id)
                   ->where('COU_ID', $cou_id)
                   ->where('UTI_ID', '!=', $equipe->UTI_ID) // Exclure le chef
-                  ->with('utilisateur');
+                  ->with('utilisateur.coureur');
         }]);
 
         $isChef = $equipe->UTI_ID == Auth::id();
@@ -49,6 +49,13 @@ class TeamController extends Controller
                                      ->where('COU_ID', $cou_id)
                                      ->first();
 
+        // Récupérer le Raid pour les dates d'inscription
+        $raid = \App\Models\Raid::findOrFail($rai_id);
+        $now = now();
+
+        // Vérifier si la période d'inscription est active
+        $inscriptionsOuvertes = $now->gte($raid->RAI_INSCRI_DATE_DEBUT) && $now->lte($raid->RAI_INSCRI_DATE_FIN);
+
         // Calculer le nombre de participants (membres non-chef + chef si il participe)
         $nbMembres = Appartient::where('RAI_ID', $rai_id)
                                ->where('COU_ID', $cou_id)
@@ -58,7 +65,7 @@ class TeamController extends Controller
 
         $nbParticipants = $nbMembres + ($chefParticipe ? 1 : 0);
 
-        return view('teams.show', compact('equipe', 'isChef', 'chefParticipe', 'course', 'nbParticipants'));
+        return view('teams.show', compact('equipe', 'isChef', 'chefParticipe', 'course', 'nbParticipants', 'inscriptionsOuvertes', 'raid'));
     }
 
     public function addMember(Request $request, $rai_id, $cou_id, $equ_id)
@@ -78,6 +85,19 @@ class TeamController extends Controller
             abort(403, "Seul le chef d'équipe peut ajouter des membres.");
         }
 
+        // Récupérer le Raid pour vérifier les dates d'inscription
+        $raid = \App\Models\Raid::findOrFail($rai_id);
+        $now = now();
+
+        // Vérifier si la période d'inscription est active
+        if ($now->lt($raid->RAI_INSCRI_DATE_DEBUT)) {
+            return back()->withErrors(['pseudo' => "Les inscriptions n'ont pas encore commencé."]);
+        }
+
+        if ($now->gt($raid->RAI_INSCRI_DATE_FIN)) {
+            return back()->withErrors(['pseudo' => "Les inscriptions sont terminées. Impossible d'ajouter des participants."]);
+        }
+
         $course = \App\Models\Course::where('RAI_ID', $rai_id)->where('COU_ID', $cou_id)->first();
 
         // Vérifier le nombre de participants (membres + chef si il participe)
@@ -87,7 +107,14 @@ class TeamController extends Controller
                                    ->where('UTI_ID', $equipe->UTI_ID)
                                    ->exists();
 
-        $nbParticipants = $equipe->membres()->count() + ($chefParticipe ? 1 : 0);
+        // Compter les membres (excluant le chef)
+        $nbMembres = Appartient::where('RAI_ID', $rai_id)
+                               ->where('COU_ID', $cou_id)
+                               ->where('EQU_ID', $equ_id)
+                               ->where('UTI_ID', '!=', $equipe->UTI_ID)
+                               ->count();
+
+        $nbParticipants = $nbMembres + ($chefParticipe ? 1 : 0);
 
         if ($nbParticipants >= $course->COU_PARTICIPANT_PAR_EQUIPE_MAX) {
             return back()->withErrors(['pseudo' => "L'équipe est complète !"]);
@@ -126,6 +153,19 @@ class TeamController extends Controller
             abort(403, "Seul le chef d'équipe peut modifier sa participation.");
         }
 
+        // Récupérer le Raid pour vérifier les dates d'inscription
+        $raid = \App\Models\Raid::findOrFail($rai_id);
+        $now = now();
+
+        // Vérifier si la période d'inscription est active
+        if ($now->lt($raid->RAI_INSCRI_DATE_DEBUT)) {
+            return back()->withErrors(['chef' => "Les inscriptions n'ont pas encore commencé."]);
+        }
+
+        if ($now->gt($raid->RAI_INSCRI_DATE_FIN)) {
+            return back()->withErrors(['chef' => "Les inscriptions sont terminées. Impossible de modifier votre participation."]);
+        }
+
         $course = \App\Models\Course::where('RAI_ID', $rai_id)->where('COU_ID', $cou_id)->first();
 
         $chefParticipe = Appartient::where('RAI_ID', $rai_id)
@@ -144,9 +184,15 @@ class TeamController extends Controller
             return back()->with('success', "Vous ne participez plus à la course.");
         } else {
             // Le chef ne participe pas, on l'ajoute
-            $nbParticipants = $equipe->membres()->count();
+            // Compter les membres (excluant le chef)
+            $nbMembres = Appartient::where('RAI_ID', $rai_id)
+                                   ->where('COU_ID', $cou_id)
+                                   ->where('EQU_ID', $equ_id)
+                                   ->where('UTI_ID', '!=', $equipe->UTI_ID)
+                                   ->count();
 
-            if ($nbParticipants >= $course->COU_PARTICIPANT_PAR_EQUIPE_MAX) {
+            // Le chef va être ajouté, donc on vérifie si nbMembres + 1 dépasse le max
+            if (($nbMembres + 1) > $course->COU_PARTICIPANT_PAR_EQUIPE_MAX) {
                 return back()->withErrors(['chef' => "L'équipe est complète ! Impossible d'ajouter le chef comme participant."]);
             }
 
@@ -159,6 +205,59 @@ class TeamController extends Controller
 
             return back()->with('success', "Vous participez maintenant à la course !");
         }
+    }
+
+    public function removeMember($rai_id, $cou_id, $equ_id, $uti_id)
+    {
+        $equipe = Equipe::where('RAI_ID', $rai_id)
+                        ->where('COU_ID', $cou_id)
+                        ->where('EQU_ID', $equ_id)
+                        ->firstOrFail();
+
+        // Vérifier que l'utilisateur connecté est le chef de l'équipe
+        if ($equipe->UTI_ID != Auth::id()) {
+            abort(403, "Seul le chef d'équipe peut retirer des membres.");
+        }
+
+        // Récupérer le Raid pour vérifier les dates d'inscription
+        $raid = \App\Models\Raid::findOrFail($rai_id);
+        $now = now();
+
+        // Vérifier si la période d'inscription est active
+        if ($now->lt($raid->RAI_INSCRI_DATE_DEBUT)) {
+            return back()->withErrors(['remove' => "Les inscriptions n'ont pas encore commencé."]);
+        }
+
+        if ($now->gt($raid->RAI_INSCRI_DATE_FIN)) {
+            return back()->withErrors(['remove' => "Les inscriptions sont terminées. Impossible de modifier l'équipe."]);
+        }
+
+        // Vérifier que l'utilisateur à retirer n'est pas le chef
+        if ($uti_id == $equipe->UTI_ID) {
+            return back()->withErrors(['remove' => "Le chef d'équipe ne peut pas être retiré. Utilisez la case à cocher pour gérer votre participation."]);
+        }
+
+        // Vérifier que l'utilisateur est bien membre de l'équipe
+        $exists = Appartient::where('RAI_ID', $rai_id)
+                            ->where('COU_ID', $cou_id)
+                            ->where('EQU_ID', $equ_id)
+                            ->where('UTI_ID', $uti_id)
+                            ->exists();
+
+        if (!$exists) {
+            return back()->withErrors(['remove' => "Cet utilisateur ne fait pas partie de l'équipe."]);
+        }
+
+        $user = User::find($uti_id);
+
+        // Supprimer avec la méthode delete directement sur le query builder
+        Appartient::where('RAI_ID', $rai_id)
+                  ->where('COU_ID', $cou_id)
+                  ->where('EQU_ID', $equ_id)
+                  ->where('UTI_ID', $uti_id)
+                  ->delete();
+
+        return back()->with('success', "{$user->UTI_PRENOM} {$user->UTI_NOM} a été retiré de l'équipe.");
     }
 
     public function searchUsers(Request $request)
@@ -176,5 +275,77 @@ class TeamController extends Controller
                     ->get(['UTI_ID', 'UTI_NOM_UTILISATEUR', 'UTI_PRENOM', 'UTI_NOM']);
 
         return response()->json($users);
+    }
+
+    public function updateRpps(Request $request, $rai_id, $cou_id, $equ_id, $uti_id)
+    {
+        $request->validate([
+            'rpps' => 'nullable|string|max:32'
+        ]);
+
+        $equipe = Equipe::where('RAI_ID', $rai_id)
+                        ->where('COU_ID', $cou_id)
+                        ->where('EQU_ID', $equ_id)
+                        ->firstOrFail();
+
+        // Vérifier que l'utilisateur connecté est le chef de l'équipe
+        if ($equipe->UTI_ID != Auth::id()) {
+            abort(403, "Seul le chef d'équipe peut modifier les informations des participants.");
+        }
+
+        // Récupérer le Raid pour vérifier les dates d'inscription
+        $raid = \App\Models\Raid::findOrFail($rai_id);
+        $now = now();
+
+        // Vérifier si la période d'inscription est active
+        if ($now->lt($raid->RAI_INSCRI_DATE_DEBUT)) {
+            return back()->withErrors(['rpps' => "Les inscriptions n'ont pas encore commencé."]);
+        }
+
+        if ($now->gt($raid->RAI_INSCRI_DATE_FIN)) {
+            return back()->withErrors(['rpps' => "Les inscriptions sont terminées."]);
+        }
+
+        // Vérifier que l'utilisateur fait partie de l'équipe
+        $isMembre = Appartient::where('RAI_ID', $rai_id)
+                              ->where('COU_ID', $cou_id)
+                              ->where('EQU_ID', $equ_id)
+                              ->where('UTI_ID', $uti_id)
+                              ->exists();
+
+        $isChef = ($equipe->UTI_ID == $uti_id);
+
+        if (!$isMembre && !$isChef) {
+            return back()->withErrors(['rpps' => "Cet utilisateur ne fait pas partie de l'équipe."]);
+        }
+
+        // Récupérer l'utilisateur
+        $user = User::findOrFail($uti_id);
+
+        // Vérifier que l'utilisateur n'a pas de licence
+        if ($user->UTI_LICENCE) {
+            return back()->withErrors(['rpps' => "Impossible de définir un RPPS pour un utilisateur ayant déjà une licence."]);
+        }
+
+        // Mettre à jour ou créer l'enregistrement coureur avec le RPPS
+        $coureur = \App\Models\Coureur::updateOrCreate(
+            ['UTI_ID' => $uti_id],
+            [
+                'CRR_PPS' => $request->rpps ?: null,
+                'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+                'UTI_EMAIL' => $user->UTI_EMAIL,
+                'UTI_NOM' => $user->UTI_NOM,
+                'UTI_PRENOM' => $user->UTI_PRENOM,
+                'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+                'UTI_RUE' => $user->UTI_RUE,
+                'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+                'UTI_VILLE' => $user->UTI_VILLE,
+                'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+                'UTI_LICENCE' => $user->UTI_LICENCE,
+                'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            ]
+        );
+
+        return back()->with('success', "Le numéro Pass'compétition a été enregistré avec succès !");
     }
 }

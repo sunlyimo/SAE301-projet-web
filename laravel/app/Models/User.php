@@ -53,7 +53,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Laravel cherche par défaut une colonne 'email'. 
+     * Laravel cherche par défaut une colonne 'email'.
      * On lui dit d'utiliser 'UTI_EMAIL' à la place.
      */
     public function getEmailAttribute()
@@ -67,6 +67,24 @@ class User extends Authenticatable
     public function getAuthPassword()
     {
         return $this->UTI_MOT_DE_PASSE;
+    }
+
+    public function clubs()
+    {
+    return $this->belongsToMany(
+        Club::class,
+        'vik_responsable_club',
+        'UTI_ID',
+        'CLU_ID'
+    );
+    }
+
+    /**
+     * Relation avec le club via la table vik_coureur
+     */
+    public function clubAsCoureur()
+    {
+        return $this->hasOne(Coureur::class, 'UTI_ID', 'UTI_ID');
     }
 
     /**
@@ -102,5 +120,22 @@ class User extends Authenticatable
         return ResponsableClub::where('UTI_ID', $this->UTI_ID)
             ->where('CLU_ID', $club->CLU_ID)
             ->exists();
+    }
+
+    public function coureur() {
+        return $this->hasOne(Coureur::class, 'UTI_ID', 'UTI_ID');
+    }
+
+    public function resultats()
+    {
+
+        return $this->hasManyThrough(
+            Resultat::class,
+            Appartient::class,
+            'UTI_ID',
+            'EQU_ID',
+            'UTI_ID',
+            'EQU_ID'
+        );
     }
 }

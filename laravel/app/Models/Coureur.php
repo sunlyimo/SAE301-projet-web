@@ -27,4 +27,12 @@ class Coureur extends Model
         'UTI_NOM_UTILISATEUR',
         'UTI_MOT_DE_PASSE',
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class, 'UTI_ID', 'UTI_ID');
+    }
+
+    public function club(){
+        return $this->belongsTo(Club::class, 'CLU_ID', 'CLU_ID');
+    }
 }

@@ -10,35 +10,47 @@
 </head>
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <body class="bg-white font-sans antialiased text-gray-900 flex flex-col min-h-screen">
-    <nav class="relative bg-white border-b border-gray-100 shadow-sm">
+    <nav class="relative bg-white border-b border-gray-100 shadow-sm" x-data="{ mobileMenuOpen: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
 
-                <div class="flex items-center gap-3">
+                <!-- Logo + Bouton Menu Mobile -->
+                <div class="flex items-center gap-4">
+                    <!-- Bouton Menu Hamburger Mobile (maintenant à gauche) -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-900 hover:text-green-600 hover:bg-gray-100 focus:outline-none transition-colors">
+                        <svg class="h-6 w-6" :class="{'hidden': mobileMenuOpen, 'block': !mobileMenuOpen }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="h-6 w-6" :class="{'block': mobileMenuOpen, 'hidden': !mobileMenuOpen }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    
                     <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
-                    <span class="text-2xl font-bold text-black tracking-tight">
-                        CartoRun
-                    </span>
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
+                        <span class="text-2xl font-bold text-black tracking-tight">
+                            CartoRun
+                        </span>
+                    </a>
                 </div>
 
+                <!-- Menu Desktop -->
                 <div class="hidden md:flex items-center space-x-4">
                     @php
                     $links = [
-                    'Accueil' => '/',
-                    'Contact' => '/contact',
-                    'À propos' => '/about',
-                    'Raids' => '/raids',
-                    'Clubs' => '/clubs'
+                        'Accueil' => '/',
+                        'Contact' => '/contact',
+                        'À propos' => '/about',
+                        'Raids' => '/raids',
+                        'Clubs' => '/clubs'
                     ];
-                    @endphp
-                    <?php
-
+                    
                     use Illuminate\Support\Facades\DB;
-
+                    
                     if (auth()->check() && DB::table('VIK_RESPONSABLE_CLUB')->where('UTI_ID', auth()->id())->exists()) {
                         $links['Créer un raid'] = '/raids/create';
-                    } ?>
+                    }
+                    @endphp
 
                     @foreach($links as $name => $url)
                     <div class="relative group h-full flex items-center">
@@ -50,7 +62,8 @@
                     @endforeach
                 </div>
 
-                <div class="flex items-center gap-6">
+                <!-- Boutons Connexion/Profil Desktop -->
+                <div class="hidden md:flex items-center gap-6">
                     @guest
                     <a href="/login" class="text-sm font-semibold text-black hover:text-green-600 transition-colors duration-300">
                         Se connecter
@@ -61,21 +74,63 @@
                     @endguest
 
                     @auth
-                        <a href="/profile" class="text-sm font-semibold text-black hover:text-green-600 transition-colors duration-300">
-                            Voir mon profil
-                        </a>
+                    <a href="/profile" class="text-sm font-semibold text-black hover:text-green-600 transition-colors duration-300">
+                        Voir mon profil
+                    </a>
 
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-black text-white text-sm font-bold hover:bg-green-600 transition-all duration-300 shadow-md active:scale-95 cursor-pointer">
-                                Se déconnecter
-                            </button>
-                        </form>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-black text-white text-sm font-bold hover:bg-green-600 transition-all duration-300 shadow-md active:scale-95 cursor-pointer">
+                            Se déconnecter
+                        </button>
+                    </form>
                     @endauth
                 </div>
             </div>
         </div>
-    </nav>
+
+        <!-- Menu Mobile -->
+        <div x-show="mobileMenuOpen" 
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 transform -translate-y-2"
+        x-transition:enter-end="opacity-100 transform translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 transform translate-y-0"
+        x-transition:leave-end="opacity-0 transform -translate-y-2"
+        class="md:hidden border-t border-gray-100"
+        @click.away="mobileMenuOpen = false">
+        <div class="px-2 pt-2 pb-3 space-y-1 bg-white shadow-lg">
+            @foreach($links as $name => $url)
+            <a href="{{ $url }}" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-green-600 hover:bg-gray-50 transition-colors">
+                {{ $name }}
+            </a>
+            @endforeach
+
+            <!-- Séparateur -->
+            <div class="border-t border-gray-200 my-2"></div>
+
+            @guest
+            <a href="/login" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-green-600 hover:bg-gray-50 transition-colors">
+                Se connecter
+            </a>
+            <a href="/register" class="block mx-3 my-2 px-3 py-2 rounded-xl text-base font-bold text-white bg-black hover:bg-green-600 transition-colors text-center shadow-md">
+                S'inscrire
+            </a>
+            @endguest
+
+            @auth
+            <a href="/profile" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-green-600 hover:bg-gray-50 transition-colors">
+                Voir mon profil
+            </a>
+            <form method="POST" action="{{ route('logout') }}" class="px-3">
+                @csrf
+                <button type="submit" class="w-full my-2 px-3 py-2 rounded-xl text-base font-bold text-white bg-black hover:bg-green-600 transition-colors shadow-md text-left">
+                    Se déconnecter
+                </button>
+            </form>
+            @endauth
+        </div>
+        </div>
 
     <main class="flex-1">
         @yield('content')
@@ -86,8 +141,9 @@
             <div class="flex flex-col md:flex-row justify-between items-start gap-12">
                 <!-- Logo and Social Media (Left) -->
                 <div class="flex flex-col items-start flex-shrink-0">
-                    <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-16 w-auto mb-6">
+                    <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity mb-6">
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-16 w-auto">
+                    </a>
                     <div class="flex gap-4">
                         <a href="#" class="text-gray-900 hover:text-green-600 transition-colors duration-300" aria-label="Instagram">
                             <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
@@ -199,7 +255,7 @@
                 opacity: 1;
             }
         }
-        
+
         .animate-slide-in {
             animation: slide-in 0.3s ease-out;
         }
@@ -214,7 +270,7 @@
                 notif.style.display = 'none';
             }, 300);
         }
-        
+
         setTimeout(() => {
             closeWelcomeNotif();
         }, 2500);
