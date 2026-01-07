@@ -15,7 +15,9 @@ class TeamController extends Controller
         $equipe = Equipe::where('RAI_ID', $rai_id)
                         ->where('COU_ID', $cou_id)
                         ->where('EQU_ID', $equ_id)
-                        ->with(['chef.coureur'])
+                        ->with(['chef.coureur.rpps' => function($query) use ($rai_id, $cou_id) {
+                            $query->where('RAI_ID', $rai_id)->where('COU_ID', $cou_id);
+                        }])
                         ->firstOrFail();
 
         // Charger les membres en excluant le chef d'équipe
@@ -23,7 +25,9 @@ class TeamController extends Controller
             $query->where('RAI_ID', $rai_id)
                   ->where('COU_ID', $cou_id)
                   ->where('UTI_ID', '!=', $equipe->UTI_ID) // Exclure le chef
-                  ->with('utilisateur.coureur');
+                  ->with(['utilisateur.coureur.rpps' => function($q) use ($rai_id, $cou_id) {
+                      $q->where('RAI_ID', $rai_id)->where('COU_ID', $cou_id);
+                  }]);
         }]);
 
         $isChef = $equipe->UTI_ID == Auth::id();
@@ -280,7 +284,10 @@ class TeamController extends Controller
     public function updateRpps(Request $request, $rai_id, $cou_id, $equ_id, $uti_id)
     {
         $request->validate([
-            'rpps' => 'nullable|string|max:32'
+            'rpps' => 'nullable|string|size:11|regex:/^[0-9]{11}$/'
+        ], [
+            'rpps.size' => 'Le numéro RPPS doit contenir exactement 11 chiffres.',
+            'rpps.regex' => 'Le numéro RPPS doit contenir uniquement des chiffres.'
         ]);
 
         $equipe = Equipe::where('RAI_ID', $rai_id)
@@ -327,11 +334,10 @@ class TeamController extends Controller
             return back()->withErrors(['rpps' => "Impossible de définir un RPPS pour un utilisateur ayant déjà une licence."]);
         }
 
-        // Mettre à jour ou créer l'enregistrement coureur avec le RPPS
-        $coureur = \App\Models\Coureur::updateOrCreate(
+        // Créer ou mettre à jour le coureur si nécessaire
+        $coureur = \App\Models\Coureur::firstOrCreate(
             ['UTI_ID' => $uti_id],
             [
-                'CRR_PPS' => $request->rpps ?: null,
                 'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
                 'UTI_EMAIL' => $user->UTI_EMAIL,
                 'UTI_NOM' => $user->UTI_NOM,
@@ -345,6 +351,26 @@ class TeamController extends Controller
                 'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
             ]
         );
+
+        // Mettre à jour ou créer le RPPS spécifique à cette course
+        if ($request->rpps) {
+            \App\Models\CoureurRpps::updateOrCreate(
+                [
+                    'UTI_ID' => $uti_id,
+                    'RAI_ID' => $rai_id,
+                    'COU_ID' => $cou_id
+                ],
+                [
+                    'CRP_NUMERO_RPPS' => $request->rpps
+                ]
+            );
+        } else {
+            // Si le RPPS est vide, on supprime l'enregistrement
+            \App\Models\CoureurRpps::where('UTI_ID', $uti_id)
+                                   ->where('RAI_ID', $rai_id)
+                                   ->where('COU_ID', $cou_id)
+                                   ->delete();
+        }
 
         return back()->with('success', "Le numéro Pass'compétition a été enregistré avec succès !");
     }

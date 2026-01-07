@@ -35,4 +35,16 @@ class Coureur extends Model
     public function club(){
         return $this->belongsTo(Club::class, 'CLU_ID', 'CLU_ID');
     }
+
+    // Relation avec CoureurRpps - RPPS par course
+    public function rpps()
+    {
+        return $this->hasMany(CoureurRpps::class, 'UTI_ID', 'UTI_ID');
+    }
+
+    // Méthode pour récupérer le RPPS d'une course spécifique
+    public function getRppsForCourse($courseId)
+    {
+        return $this->rpps()->where('COU_ID', $courseId)->first();
+    }
 }
