@@ -12,4 +12,10 @@ class CourseController extends Controller
         $courses = Course::all();
         return view('races.index', compact('courses'));
     }
+
+    public function indexRaceOfRaid($id)
+    {
+        $courses = Course::getRaceOfRaid($id);
+        return view('races.index', compact('courses'));
+    }
 }

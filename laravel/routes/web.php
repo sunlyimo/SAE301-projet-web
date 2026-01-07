@@ -72,6 +72,9 @@ Route::middleware('auth')->group(function () {
 Route::get('/races', [CourseController::class, 'index'])->name('races.index');
 
 Route::get('/raids',[RaidController::class, 'index']);
+Route::get('/raids/{id}',[CourseController::class, 'indexRaceOfRaid']);
+
+
 Route::get('/about', function () {
     return view('about.about');
 })->name('about');
