@@ -20,7 +20,7 @@ class Resultat extends Model
     ];
 
     /**
-     * Permet à Laravel de faire des UPDATE ou DELETE corrects
+     * UPDATE ou DELETE corrects
      */
     protected function setKeysForSaveQuery($query)
     {
@@ -30,7 +30,7 @@ class Resultat extends Model
     }
 
     /**
-     * Relation : Un résultat appartient à une Équipe
+     * Un résultat appartient à une Équipe
      */
     public function equipe()
     {
@@ -40,7 +40,7 @@ class Resultat extends Model
     }
 
     /**
-     * Relation : Un résultat appartient à une Course
+     * Un résultat appartient à une Course
      */
     public function course()
     {
