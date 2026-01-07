@@ -29,13 +29,11 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
     
-    Route::get('/raids',[RaidController::class, 'index']);
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
     Route::post('/raids', [RaidController::class, 'store'])->name('raids.store');
-    Route::get('/raids',[RaidController::class, 'index']);
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
     Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.edit');
@@ -73,6 +71,7 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/races', [CourseController::class, 'index'])->name('races.index');
 
+Route::get('/raids',[RaidController::class, 'index']);
 Route::get('/about', function () {
     return view('about.about');
 })->name('about');
