@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-md mx-auto mt-10 p-8 bg-white shadow-xl rounded-2xl border border-gray-100">
+<div class="max-w-md mx-auto mt-10 mb-10 p-8 bg-white shadow-xl rounded-2xl border border-gray-100">
     <h2 class="text-2xl font-bold mb-6 text-black">Connexion</h2>
     
     @if($errors->any())

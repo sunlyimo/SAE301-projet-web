@@ -30,9 +30,7 @@ class Equipe extends Model
 
     public function membres()
     {
-        return $this->hasMany(Appartient::class, 'EQU_ID', 'EQU_ID')
-                    ->where('RAI_ID', $this->getAttribute('RAI_ID'))
-                    ->where('COU_ID', $this->getAttribute('COU_ID'));
+        return $this->hasMany(Appartient::class, 'EQU_ID', 'EQU_ID');
     }
 
     public function getCourseAttribute()

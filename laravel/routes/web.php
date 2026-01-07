@@ -16,17 +16,10 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\WelcomeController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::get('/about', function () {
-    return view('about.about');
-})->name('about');
-
-Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
-Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+Route::get('/', [WelcomeController::class, 'index']);
 
 Route::get('/repair', function() {
     Artisan::call('view:clear');
@@ -97,9 +90,55 @@ Route::middleware('auth')->group(function () {
       }
     });
 
-    Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
-        Storage::disk($disk)->delete($file);
-        return Redirect::back();
-    })->name("logs.delete");
+Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
+  Storage::disk($disk)->delete($file);
+  return Redirect::back();
+}) -> name("logs.delete");
 
-});
+Route::resource('clubs', ClubController::class);
+
+// Route pour afficher la page de création réussie
+Route::get('/clubs/created/{club}/{token}', [ClubController::class, 'showCreated'])->name('clubs.created');
+
+// Routes pour l'inscription des responsables
+Route::get('/responsable/mailbox/{club_id}/{token}', [ClubController::class, 'showFakeMailbox'])->name('responsable.mailbox');
+Route::post('/responsable/quick-validate/{club_id}/{token}', [ClubController::class, 'quickValidateResponsable'])->name('responsable.quick-validate');
+Route::post('/responsable/refuse/{club_id}/{token}', [ClubController::class, 'refuseResponsable'])->name('responsable.refuse');
+Route::get('/responsable/quick-validated/{club}/{token}', [ClubController::class, 'showQuickValidated'])->name('responsable.quick-validated');
+Route::get('/responsable/register/{club_id}/{token}', [ClubController::class, 'showResponsableRegistration'])->name('responsable.register');
+Route::post('/responsable/complete-registration', [ClubController::class, 'completeResponsableRegistration'])->name('responsable.complete-registration');
+
+// Route pour la notification de refus à l'admin
+Route::get('/admin/refusal-notification/{club_id}/{token}', [ClubController::class, 'showAdminRefusalNotification'])->name('admin.refusal-notification');
+Route::post('/admin/recreate-club/{club_id}/{token}', [ClubController::class, 'recreateClub'])->name('admin.recreate-club');
+
+Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
+Route::get('/courses/{rai_id}/{cou_id}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+Route::get('/raids/{raid_id}/courses', [App\Http\Controllers\CourseController::class, 'coursesByRaid'])->name('raids.courses');
+Route::get('/raids', [RaidController::class, 'index'])->name('raids.index');
+
+Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
+Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+
+Route::get('/courses/{rai_id}/{cou_id}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+Route::patch('/courses/{rai_id}/{cou_id}', [CourseController::class, 'update'])->name('courses.update');
+
+Route::get('/courses/{rai_id}/{cou_id}/inscription', [InscriptionController::class, 'show'])->name('courses.inscription');
+Route::post('/courses/{rai_id}/{cou_id}/team/create', [InscriptionController::class, 'createTeam'])->name('courses.team.create');
+Route::post('/courses/{rai_id}/{cou_id}/team/join', [InscriptionController::class, 'joinTeam'])->name('courses.team.join');
+
+Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
+Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
+Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/toggle-chef', [TeamController::class, 'toggleChefParticipation'])->name('teams.toggle-chef');
+Route::get('/api/users/search', [TeamController::class, 'searchUsers'])->name('users.search');
+
+
+
+Route::get('/about', function () {
+    return view('about.about');
+})->name('about');
+
+Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+

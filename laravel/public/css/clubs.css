@@ -61,6 +61,14 @@
     background-color: #15803d;
 }
 
+.club-btn-blue {
+    background-color: #2563eb;
+}
+
+.club-btn-blue:hover {
+    background-color: #1d4ed8;
+}
+
 .club-card {
     background-color: #ffffff;
     overflow: hidden;
@@ -265,4 +273,35 @@
 .club-details-actions .club-delete-btn:hover {
     background-color: #b91c1c;
     border-color: #b91c1c;
+}
+
+/* Styles pour les champs responsable */
+.club-responsable-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.25rem;
+}
+
+.club-responsable-field {
+    flex: 1;
+}
+
+.club-responsable-field .club-input {
+    margin-top: 0;
+}
+
+.club-responsable-email {
+    margin-top: 0.5rem;
+}
+
+.club-responsable-email .club-input {
+    width: 100%;
+}
+
+.club-responsable-username {
+    margin-top: 0.5rem;
+}
+
+.club-responsable-username .club-input {
+    width: 100%;
 }
