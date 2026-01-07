@@ -94,8 +94,6 @@ Route::post('/courses/{rai_id}/{cou_id}/team/join', [InscriptionController::clas
 Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
 Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
 
-Route::get('/raids',[RaidController::class, 'index']);
-Route::get('/raids/{id}',[CourseController::class, 'indexRaceOfRaid']);
 
 
 Route::get('/about', function () {

@@ -48,6 +48,10 @@
                         {{ $raid->RAI_NOM }}
                     </h2>
 
+                    <p class="text-sm font-bold text-gray-800">
+                        {{ $raid->total_course }} courses
+                    </p>
+
                     {{-- Dates de l'événement --}}
                     <div class="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
                         <div class="flex items-center text-xs text-gray-500 uppercase font-bold mb-1">
@@ -55,7 +59,19 @@
                             Date de l'événement
                         </div>
                         <p class="text-sm font-bold text-gray-800">
-                            Du {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m') }} 
+                            Du {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m/Y') }} 
+                            au {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_FIN)->format('d/m/Y') }}
+                        </p>
+                    </div>
+
+                    {{-- Inscription --}}
+                    <div class="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                        <div class="flex items-center text-xs text-gray-500 uppercase font-bold mb-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Date d'inscription
+                        </div>
+                        <p class="text-sm font-bold text-gray-800">
+                            Du {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m/Y') }} 
                             au {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_FIN)->format('d/m/Y') }}
                         </p>
                     </div>

@@ -61,12 +61,6 @@ class CourseController extends Controller
         return view('courses.edit', compact('course', 'types'));
     }
 
-    public function indexRaceOfRaid($id)
-    {
-        $courses = Course::getRaceOfRaid($id);
-        return view('races.index', compact('courses'));
-    }
-
     /**
      * Mise à jour de la course.
      */
