@@ -14,14 +14,10 @@ class ResultatController extends Controller
     public function index($rai_id, $cou_id)
     {
         $course = Course::where('RAI_ID', $rai_id)->where('COU_ID', $cou_id)->firstOrFail();
-        
-        // On ne charge QUE le chef. Les membres seront chargés par la vue via l'attribut.
         $equipes = Equipe::where('RAI_ID', $rai_id)
                         ->where('COU_ID', $cou_id)
                         ->with('chef') 
                         ->get();
-
-        // Tri par temps (les null à la fin)
         $equipes = $equipes->sortBy(function($equipe) {
              return $equipe->resultat_cache->RES_TEMPS ?? '99:99:99';
         });
