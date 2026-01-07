@@ -20,7 +20,7 @@
             <label class="block text-sm font-medium text-gray-700">Mot de passe</label>
             <input type="password" name="UTI_MOT_DE_PASSE" required class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 border-gray-300">
         </div>
-        <button type="submit" class="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-all">
+        <button type="submit" class="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-all cursor-pointer">
             Se connecter
         </button>
     </form>
