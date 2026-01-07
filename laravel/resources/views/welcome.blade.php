@@ -4,10 +4,9 @@
 
 @section('content')
 
-<div class="relative" style="background-image: url('/images/foret.png'); background-size: cover; background-position: center; min-height: 400px;">
+<div class="relative min-h-[400px] overflow-hidden">
     
-    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-    
+    <img src="{{ asset('images/foret.jpg') }}" alt="Forêt" class="absolute inset-0 w-full h-full object-cover">
     
     <div class="relative z-10 flex items-center justify-center h-full min-h-[400px]">
         <h1 class="text-6xl md:text-7xl lg:text-8xl font-bold text-white">CartoRun</h1>
