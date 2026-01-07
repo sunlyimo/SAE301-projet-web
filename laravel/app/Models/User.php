@@ -121,4 +121,25 @@ class User extends Authenticatable
             ->where('CLU_ID', $club->CLU_ID)
             ->exists();
     }
+
+    public function resultats()
+    {
+
+        return $this->hasManyThrough(
+            Resultat::class, 
+            Appartient::class,
+            'UTI_ID',
+            'EQU_ID',
+            'UTI_ID',
+            'EQU_ID'
+        );
+    }
+
+    /**
+     * Relation avec la table Coureur (pour accéder au CRR_PPS)
+     */
+    public function coureur()
+    {
+        return $this->hasOne(Coureur::class, 'UTI_ID', 'UTI_ID');
+    }
 }

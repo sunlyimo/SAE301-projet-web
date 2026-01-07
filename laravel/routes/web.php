@@ -17,7 +17,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\WelcomeController;
-
+use App\Http\Controllers\ResultatController;
 
 Route::get('/', [WelcomeController::class, 'index']);
 
@@ -64,6 +64,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
     Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
+
+    Route::get('/courses/{rai_id}/{cou_id}/resultats', [ResultatController::class, 'index'])->name('resultats.index');
+    Route::post('/courses/{rai_id}/{cou_id}/resultats', [ResultatController::class, 'store'])->name('resultats.store');
 
     Route::get('/logs/{file}', function (string $file) {
       if ($file === 'laravel') {
@@ -147,7 +150,9 @@ Route::post('/courses/{rai_id}/{cou_id}/team/join', [InscriptionController::clas
 
 Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
 Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
+Route::delete('/teams/{rai_id}/{cou_id}/{equ_id}/remove/{uti_id}', [TeamController::class, 'removeMember'])->name('teams.remove');
 Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/toggle-chef', [TeamController::class, 'toggleChefParticipation'])->name('teams.toggle-chef');
+Route::patch('/teams/{rai_id}/{cou_id}/{equ_id}/rpps/{uti_id}', [TeamController::class, 'updateRpps'])->name('teams.update-rpps');
 Route::get('/api/users/search', [TeamController::class, 'searchUsers'])->name('users.search');
 
 
