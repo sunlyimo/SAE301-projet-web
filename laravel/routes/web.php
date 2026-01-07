@@ -29,7 +29,7 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
-    
+
     Route::get('/raids',[RaidController::class, 'index']);
 });
 
@@ -39,14 +39,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/raids',[RaidController::class, 'index']);
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
-    Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::patch('/profile', [UserController::class, 'update'])->name('user.update');
     Route::get('/logs/{file}', function (string $file) {
       if ($file === 'laravel') {
         $content = Storage::disk('laravelLog')->get('laravel.log');
         return view('log', [
-            'file'=>'laravel.log', 
-            'content'=>$content, 
+            'file'=>'laravel.log',
+            'content'=>$content,
             'route'=>route('logs.delete', ['disk'=>'laravelLog', 'file'=>'laravel.log'])
             ]);
       } else {
@@ -55,8 +54,8 @@ Route::middleware('auth')->group(function () {
           Log::debug("exists : OK");
           $content = Storage::disk('log')->get("$file.log");
           return view('log', [
-            'file'=>"$file.log", 
-            'content'=>$content, 
+            'file'=>"$file.log",
+            'content'=>$content,
             'route'=>null
             ]);
         } else {
