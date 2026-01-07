@@ -69,6 +69,24 @@ class User extends Authenticatable
         return $this->UTI_MOT_DE_PASSE;
     }
 
+    public function clubs()
+    {
+    return $this->belongsToMany(
+        Club::class,
+        'vik_responsable_club',
+        'UTI_ID',
+        'CLU_ID'
+    );
+    }
+
+    /**
+     * Relation avec le club via la table vik_coureur
+     */
+    public function clubAsCoureur()
+    {
+        return $this->hasOne(Coureur::class, 'UTI_ID', 'UTI_ID');
+    }
+
     /**
      * Vérifie si l'utilisateur est un administrateur
      */
