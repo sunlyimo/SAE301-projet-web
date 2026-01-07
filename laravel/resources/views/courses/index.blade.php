@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto my-12 p-6">
     
-    {{-- Gestion des notifications --}}
+    {{-- 1. Gestion des notifications --}}
     <div class="flex justify-between items-center mb-10">
         <div class="w-full max-w-2xl">
             @if(session('success'))
@@ -18,28 +18,55 @@
         </div>
     </div>
 
-    {{-- En-tête de page --}}
+    {{-- 2. En-tête de page (Dynamique selon si on vient d'un Raid ou non) --}}
     <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-200 pb-6">
         <div>
-            <h2 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Liste des Courses</h2>
-            <p class="text-gray-500 mt-2">Découvrez les défis à venir et inscrivez-vous.</p>
+            @if(isset($raid))
+                {{-- Affichage des courses d'un Raid--}}
+                <div class="flex items-center gap-3 mb-2">
+                    <a href="{{ route('raids.index') }}" class="text-gray-400 hover:text-black transition-colors flex items-center gap-1 font-bold text-sm group">
+                        <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Retour aux Raids
+                    </a>
+                    <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded uppercase">
+                        Raid #{{ $raid->RAI_ID }}
+                    </span>
+                </div>
+                <h2 class="text-4xl font-black text-gray-800 tracking-tight uppercase leading-none">
+                    Courses du {{ $raid->RAI_NOM }}
+                </h2>
+                <p class="text-gray-500 mt-2">Voici les épreuves disponibles pour ce raid.</p>
+            @else
+                <h2 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Aucune Course disponible</h2>
+            @endif
         </div>
 
         {{-- Bouton Créer (Responsables uniquement) --}}
         @if(DB::table('vik_responsable_course')->where('UTI_ID', Auth::id())->exists())
             <a href="{{ route('courses.create') }}" class="mt-4 md:mt-0 inline-flex items-center px-6 py-4 bg-black text-white rounded-xl font-bold hover:bg-green-600 transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                CRÉER UNE COURSE
+                AJOUTER UNE COURSE
             </a>
         @endif
     </div>
 
-    {{-- Grille des courses --}}
+    {{-- Message si aucune course --}}
+    @if($courses->isEmpty())
+        <div class="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+            <p class="text-2xl text-gray-400 font-bold mb-4">Aucune course n'est encore configurée pour ce raid.</p>
+            @if(DB::table('vik_responsable_course')->where('UTI_ID', Auth::id())->exists())
+                <p class="text-gray-500">Utilisez le bouton "Ajouter une course" ci-dessus pour commencer.</p>
+            @else
+                <a href="{{ route('raids.index') }}" class="text-black underline font-bold hover:text-green-600">Retourner à la liste des raids</a>
+            @endif
+        </div>
+    @endif
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         @foreach($courses as $course)
             <div class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-300 flex flex-col">
                 
-                {{-- 1. En-tête de la carte (Type, ID, Nom, Orga) --}}
+                {{-- En-tête de la carte --}}
                 <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex gap-2">
@@ -69,7 +96,7 @@
 
                 <div class="p-6 space-y-6 flex-grow">
                     
-                    {{-- 2. Dates et Lieu --}}
+                    {{-- Dates et Lieu --}}
                     <div class="flex items-center justify-between text-sm text-gray-700 bg-blue-50 p-4 rounded-xl border border-blue-100">
                         <div class="flex items-center">
                             <span class="text-2xl mr-3">📍</span>
@@ -85,10 +112,10 @@
                         </div>
                     </div>
 
-                    {{-- 3. Grille d'infos détaillées --}}
+                    {{-- Grille infos --}}
                     <div class="grid grid-cols-2 gap-4">
                         
-                        {{-- Colonne Gauche : Tarifs --}}
+                        {{-- Tarifs --}}
                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
                             <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-3 border-b pb-1">💰 Tarification</h4>
                             <ul class="space-y-2 text-sm">
@@ -113,7 +140,7 @@
                             </ul>
                         </div>
 
-                        {{-- Colonne Droite : Conditions d'âge --}}
+                        {{-- Conditions d'âge --}}
                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
                             <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-3 border-b pb-1">🔞 Conditions d'âge</h4>
                             <ul class="space-y-2 text-sm">
@@ -135,9 +162,8 @@
                         </div>
                     </div>
 
-                    {{-- 4. Logistique (Participants et Équipes) --}}
+                    {{-- Logistique --}}
                     <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
-                         
                         <h4 class="text-xs font-black text-yellow-600 uppercase tracking-widest mb-3 border-b border-yellow-200 pb-1">⚡ Format & Capacité</h4>
                         <div class="grid grid-cols-3 gap-2 text-center divide-x divide-yellow-200">
                             <div>
@@ -160,7 +186,7 @@
 
                 </div>
 
-                {{-- 5. Pied de carte (Actions) --}}
+                {{-- Pied de carte --}}
                 <div class="p-6 pt-0 mt-auto">
                     @if(DB::table('vik_responsable_course')->where('UTI_ID', Auth::id())->exists())
                         <div class="grid grid-cols-5 gap-3">

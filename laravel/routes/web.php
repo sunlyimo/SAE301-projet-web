@@ -78,6 +78,8 @@ Route::resource('clubs', ClubController::class);
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
 Route::get('/courses/{rai_id}/{cou_id}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+Route::get('/raids/{raid_id}/courses', [App\Http\Controllers\CourseController::class, 'coursesByRaid'])->name('raids.courses');
+Route::get('/raids', [RaidController::class, 'index'])->name('raids.index');
 
 Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
 Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
