@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\DB;
 class RaidController extends Controller
 {
     public function index() {
-        return view('raid',['raids' => Raid::getFuturRaid()]);
+        return view('raid')
+        ->with('raids',Raid::getFuturRaid());
     }
 
     public function create() /* affichage du formulaire */
