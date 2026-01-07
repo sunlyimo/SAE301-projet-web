@@ -1,9 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+
+@php
+    $userId = Auth::id();
+    $isRaidManager = DB::table('vik_responsable_raid')->where('UTI_ID', $userId)->exists();
+    $isCourseManager = DB::table('vik_responsable_course')->where('UTI_ID', $userId)->exists();
+    $canManage = $isRaidManager || $isCourseManager;
+@endphp
+
 <div class="max-w-7xl mx-auto my-12 p-6">
-    
-    {{-- 1. Gestion des notifications --}}
     <div class="flex justify-between items-center mb-10">
         <div class="w-full max-w-2xl">
             @if(session('success'))
@@ -18,7 +24,6 @@
         </div>
     </div>
 
-    {{-- 2. En-tête de page (Dynamique selon si on vient d'un Raid ou non) --}}
     <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-200 pb-6">
         <div>
             @if(isset($raid))
@@ -41,8 +46,7 @@
             @endif
         </div>
 
-        {{-- Bouton Créer (Responsables uniquement) --}}
-        @if(DB::table('vik_responsable_course')->where('UTI_ID', Auth::id())->exists())
+        @if($isRaidManager)
             <a href="{{ route('courses.create') }}" class="mt-4 md:mt-0 inline-flex items-center px-6 py-4 bg-black text-white rounded-xl font-bold hover:bg-green-600 transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 AJOUTER UNE COURSE
@@ -50,12 +54,14 @@
         @endif
     </div>
 
-    {{-- Message si aucune course --}}
     @if($courses->isEmpty())
         <div class="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
             <p class="text-2xl text-gray-400 font-bold mb-4">Aucune course n'est encore configurée pour ce raid.</p>
-            @if(DB::table('vik_responsable_course')->where('UTI_ID', Auth::id())->exists())
+            
+            @if($isRaidManager)
                 <p class="text-gray-500">Utilisez le bouton "Ajouter une course" ci-dessus pour commencer.</p>
+            @elseif($isCourseManager)
+                 <p class="text-gray-500">Aucune course disponible. Seul un Responsable de Raid peut en créer une.</p>
             @else
                 <a href="{{ route('raids.index') }}" class="text-black underline font-bold hover:text-green-600">Retourner à la liste des raids</a>
             @endif
@@ -102,7 +108,6 @@
 
                 <div class="p-6 space-y-6 flex-grow">
                     
-                    {{-- Dates et Lieu --}}
                     <div class="flex items-center justify-between text-sm text-gray-700 bg-blue-50 p-4 rounded-xl border border-blue-100">
                         <div class="flex items-center">
                             <span class="text-2xl mr-3"></span>
@@ -118,7 +123,6 @@
                         </div>
                     </div>
 
-                    {{-- Grille infos --}}
                     <div class="grid grid-cols-2 gap-4">
                         
                         {{-- Tarifs --}}
@@ -205,19 +209,19 @@
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     </a>
 
-                @elseif(DB::table('vik_responsable_course')->where('UTI_ID', Auth::id())->exists())
-                    {{-- Responsable --}}
+                @elseif($canManage)
+                    {{-- Responsable (Raid ou Course) --}}
                     <div class="flex gap-2">
                         <a href="{{ route('courses.inscription', [$course->RAI_ID, $course->COU_ID]) }}" class="flex-1 bg-black text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-lg flex justify-center items-center group text-sm">
                             <span>S'inscrire</span>
                         </a>
+                        {{-- Le bouton modifier est visible pour les deux rôles --}}
                         <a href="{{ route('courses.edit', [$course->RAI_ID, $course->COU_ID]) }}" class="w-12 bg-gray-100 text-gray-600 rounded-xl flex items-center justify-center hover:bg-yellow-400 hover:text-white transition-all shadow-inner border border-gray-200" title="Modifier">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         </a>
                     </div>
 
                 @else
-                    {{-- Non inscrit --}}
                     <a href="{{ route('courses.inscription', [$course->RAI_ID, $course->COU_ID]) }}" class="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-lg flex justify-center items-center group text-sm">
                         <span>S'inscrire (Créer une équipe)</span>
                         <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
