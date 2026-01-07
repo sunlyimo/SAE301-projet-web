@@ -91,6 +91,15 @@ class CourseController extends Controller
         return redirect()->route('courses.index')->with('success', 'Course supprimée.');
     }
 
+    public function coursesByRaid($raid_id)
+    {
+        $raid = \App\Models\Raid::findOrFail($raid_id);
+        $courses = Course::where('RAI_ID', $raid_id)
+                        ->with(['type', 'responsable'])
+                        ->get();
+        return view('courses.index', compact('courses', 'raid'));
+    }
+
     /**
      * Méthode de validation centralisée.
      *

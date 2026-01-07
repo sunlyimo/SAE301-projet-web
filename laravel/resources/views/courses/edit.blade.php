@@ -131,7 +131,13 @@
             <h2 class="text-xl font-bold border-b pb-2 text-yellow-600 uppercase tracking-widest text-sm">Capacité & Équipes</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div class="space-y-1">
-                    <label class="text-xs font-bold text-gray-400 uppercase">Part. Max</label>
+                    <label class="text-xs font-bold text-gray-400 uppercase">Participants Min</label>
+                    <input type="number" name="COU_PARTICIPANT_MIN" value="{{ old('COU_PARTICIPANT_MIN', $course->COU_PARTICIPANT_MIN) }}" 
+                        class="w-full p-4 bg-gray-50 rounded-2xl border-2 font-bold focus:ring-0 outline-none @error('COU_PARTICIPANT_MIN') border-red-500 @else border-transparent focus:border-yellow-500 @enderror">
+                    @error('COU_PARTICIPANT_MIN') <p class="text-red-500 text-xs font-bold mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-400 uppercase">Participants Max</label>
                     <input type="number" name="COU_PARTICIPANT_MAX" value="{{ old('COU_PARTICIPANT_MAX', $course->COU_PARTICIPANT_MAX) }}" 
                         class="w-full p-4 bg-gray-50 rounded-2xl border-2 font-bold focus:ring-0 outline-none @error('COU_PARTICIPANT_MAX') border-red-500 @else border-transparent focus:border-yellow-500 @enderror">
                     @error('COU_PARTICIPANT_MAX') <p class="text-red-500 text-xs font-bold mt-1">{{ $message }}</p> @enderror
