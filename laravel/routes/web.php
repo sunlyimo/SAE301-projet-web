@@ -36,6 +36,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
     Route::post('/raids', [RaidController::class, 'store'])->name('raids.store');
+    Route::get('/raids',[RaidController::class, 'index']);
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
     Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.edit');
@@ -73,8 +74,15 @@ Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
 
 Route::resource('clubs', ClubController::class);
 
-Route::get('/races', [CourseController::class, 'index'])->name('races.index');
+Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
+Route::get('/courses/{rai_id}/{cou_id}/edit', [CourseController::class, 'edit'])->name('courses.edit');
 
+Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
+Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+
+Route::get('/courses/{rai_id}/{cou_id}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+Route::patch('/courses/{rai_id}/{cou_id}', [CourseController::class, 'update'])->name('courses.update');
 Route::get('/about', function () {
     return view('about.about');
 })->name('about');
