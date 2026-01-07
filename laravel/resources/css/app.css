@@ -9,3 +9,13 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+h1 {
+    @apply font-extrabold;
+    font-size: 3em;
+}
+
+h2 {
+    @apply font-extrabold;
+    font-size: 2em;
+}
