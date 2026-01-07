@@ -1,20 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="h-14"></div>
-    <div class="max-w-6xl mx-auto px-6 mt-20 mb-16">
+<div class="h-14"></div>
+<div class="max-w-6xl mx-auto px-6 mt-20 mb-16">
 
-        @if(session('success'))
-            <div id="success-message" class="fixed top-10 right-10 z-50 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl animate-fade-in">
-                {{ session('success') }}
-            </div>
-            <script>
-                setTimeout(() => {
-                    const msg = document.getElementById('success-message');
-                    if(msg) { msg.style.opacity = '0'; setTimeout(() => msg.remove(), 500); }
-                }, 5000);
-            </script>
-        @endif
+    @if(session('success'))
+        <div id="success-message" class="fixed top-10 right-10 z-50 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl animate-fade-in">
+            {{ session('success') }}
+        </div>
+        <script>
+            setTimeout(() => {
+                const msg = document.getElementById('success-message');
+                if(msg) {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.remove(), 500);
+                }
+            }, 5000);
+        </script>
+    @endif
 
         @php
             $licenceActive = old('UTI_LICENCE') || $user->UTI_LICENCE ? true : false;
@@ -26,7 +29,6 @@
             @method('PATCH')
 
             <div class="flex items-center gap-6 mb-16" x-data="{ editing: false, name: '{{ old('UTI_NOM_UTILISATEUR', $user->UTI_NOM_UTILISATEUR) }}' }">
-                {{-- Avatar --}}
                 <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-200 shadow-inner flex-shrink-0">
                     <img src="https://ui-avatars.com/api/?name={{ $user->UTI_NOM_UTILISATEUR }}&size=128&background=random" alt="Avatar">
                 </div>
@@ -34,7 +36,6 @@
                 {{-- Nom d'utilisateur --}}
                 <div class="flex flex-col">
                     <div class="flex items-center gap-2">
-                        {{-- Titre / Input toggle --}}
                         <template x-if="!editing">
                             <h1 class="text-4xl font-black text-gray-900 tracking-tight" x-text="name"></h1>
                         </template>
@@ -46,7 +47,6 @@
                                    placeholder="Nom d'utilisateur">
                         </template>
 
-                        {{-- Bouton crayon / valider --}}
                         <button type="button" @click="editing = !editing" class="text-black hover:text-green-600 transition-colors p-1">
                             <svg x-show="!editing" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -59,7 +59,6 @@
                         </button>
                     </div>
 
-                    {{-- Message d'erreur --}}
                     @error('UTI_NOM_UTILISATEUR')
                     <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                     @enderror
@@ -422,16 +421,127 @@
                 </div>
             </div>
 
-
-
-
-
             <div class="mt-16 flex justify-center">
                 <button type="submit" class="bg-black font-bold text-white px-16 py-4 rounded-xl text-lg shadow-xl hover:bg-green-600 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 uppercase tracking-tighter">
                     Enregistrer les modifications
                 </button>
             </div>
         </form>
+
+        <div class="mt-16 flex justify-center">
+            <button type="submit" class="bg-black font-bold text-white px-16 py-4 rounded-xl text-lg shadow-xl hover:bg-green-600 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 uppercase tracking-tighter">
+                Enregistrer les modifications
+            </button>
+        </div>
+    </form>
+
+    <div class="mt-24 border-t border-gray-100 pt-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
+            Historique des Courses
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            @forelse($uniqueCourses as $course)
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-1">
+                    {{-- Badge Type --}}
+                    <div class="mb-3">
+                         <span class="text-[10px] font-bold uppercase text-gray-500">
+                            {{ $course->type->TYP_LIBELLE ?? 'Course' }}
+                        </span>
+                    </div>
+
+                    {{-- Nom & Raid --}}
+                    <h3 class="font-black text-gray-900 uppercase text-lg leading-tight truncate" title="{{ $course->COU_NOM }}">
+                        {{ $course->COU_NOM }}
+                    </h3>
+                    <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1 mb-4 truncate">
+                        {{ $course->raid->RAI_NOM }}
+                    </p>
+
+                    {{-- Infos Minimales --}}
+                    <div class="flex justify-between items-end border-t border-gray-100 pt-3">
+                        <div class="text-xs text-gray-500 font-bold">
+                             <span class="block text-[10px] uppercase text-gray-300">Date</span>
+                             {{ \Carbon\Carbon::parse($course->COU_DATE_DEBUT)->format('d/m/Y') }}
+                             <span class="block text-[10px] uppercase text-gray-300">Lieu</span>
+                             {{ Str::limit($course->COU_LIEU, 50) }}
+                        </div>
+                    </div>
+                    <div class="mt-auto mb-4 py-2">
+                        <a href="{{ route('raids.courses', $course->RAI_ID) }}"
+                           class="block w-full text-center bg-gray-100 text-gray-800 py-2 rounded-lg font-bold text-xs hover:bg-black hover:text-white transition-colors uppercase tracking-wide">
+                            Voir la course
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full text-center py-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                    <p class="text-gray-400 font-bold text-sm italic">Aucune course terminée.</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+    <div class="mt-16 border-t border-gray-100 pt-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
+            Mes Équipes
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            @forelse($allTeams as $equipe)
+                @php
+                    $isChef = ($equipe->UTI_ID == Auth::id());
+                @endphp
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all group flex flex-col h-full">
+
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200">
+                            @if($equipe->EQU_IMAGE)
+                                <img src="{{ asset('storage/' . $equipe->EQU_IMAGE) }}" class="w-full h-full object-cover">
+                            @else
+                                <span class="text-xl">🚩</span>
+                            @endif
+                        </div>
+                        <div class="overflow-hidden">
+                            <h3 class="font-black text-gray-900 uppercase text-md truncate" title="{{ $equipe->EQU_NOM }}">
+                                {{ $equipe->EQU_NOM }}
+                            </h3>
+                            @if($isChef)
+                                <span class="text-[10px] font-bold uppercase text-yellow-600 bg-yellow-50 px-1 rounded">👑 Chef d'équipe</span>
+                            @else
+                                <span class="text-[10px] font-bold uppercase text-blue-600 bg-blue-50 px-1 rounded">👤 Membre</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="mb-4 flex-grow">
+                        <p class="text-xs text-gray-400 uppercase font-bold">Participation à :</p>
+                        <p class="text-sm font-bold text-gray-800 truncate" title="{{ $equipe->course->COU_NOM }}">
+                            {{ $equipe->course->COU_NOM }}
+                        </p>
+                    </div>
+
+                    <div class="mt-auto grid grid-cols-2 gap-2">
+
+                        <a href="{{ route('raids.courses', $equipe->course->RAI_ID) }}"
+                        class="flex items-center justify-center bg-gray-100 text-gray-600 py-2 rounded-lg font-bold text-xs hover:bg-gray-200 transition-colors uppercase tracking-wide"
+                        title="Voir la fiche de la course">
+                            Course
+                        </a>
+
+                        <a href="{{ route('teams.show', [$equipe->RAI_ID, $equipe->COU_ID, $equipe->EQU_ID]) }}"
+                        class="flex items-center justify-center bg-black text-white py-2 rounded-lg font-bold text-xs hover:bg-green-600 transition-colors uppercase tracking-wide">
+                            Équipe
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full text-center py-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                    <p class="text-gray-400 font-bold text-sm italic">Aucune équipe rejointe.</p>
+                </div>
+            @endforelse
+        </div>
     </div>
 
     <script>

@@ -2,19 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Coureur extends Model
+class ResponsableClub extends Model
 {
-    use HasFactory;
-    protected $table = 'vik_coureur';
+    protected $table = 'vik_responsable_club';
     protected $primaryKey = 'UTI_ID';
     public $timestamps = false;
+
     protected $fillable = [
         'UTI_ID',
         'CLU_ID',
-        'CRR_PPS',
         'UTI_EMAIL',
         'UTI_NOM',
         'UTI_PRENOM',
@@ -28,11 +26,8 @@ class Coureur extends Model
         'UTI_MOT_DE_PASSE',
     ];
 
-    public function user() {
-        return $this->belongsTo(User::class, 'UTI_ID', 'UTI_ID');
-    }
-
-    public function club(){
+    public function club()
+    {
         return $this->belongsTo(Club::class, 'CLU_ID', 'CLU_ID');
     }
 }

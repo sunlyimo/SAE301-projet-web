@@ -1,8 +1,17 @@
 @extends('layouts.app')
+<?php
+use Illuminate\Support\Facades\DB;
 
+if (auth()->check() && DB::table('VIK_RESPONSABLE_CLUB')->where('UTI_ID', auth()->id())->exists()) {
+    
+}
+else {
+    //abort(403, 'Accès refusé');
+}
+?>
 @section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-8">
@@ -21,13 +30,13 @@
 
                 <div class="card-body p-4 p-md-5">
                     @if($errors->any())
-                        <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
-                            <ul class="mb-0">
-                                @foreach($errors->all() as $error)
-                                    <li><i class="fas fa-triangle-exclamation me-2"></i>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $error)
+                            <li><i class="fas fa-triangle-exclamation me-2"></i>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                     @endif
 
                     <form action="{{ route('raids.store') }}" method="POST" enctype="multipart/form-data">
@@ -40,23 +49,15 @@
 
                         <div class="form-floating mb-4">
                             <input type="text" name="RAI_NOM" id="RAI_NOM" value="{{ old('RAI_NOM') }}"
-                                   class="form-control @error('RAI_NOM') is-invalid @enderror" placeholder="Nom du raid">
+                                class="form-control @error('RAI_NOM') is-invalid @enderror" placeholder="Nom du raid">
                             <label for="RAI_NOM">Nom de l'événement</label>
                             @error('RAI_NOM') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" name="RAI_LIEU" id="RAI_LIEU" value="{{ old('RAI_LIEU') }}" class="form-control" placeholder="Lieu">
-                                    <label for="RAI_LIEU"><i class="fas fa-map-marker-alt me-1"></i> Lieu de départ</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="url" name="RAI_WEB" id="RAI_WEB" value="{{ old('RAI_WEB') }}" class="form-control" placeholder="Site web">
-                                    <label for="RAI_WEB"><i class="fas fa-globe me-1"></i> Site internet</label>
-                                </div>
+                        <div class="g-3 mb-4">
+                            <div class="form-floating">
+                                <input type="text" name="RAI_LIEU" id="RAI_LIEU" value="{{ old('RAI_LIEU') }}" class="form-control" placeholder="Lieu">
+                                <label for="RAI_LIEU"><i class="fas fa-map-marker-alt me-1"></i> Lieu de départ</label>
                             </div>
                         </div>
 
@@ -105,7 +106,7 @@
                                     <select name="CLU_ID" id="CLU_ID" class="form-select">
                                         <option value="">Choisir un club...</option>
                                         @foreach($clubs ?? [] as $id => $name)
-                                            <option value="{{ $id }}" {{ old('CLU_ID') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                        <option value="{{ $id }}" {{ old('CLU_ID') == $id ? 'selected' : '' }}>{{ $name }}</option>
                                         @endforeach
                                     </select>
                                     <label for="CLU_ID">Club Organisateur</label>
@@ -113,13 +114,14 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <select name="UTI_ID" id="UTI_ID" class="form-select">
-                                        <option value="">Choisir un responsable...</option>
-                                        @foreach($responsables ?? [] as $id => $name)
-                                            <option value="{{ $id }}" {{ old('UTI_ID') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                    <input list="responsable_list" id="responsable_input" class="form-control" placeholder="Rechercher un membre..." autocomplete="off" value="{{ old('responsable_name') }}">
+                                    <datalist id="responsable_list">
+                                        @foreach($responsables ?? [] as $resp)
+                                            <option value="{{ $resp->name }}"></option>
                                         @endforeach
-                                    </select>
-                                    <label for="UTI_ID">Responsable</label>
+                                    </datalist>
+                                    <input type="hidden" name="UTI_ID" id="UTI_ID" value="{{ old('UTI_ID') }}">
+                                    <label for="responsable_input">Responsable</label>
                                 </div>
                             </div>
                         </div>
@@ -132,17 +134,16 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="email" name="RAI_CONTACT" id="RAI_CONTACT" value="{{ old('RAI_CONTACT') }}" 
-                                           class="form-control @error('RAI_CONTACT') is-invalid @enderror" placeholder="Email">
+                                    <input type="email" name="RAI_CONTACT" id="RAI_CONTACT" value="{{ old('RAI_CONTACT') }}"
+                                        class="form-control @error('RAI_CONTACT') is-invalid @enderror" readonly placeholder="Email">
                                     <label for="RAI_CONTACT"><i class="fas fa-envelope me-1"></i> Email</label>
                                     @error('RAI_CONTACT') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="tel" name="RAI_TELEPHONE" id="RAI_TELEPHONE" value="{{ old('RAI_TELEPHONE') }}" 
-                                           class="form-control" placeholder="Téléphone">
-                                    <label for="RAI_TELEPHONE"><i class="fas fa-phone me-1"></i> Téléphone (optionnel)</label>
+                                    <input type="url" name="RAI_WEB" id="RAI_WEB" value="{{ old('RAI_WEB') }}" class="form-control" placeholder="Site web">
+                                    <label for="RAI_WEB"><i class="fas fa-globe me-1"></i> Site internet (facultatif)</label>
                                 </div>
                             </div>
                         </div>
@@ -172,4 +173,45 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('responsable_input');
+    const hidden = document.getElementById('UTI_ID');
+    const contactEmail = document.getElementById('RAI_CONTACT');
+    const contactPhone = document.getElementById('RAI_TELEPHONE');
+
+    if (!input || !hidden) return;
+
+    const mapping = {};
+    @foreach($responsables ?? [] as $resp)
+        mapping["{!! addslashes($resp->name) !!}"] = { id: "{{ $resp->UTI_ID }}", email: "{{ $resp->UTI_EMAIL ?? '' }}", phone: "{{ $resp->UTI_TELEPHONE ?? '' }}" };
+    @endforeach
+
+    function applyContactForName(name) {
+        const entry = mapping[name];
+        if (entry) {
+            hidden.value = entry.id;
+            if (contactEmail) contactEmail.value = entry.email || '';
+            if (contactPhone) contactPhone.value = entry.phone || '';
+        } else {
+            hidden.value = '';
+        }
+    }
+
+    input.addEventListener('change', function () {
+        applyContactForName(this.value.trim());
+    });
+
+    // clear hidden if user clears input
+    input.addEventListener('input', function () {
+        if (!this.value.trim()) {
+            hidden.value = '';
+            if (contactEmail) contactEmail.value = '';
+            if (contactPhone) contactPhone.value = '';
+        }
+    });
+});
+</script>
+
 @endsection

@@ -9,7 +9,7 @@
     <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-200 pb-6">
         <div>
             <h1 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Les Raids</h1>
-            <p class="text-gray-500 mt-2">Sélectionnez un événement pour voir les épreuves.</p>
+            <p class="text-gray-500 mt-2">Tous les raids à venir.</p>
         </div>
         
         {{-- Bouton Créer (si admin) --}}
@@ -48,6 +48,14 @@
                         {{ $raid->RAI_NOM }}
                     </h2>
 
+                    <p class="text-sm font-bold text-gray-800">
+                        {{ $raid->total_course }} courses
+                    </p>
+                    <p class="text-sm text-gray-800">
+                            {{ $raid->RAI_LIEU }}
+                    </p>
+
+
                     {{-- Dates de l'événement --}}
                     <div class="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
                         <div class="flex items-center text-xs text-gray-500 uppercase font-bold mb-1">
@@ -55,8 +63,20 @@
                             Date de l'événement
                         </div>
                         <p class="text-sm font-bold text-gray-800">
-                            Du {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m') }} 
+                            Du {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m/Y') }} 
                             au {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_FIN)->format('d/m/Y') }}
+                        </p>
+                    </div>
+
+                    {{-- Inscription --}}
+                    <div class="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                        <div class="flex items-center text-xs text-gray-500 uppercase font-bold mb-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Date d'inscription
+                        </div>
+                        <p class="text-sm font-bold text-gray-800">
+                            Du {{ \Carbon\Carbon::parse($raid->RAI_INSCRI_DATE_DEBUT)->format('d/m/Y') }} 
+                            au {{ \Carbon\Carbon::parse($raid->RAI_INSCRI_DATE_FIN)->format('d/m/Y') }}
                         </p>
                     </div>
                 </div>

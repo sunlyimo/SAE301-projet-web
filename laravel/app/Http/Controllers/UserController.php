@@ -7,14 +7,47 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Equipe;
+use App\Models\Appartient;
 
 class UserController extends Controller
 {
-    public function profile()
+    public function show()
     {
-        return view('user.profile', ['user' => Auth::user(), 'clubs' => Club::all()]);
-    }
 
+        $user = Auth::user();
+        $clubs = Club::all();
+        $userId = $user->UTI_ID;
+        $equipesChef = Equipe::where('UTI_ID', $userId)->get();
+        $appartenances = Appartient::where('UTI_ID', $userId)->get();
+        $equipesMembre = collect();
+
+        foreach ($appartenances as $app) {
+            $team = Equipe::where('RAI_ID', $app->RAI_ID)
+                ->where('COU_ID', $app->COU_ID)
+                ->where('EQU_ID', $app->EQU_ID)
+                ->first();
+
+            if ($team) {
+                $equipesMembre->push($team);
+            }
+        }
+
+        $allTeams = $equipesChef->concat($equipesMembre)->unique(function ($item) {
+            return $item->RAI_ID . '-' . $item->COU_ID . '-' . $item->EQU_ID;
+        });
+
+        $allTeams = $allTeams->sortByDesc(function($team) {
+            return $team->course->COU_DATE_DEBUT ?? 0;
+        });
+
+        $uniqueCourses = $allTeams->map(fn($t) => $t->course)->unique(function ($course) {
+            return $course ? ($course->RAI_ID . '-' . $course->COU_ID) : null;
+        })->filter();
+
+
+        return view('user.profile', compact('user', 'allTeams', 'uniqueCourses', 'clubs'));
+    }
 
     public function update(Request $request)
     {
