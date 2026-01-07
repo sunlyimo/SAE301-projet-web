@@ -11,7 +11,7 @@
 
         <div class="flex flex-wrap">
             @foreach ($raids as $raid)
-                <div class="bg-gray-300 rounded-md w-10xs m-2">
+                <div class="border border-black-300 rounded-md w-10xs m-2 p-2">
                     <h2> {{ $raid->RAI_NOM }} </h2>
                     @if($raid->RAI_INSCRI_DATE_DEBUT > now() && $raid->RAI_INSCRI_DATE_FIN < now())
                         <p class="text-bold"> En cours</p>
