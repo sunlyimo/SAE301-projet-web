@@ -8,11 +8,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <body class="bg-white font-sans antialiased text-gray-900 flex flex-col min-h-screen">
     <nav class="relative bg-white border-b border-gray-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
-                
+
                 <div class="flex items-center gap-3">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
                     <span class="text-2xl font-bold text-black tracking-tight">
@@ -55,7 +56,7 @@
                         <a href="/profile" class="text-sm font-semibold text-black hover:text-green-600 transition-colors duration-300">
                             Voir mon profil
                         </a>
-                        
+
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
                             <button type="submit" class="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-black text-white text-sm font-bold hover:bg-green-600 transition-all duration-300 shadow-md active:scale-95">
@@ -154,5 +155,62 @@
             </div>
         </div>
     </footer>
+
+
+    @if(session('welcome'))
+    <div id="welcomeNotif" class="fixed top-4 right-4 z-50 bg-white rounded-lg shadow-2xl p-4 max-w-sm transform transition-all animate-slide-in border-l-4 border-green-600">
+        <div class="flex items-center gap-3">
+            <div class="flex-shrink-0">
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm font-semibold text-gray-900">Connexion réussie !</p>
+                <p class="text-sm text-gray-600">
+                    Bonjour <span class="font-bold text-green-600">{{ session('welcome') }}</span>
+                </p>
+            </div>
+            <button onclick="closeWelcomeNotif()" class="flex-shrink-0 text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slide-in {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .animate-slide-in {
+            animation: slide-in 0.3s ease-out;
+        }
+    </style>
+
+    <script>
+        function closeWelcomeNotif() {
+            const notif = document.getElementById('welcomeNotif');
+            notif.style.transform = 'translateX(100%)';
+            notif.style.opacity = '0';
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 300);
+        }
+        
+        setTimeout(() => {
+            closeWelcomeNotif();
+        }, 1500);
+    </script>
+    @endif
+
 </body>
 </html>
