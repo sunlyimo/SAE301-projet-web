@@ -170,6 +170,12 @@
                              {{ Str::limit($course->COU_LIEU, 50) }}
                         </div>
                     </div>
+                    <div class="mt-auto mb-4 py-2">
+                        <a href="{{ route('raids.courses', $course->RAI_ID) }}" 
+                           class="block w-full text-center bg-gray-100 text-gray-800 py-2 rounded-lg font-bold text-xs hover:bg-black hover:text-white transition-colors uppercase tracking-wide">
+                            Voir la course
+                        </a>
+                    </div>
                 </div>
             @empty
                 <div class="col-span-full text-center py-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
@@ -180,7 +186,7 @@
     </div>
 
     <div class="mt-16 border-t border-gray-100 pt-12">
-        <h2 class="text-2xl font-black text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
             Mes Équipes
         </h2>
 
@@ -214,14 +220,22 @@
 
                     <div class="mb-4 flex-grow">
                         <p class="text-xs text-gray-400 uppercase font-bold">Participation à :</p>
-                        <p class="text-sm font-bold text-gray-800 truncate">{{ $equipe->course->COU_NOM }}</p>
+                        <p class="text-sm font-bold text-gray-800 truncate" title="{{ $equipe->course->COU_NOM }}">
+                            {{ $equipe->course->COU_NOM }}
+                        </p>
                     </div>
 
-                    {{-- Bouton Action --}}
-                    <div class="mt-auto">
+                    <div class="mt-auto grid grid-cols-2 gap-2">
+                        
+                        <a href="{{ route('raids.courses', $equipe->course->RAI_ID) }}" 
+                        class="flex items-center justify-center bg-gray-100 text-gray-600 py-2 rounded-lg font-bold text-xs hover:bg-gray-200 transition-colors uppercase tracking-wide"
+                        title="Voir la fiche de la course">
+                            Course
+                        </a>
+
                         <a href="{{ route('teams.show', [$equipe->RAI_ID, $equipe->COU_ID, $equipe->EQU_ID]) }}" 
-                           class="block w-full text-center bg-black text-white py-2 rounded-lg font-bold text-xs hover:bg-green-600 transition-colors uppercase tracking-wide">
-                            Voir l'équipe
+                        class="flex items-center justify-center bg-black text-white py-2 rounded-lg font-bold text-xs hover:bg-green-600 transition-colors uppercase tracking-wide">
+                            Équipe
                         </a>
                     </div>
                 </div>

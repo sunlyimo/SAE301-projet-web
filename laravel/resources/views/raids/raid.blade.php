@@ -51,6 +51,10 @@
                     <p class="text-sm font-bold text-gray-800">
                         {{ $raid->total_course }} courses
                     </p>
+                    <p class="text-sm text-gray-800">
+                            {{ $raid->RAI_LIEU }}
+                    </p>
+
 
                     {{-- Dates de l'événement --}}
                     <div class="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
