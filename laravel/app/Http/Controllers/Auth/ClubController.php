@@ -6,15 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Models\Club;
 use App\Models\ResponsableClub;
 use App\Models\User;
+use App\Models\ResponsableInvitation as ResponsableInvitationModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
+use App\Mail\ResponsableInvitation as ResponsableInvitationMail;
 
 class ClubController extends Controller
 {
     public function index()
     {
         $clubs = Club::with('responsable')->get();
-        return view('clubs.index', compact('clubs'));
+
+        // Collect club IDs that currently have a pending responsable invitation
+        $pendingClubIds = ResponsableInvitationModel::where('status', 'pending')->pluck('club_id')->unique()->toArray();
+
+        return view('clubs.index', compact('clubs', 'pendingClubIds'));
     }
 
     public function create()
@@ -27,7 +36,11 @@ class ClubController extends Controller
             abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent créer des clubs.');
         }
 
-        return view('clubs.create');
+        // Récupérer les utilisateurs qui ne sont pas déjà responsables d'un club
+        $responsableIds = ResponsableClub::pluck('UTI_ID')->filter()->unique()->toArray();
+        $availableUsers = User::whereNotIn('UTI_ID', $responsableIds)->get();
+
+        return view('clubs.create', compact('availableUsers'));
     }
 
     public function store(Request $request)
@@ -36,16 +49,24 @@ class ClubController extends Controller
             abort(403, 'Accès non autorisé. Seuls les administrateurs peuvent créer des clubs.');
         }
 
-        $request->validate([
+        // Validation conditionnelle: si un utilisateur existant est sélectionné, on ne demande pas les champs du nouveau responsable
+        $rules = [
             'CLU_NOM' => 'required|string|max:50',
             'CLU_RUE' => 'required|string|max:100',
             'CLU_CODE_POSTAL' => 'required|string|max:6',
             'CLU_VILLE' => 'required|string|max:50',
-            'RESP_NOM' => 'required|string|max:50',
-            'RESP_PRENOM' => 'required|string|max:50',
-            'RESP_EMAIL' => 'required|email|max:100',
-            'RESP_NOM_UTILISATEUR' => 'required|string|max:255|unique:vik_responsable_club,UTI_NOM_UTILISATEUR',
-        ]);
+        ];
+
+        if ($request->filled('selected_responsable_id')) {
+            $rules['selected_responsable_id'] = 'required|exists:vik_utilisateur,UTI_ID';
+        } else {
+            $rules['RESP_NOM'] = 'required|string|max:50';
+            $rules['RESP_PRENOM'] = 'required|string|max:50';
+            $rules['RESP_EMAIL'] = 'required|email|max:100';
+            $rules['RESP_NOM_UTILISATEUR'] = 'required|string|max:255|unique:vik_responsable_club,UTI_NOM_UTILISATEUR';
+        }
+
+        $request->validate($rules);
 
         $club = Club::create([
             'CLU_NOM' => $request->CLU_NOM,
@@ -54,29 +75,87 @@ class ClubController extends Controller
             'CLU_VILLE' => $request->CLU_VILLE,
         ]);
 
-        // Créer le responsable du club
-        $responsableId = User::max('UTI_ID') + 1; // Générer un nouvel ID basé sur vik_utilisateur
+        $responsableId = null;
 
-        // Créer d'abord l'utilisateur de base
-        User::create([
-            'UTI_ID' => $responsableId,
-            'UTI_NOM' => $request->RESP_NOM,
-            'UTI_PRENOM' => $request->RESP_PRENOM,
-            'UTI_EMAIL' => $request->RESP_EMAIL,
-            'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
-        ]);
+        if ($request->filled('selected_responsable_id')) {
+            // Utilisateur existant choisi
+            $selectedId = $request->selected_responsable_id;
 
-        ResponsableClub::create([
-            'UTI_ID' => $responsableId,
-            'CLU_ID' => $club->CLU_ID,
-            'UTI_NOM' => $request->RESP_NOM,
-            'UTI_PRENOM' => $request->RESP_PRENOM,
-            'UTI_EMAIL' => $request->RESP_EMAIL,
-            'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
-        ]);
+            // Vérifier qu'il n'est pas déjà responsable
+            if (ResponsableClub::where('UTI_ID', $selectedId)->exists()) {
+                return back()->withErrors(['selected_responsable_id' => "Cet utilisateur est déjà responsable d'un club."])->withInput();
+            }
 
-        // Générer un token fictif pour simuler l'invitation
-        $token = md5($club->CLU_ID . $responsableId . time());
+            $user = User::findOrFail($selectedId);
+
+            // Create an invitation for the existing user instead of directly promoting them
+            $token = bin2hex(random_bytes(16));
+            $invitation = ResponsableInvitationModel::create([
+                'club_id' => $club->CLU_ID,
+                'user_id' => $user->UTI_ID,
+                'token' => $token,
+                'status' => 'pending',
+            ]);
+
+            // Send invitation email (synchronous for now)
+            try {
+                Mail::to($user->UTI_EMAIL)->send(new ResponsableInvitationMail($club, $token, $user, false));
+            } catch (\Throwable $e) {
+                // Log or ignore mail failures for now
+            }
+
+            // Make the invited user available to the created view / mailbox
+            session(['invited_user_id' => $user->UTI_ID, 'invitation_id' => $invitation->id]);
+
+            $responsableId = null; // still pending until user accepts
+        } else {
+            // Créer un nouvel utilisateur et responsable
+            $responsableId = User::max('UTI_ID') + 1; // Générer un nouvel ID basé sur vik_utilisateur
+
+            // Créer d'abord l'utilisateur de base
+            $user = User::create([
+                'UTI_ID' => $responsableId,
+                'UTI_NOM' => $request->RESP_NOM,
+                'UTI_PRENOM' => $request->RESP_PRENOM,
+                'UTI_EMAIL' => $request->RESP_EMAIL,
+                'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
+            ]);
+
+            ResponsableClub::create([
+                'UTI_ID' => $responsableId,
+                'CLU_ID' => $club->CLU_ID,
+                'UTI_NOM' => $request->RESP_NOM,
+                'UTI_PRENOM' => $request->RESP_PRENOM,
+                'UTI_EMAIL' => $request->RESP_EMAIL,
+                'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
+            ]);
+
+            // generate a token for the mailbox/confirmation view for the new responsable flow
+            $token = bin2hex(random_bytes(16));
+
+            // Persist an invitation so the new-user flow can be accepted/refused like existing-user invitations
+            $invitation = ResponsableInvitationModel::create([
+                'club_id' => $club->CLU_ID,
+                'user_id' => $user->UTI_ID,
+                'token' => $token,
+                'status' => 'pending',
+            ]);
+
+            // Send an invitation email to the newly created user prompting them to complete registration
+            try {
+                Mail::to($user->UTI_EMAIL)->send(new ResponsableInvitationMail($club, $token, $user, true));
+            } catch (\Throwable $e) {
+                // ignore or log mail failures for now
+            }
+
+            // Make the invited (newly created) user available to the created view / mailbox
+            session(['invited_user_id' => $user->UTI_ID, 'invitation_id' => $invitation->id]);
+        }
+
+        // Ensure we use the same token used above (for existing-invitation flow it's already set)
+        if (!isset($token)) {
+            $token = bin2hex(random_bytes(16));
+        }
 
         return redirect()->route('clubs.created', [
             'club' => $club->CLU_ID,
@@ -88,29 +167,72 @@ class ClubController extends Controller
     {
         $club = Club::with('responsable')->findOrFail($clubId);
 
-        return view('clubs.created', compact('club', 'token'));
+        // Try to pull invited user from session (set when creating with an existing user)
+        $invitedUser = null;
+        if (session()->has('invited_user_id')) {
+            $invitedUser = User::find(session()->get('invited_user_id'));
+        }
+
+        // If there's a pending invitation matching the token, pass it as well
+        $invitation = ResponsableInvitationModel::where('club_id', $clubId)->where('token', $token)->where('status', 'pending')->first();
+
+        return view('clubs.created', compact('club', 'token', 'invitedUser', 'invitation'));
     }
 
     public function showFakeMailbox($clubId, $token)
     {
         $club = Club::with('responsable')->findOrFail($clubId);
 
-        if (!$club->responsable) {
+        // Look for a pending invitation by token and club
+        $invitation = ResponsableInvitationModel::where('club_id', $clubId)->where('token', $token)->where('status', 'pending')->first();
+
+        $invitedUser = null;
+        if ($invitation) {
+            $invitedUser = $invitation->user;
+        } elseif (session()->has('invited_user_id')) {
+            $invitedUser = User::find(session()->get('invited_user_id'));
+        } elseif ($club->responsable) {
+            // If club already has a responsable (created immediately for new user flow), use it
+            $invitedUser = User::where('UTI_ID', $club->responsable->UTI_ID)->first();
+        }
+
+        if (!$invitedUser && !$invitation) {
             abort(404, 'Responsable non trouvé');
         }
 
-        return view('emails.fake-mailbox', compact('club', 'token'));
+        return view('emails.fake-mailbox', compact('club', 'token', 'invitedUser', 'invitation'));
     }
 
     public function showResponsableRegistration($clubId, $token)
     {
         $club = Club::with('responsable')->findOrFail($clubId);
 
-        if (!$club->responsable) {
-            abort(404, 'Responsable non trouvé');
+        // Try to locate a persistent invitation (for existing-user invitations)
+        $invitation = ResponsableInvitationModel::where('club_id', $clubId)
+            ->where('token', $token)
+            ->where('status', 'pending')
+            ->first();
+
+        // Resolve the invited user from the invitation, session (new-user flow) or the club responsable
+        $user = null;
+        if ($invitation) {
+            $user = $invitation->user;
+        } elseif (session()->has('invited_user_id')) {
+            $user = User::find(session()->get('invited_user_id'));
+        } elseif ($club->responsable) {
+            $user = User::where('UTI_ID', $club->responsable->UTI_ID)->first();
         }
 
-        return view('auth.responsable-register', compact('club', 'token'));
+        if (!$user) {
+            abort(404, 'Utilisateur invité introuvable');
+        }
+
+        // If we don't have a persistent invitation, create a lightweight object so the view can show the token
+        if (!$invitation) {
+            $invitation = (object) ['token' => $token];
+        }
+
+        return view('auth.responsable-register', compact('club', 'token', 'user', 'invitation'));
     }
 
     public function quickValidateResponsable($clubId, $token)
@@ -263,13 +385,31 @@ class ClubController extends Controller
         // Connecter automatiquement l'utilisateur
         Auth::login($user);
 
+        // If there's a pending invitation associated with this club and token, mark it accepted
+        if ($request->filled('invitation_token')) {
+            $invitation = ResponsableInvitationModel::where('club_id', $request->club_id)
+                ->where('token', $request->invitation_token)
+                ->where('status', 'pending')
+                ->first();
+
+            if ($invitation) {
+                $invitation->status = 'accepted';
+                $invitation->accepted_at = now();
+                $invitation->save();
+            }
+        }
+
         return redirect('/')->with('success', 'Votre inscription a été finalisée avec succès ! Bienvenue.');
     }
 
     public function show(Club $club)
     {
         $club->load('responsable');
-        return view('clubs.show', compact('club'));
+
+        // Determine if there's still a pending invitation for this club
+        $pending = ResponsableInvitationModel::where('club_id', $club->CLU_ID)->where('status', 'pending')->exists();
+
+        return view('clubs.show', compact('club', 'pending'));
     }
 
     public function edit(Club $club)
@@ -374,5 +514,333 @@ class ClubController extends Controller
         $club->delete();
 
         return redirect()->route('clubs.index')->with('success', 'Le club a été supprimé avec succès. Le responsable est maintenant un utilisateur normal.');
+    }
+
+    /**
+     * Affiche la page d'invitation (GET) pour les invitations aux utilisateurs existants
+     */
+    public function showInvitation($clubId, $userId, $token)
+    {
+        $club = Club::findOrFail($clubId);
+
+        $invitation = ResponsableInvitationModel::where('club_id', $clubId)
+            ->where('user_id', $userId)
+            ->where('token', $token)
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$invitation) {
+            abort(404, 'Invitation introuvable');
+        }
+
+        $user = $invitation->user;
+
+        // If the accept URL is used and user is not authenticated, redirect them to login and set intended URL
+        if (!Auth::check() && request()->route()->getName() === 'responsable.invitation.accept.show') {
+            session(['url.intended' => route('responsable.invitation.accept.show', ['club_id' => $clubId, 'user_id' => $userId, 'token' => $token])]);
+            return redirect()->route('login')->with('info', "Veuillez vous connecter pour accepter l'invitation.");
+        }
+
+        // Do not auto-accept on GET requests — show the invitation page and require the POST accept action.
+
+        return view('auth.responsable-invitation', compact('club', 'user', 'token'));
+    }
+
+    /**
+     * Redirect to login and set intended to the POST accept route so the user completes login first
+     */
+    public function redirectToLoginForInvitation($clubId, $userId, $token)
+    {
+        $invitation = ResponsableInvitationModel::where('club_id', $clubId)
+            ->where('user_id', $userId)
+            ->where('token', $token)
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$invitation) {
+            abort(404, 'Invitation introuvable');
+        }
+
+        // set intended to the GET invitation page so Laravel redirects back to it after login
+        // If the user is already authenticated as the invited user, show the invitation page (no auto-accept).
+        if (Auth::check() && Auth::user()->UTI_ID == $userId) {
+            return redirect()->route('responsable.invitation.accept.show', ['club_id' => $clubId, 'user_id' => $userId, 'token' => $token]);
+        }
+
+        // Otherwise force login and set intended to return to the acceptance-after-login route
+        session(['url.intended' => route('responsable.invitation.accept.after_login', ['club_id' => $clubId, 'user_id' => $userId, 'token' => $token])]);
+        return redirect()->route('login')->with('info', "Veuillez vous connecter pour accepter l'invitation.");
+    }
+
+    /**
+     * Accept automatically after login — intended target after the login redirect.
+     * This route will perform the same checks as `acceptInvitation` but runs on GET
+     * immediately after the invited user logs in.
+     */
+    public function acceptAfterLogin(Request $request, $clubId, $userId, $token)
+    {
+        if (!Auth::check()) {
+            // Not authenticated: redirect to login (shouldn't normally happen because intended should point here)
+            session(['url.intended' => route('responsable.invitation.accept.after_login', ['club_id' => $clubId, 'user_id' => $userId, 'token' => $token])]);
+            return redirect()->route('login')->with('info', "Veuillez vous connecter pour accepter l'invitation.");
+        }
+
+        // Only the invited user may auto-accept after login
+        if (Auth::user()->UTI_ID != $userId) {
+            abort(403, 'Vous n\'êtes pas autorisé à accepter cette invitation.');
+        }
+
+        $invitation = ResponsableInvitationModel::where('club_id', $clubId)
+            ->where('user_id', $userId)
+            ->where('token', $token)
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$invitation) {
+            abort(404, 'Invitation introuvable');
+        }
+
+        // Prevent duplicate responsibilities
+        if (ResponsableClub::where('CLU_ID', $clubId)->exists()) {
+            return redirect()->route('clubs.index')->with('error', 'Ce club a déjà un responsable.');
+        }
+
+        if (ResponsableClub::where('UTI_ID', $userId)->exists()) {
+            return redirect()->route('clubs.index')->with('error', 'Cet utilisateur est déjà responsable d\'un club.');
+        }
+
+        $user = User::findOrFail($userId);
+
+        try {
+            DB::beginTransaction();
+
+            if (ResponsableClub::where('CLU_ID', $clubId)->lockForUpdate()->exists()) {
+                DB::rollBack();
+                return redirect()->route('clubs.index')->with('error', 'Ce club a déjà un responsable.');
+            }
+
+            if (ResponsableClub::where('UTI_ID', $userId)->lockForUpdate()->exists()) {
+                DB::rollBack();
+                return redirect()->route('clubs.index')->with('error', 'Cet utilisateur est déjà responsable d\'un club.');
+            }
+
+            ResponsableClub::create([
+                'UTI_ID' => $user->UTI_ID,
+                'CLU_ID' => $clubId,
+                'UTI_NOM' => $user->UTI_NOM,
+                'UTI_PRENOM' => $user->UTI_PRENOM,
+                'UTI_EMAIL' => $user->UTI_EMAIL,
+                'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+                'UTI_RUE' => $user->UTI_RUE,
+                'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+                'UTI_VILLE' => $user->UTI_VILLE,
+                'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+                'UTI_LICENCE' => $user->UTI_LICENCE,
+                'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+                'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            ]);
+
+            $invitation->status = 'accepted';
+            $invitation->accepted_at = now();
+            $invitation->save();
+
+            DB::commit();
+
+            return redirect()->route('clubs.index')->with('success', 'Invitation acceptée. Vous êtes maintenant responsable du club.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('clubs.index')->with('error', 'Conflit lors de l\'acceptation — l\'opération a déjà été effectuée.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Accepter une invitation (POST)
+     */
+    public function acceptInvitation(Request $request, $clubId, $userId, $token)
+    {
+        $invitation = ResponsableInvitationModel::where('club_id', $clubId)
+            ->where('user_id', $userId)
+            ->where('token', $token)
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$invitation) {
+            abort(404, 'Invitation introuvable');
+        }
+
+        // If not logged in, redirect to login page and set intended to the GET invitation page
+        if (!Auth::check()) {
+            session(['url.intended' => route('responsable.invitation.accept.show', ['club_id' => $clubId, 'user_id' => $userId, 'token' => $token])]);
+            return redirect()->route('login')->with('info', "Veuillez vous connecter pour accepter l'invitation.");
+        }
+
+        // Ensure the logged-in user is the invited user (or admin)
+        if (Auth::user()->UTI_ID != $userId && !Auth::user()->isAdmin()) {
+            abort(403, 'Vous n\'êtes pas autorisé à accepter cette invitation.');
+        }
+
+        // Prevent duplicate responsibilities
+        if (ResponsableClub::where('CLU_ID', $clubId)->exists()) {
+            return redirect()->route('clubs.index')->with('error', 'Ce club a déjà un responsable.');
+        }
+
+        if (ResponsableClub::where('UTI_ID', $userId)->exists()) {
+            return redirect()->route('clubs.index')->with('error', 'Cet utilisateur est déjà responsable d\'un club.');
+        }
+
+        $user = User::findOrFail($userId);
+
+        try {
+            DB::beginTransaction();
+
+            if (ResponsableClub::where('CLU_ID', $clubId)->lockForUpdate()->exists()) {
+                DB::rollBack();
+                return redirect()->route('clubs.index')->with('error', 'Ce club a déjà un responsable.');
+            }
+
+            if (ResponsableClub::where('UTI_ID', $userId)->lockForUpdate()->exists()) {
+                DB::rollBack();
+                return redirect()->route('clubs.index')->with('error', 'Cet utilisateur est déjà responsable d\'un club.');
+            }
+
+            ResponsableClub::create([
+                'UTI_ID' => $user->UTI_ID,
+                'CLU_ID' => $clubId,
+                'UTI_NOM' => $user->UTI_NOM,
+                'UTI_PRENOM' => $user->UTI_PRENOM,
+                'UTI_EMAIL' => $user->UTI_EMAIL,
+                'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+                'UTI_RUE' => $user->UTI_RUE,
+                'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+                'UTI_VILLE' => $user->UTI_VILLE,
+                'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+                'UTI_LICENCE' => $user->UTI_LICENCE,
+                'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+                'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            ]);
+
+            $invitation->status = 'accepted';
+            $invitation->accepted_at = now();
+            $invitation->save();
+
+            DB::commit();
+
+            return redirect()->route('clubs.index')->with('success', 'Invitation acceptée. Vous êtes maintenant responsable du club.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('clubs.index')->with('error', 'Conflit lors de l\'acceptation — l\'opération a déjà été effectuée.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Refuser une invitation (POST)
+     */
+    public function refuseInvitation(Request $request, $clubId, $userId, $token)
+    {
+        $invitation = ResponsableInvitationModel::where('club_id', $clubId)
+            ->where('user_id', $userId)
+            ->where('token', $token)
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$invitation) {
+            abort(404, 'Invitation introuvable');
+        }
+
+        if (!Auth::check()) {
+            session(['url.intended' => route('responsable.invitation.show', ['club_id' => $clubId, 'user_id' => $userId, 'token' => $token])]);
+            return redirect()->route('login')->with('info', "Veuillez vous connecter pour refuser l'invitation.");
+        }
+
+        if (Auth::user()->UTI_ID != $userId && !Auth::user()->isAdmin()) {
+            abort(403, 'Vous n\'êtes pas autorisé à refuser cette invitation.');
+        }
+
+        $invitation->status = 'refused';
+        $invitation->refused_at = now();
+        $invitation->save();
+
+        // Notify admin or set session for admin notification if required
+        session(['refused_invitation' => $invitation->id]);
+
+        return redirect('/')->with('success', 'Vous avez refusé l\'invitation. Merci d\'avoir répondu.');
+    }
+
+    /**
+     * Accept an invitation on behalf of the user (admin action)
+     */
+    public function adminAcceptInvitation(Request $request, $clubId, $userId, $token)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Accès non autorisé.');
+        }
+
+        $invitation = ResponsableInvitationModel::where('club_id', $clubId)
+            ->where('user_id', $userId)
+            ->where('token', $token)
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$invitation) {
+            abort(404, 'Invitation introuvable');
+        }
+
+        $user = $invitation->user;
+
+        try {
+            DB::beginTransaction();
+
+            if (ResponsableClub::where('CLU_ID', $clubId)->lockForUpdate()->exists()) {
+                DB::rollBack();
+                return redirect()->route('clubs.index')->with('error', 'Ce club a déjà un responsable.');
+            }
+
+            if (ResponsableClub::where('UTI_ID', $userId)->lockForUpdate()->exists()) {
+                DB::rollBack();
+                return redirect()->route('clubs.index')->with('error', 'Cet utilisateur est déjà responsable d\'un club.');
+            }
+
+            ResponsableClub::create([
+                'UTI_ID' => $user->UTI_ID,
+                'CLU_ID' => $clubId,
+                'UTI_NOM' => $user->UTI_NOM,
+                'UTI_PRENOM' => $user->UTI_PRENOM,
+                'UTI_EMAIL' => $user->UTI_EMAIL,
+                'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+                'UTI_RUE' => $user->UTI_RUE,
+                'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+                'UTI_VILLE' => $user->UTI_VILLE,
+                'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+                'UTI_LICENCE' => $user->UTI_LICENCE,
+                'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+                'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            ]);
+
+            $invitation->status = 'accepted';
+            $invitation->accepted_at = now();
+            $invitation->save();
+
+            DB::commit();
+
+            return redirect()->route('clubs.index')->with('success', 'Invitation acceptée au nom de l\'utilisateur.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('clubs.index')->with('error', 'Conflit lors de l\'acceptation — l\'opération a déjà été effectuée.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        $invitation->status = 'accepted';
+        $invitation->accepted_at = now();
+        $invitation->save();
+
+        return redirect()->route('clubs.index')->with('success', 'Invitation acceptée au nom de l\'utilisateur.');
     }
 }

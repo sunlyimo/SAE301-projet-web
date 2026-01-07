@@ -109,6 +109,22 @@ Route::get('/responsable/quick-validated/{club}/{token}', [ClubController::class
 Route::get('/responsable/register/{club_id}/{token}', [ClubController::class, 'showResponsableRegistration'])->name('responsable.register');
 Route::post('/responsable/complete-registration', [ClubController::class, 'completeResponsableRegistration'])->name('responsable.complete-registration');
 
+// Invitation routes for existing users
+Route::get('/responsable/invitation/{club_id}/{user_id}/{token}', [ClubController::class, 'showInvitation'])->name('responsable.invitation.show');
+// Allow GET to the accept URL to show the invitation page (some clients may request the link as GET)
+Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept', [ClubController::class, 'showInvitation'])->name('responsable.invitation.accept.show');
+
+// Redirect link used in emails: immediately send user to login and set intended to the POST accept route
+Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept-login', [ClubController::class, 'redirectToLoginForInvitation'])->name('responsable.invitation.accept.login');
+
+// Accept automatically after login (the intended URL will point here)
+Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept-after-login', [ClubController::class, 'acceptAfterLogin'])->name('responsable.invitation.accept.after_login');
+Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/accept', [ClubController::class, 'acceptInvitation'])->name('responsable.invitation.accept');
+Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/refuse', [ClubController::class, 'refuseInvitation'])->name('responsable.invitation.refuse');
+
+// Admin helper: accept invitation on behalf of user (requires auth and admin)
+Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/admin-accept', [ClubController::class, 'adminAcceptInvitation'])->name('responsable.invitation.admin-accept')->middleware('auth');
+
 // Route pour la notification de refus à l'admin
 Route::get('/admin/refusal-notification/{club_id}/{token}', [ClubController::class, 'showAdminRefusalNotification'])->name('admin.refusal-notification');
 Route::post('/admin/recreate-club/{club_id}/{token}', [ClubController::class, 'recreateClub'])->name('admin.recreate-club');

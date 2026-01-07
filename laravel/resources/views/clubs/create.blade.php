@@ -56,7 +56,21 @@
                 
                 <div class="club-form-group">
                     <label class="club-label">Responsable du club</label>
-                    <div class="club-responsable-row">
+
+                    <div style="margin-bottom:8px;">
+                        <label for="selected_responsable_id">Choisir un utilisateur existant (facultatif)</label>
+                        <select name="selected_responsable_id" id="selected_responsable_id" class="club-input">
+                            <option value="">-- Créer un nouveau responsable --</option>
+                            @foreach($availableUsers ?? [] as $user)
+                                <option value="{{ $user->UTI_ID }}">{{ $user->UTI_NOM }} {{ $user->UTI_PRENOM }} ({{ $user->UTI_EMAIL }})</option>
+                            @endforeach
+                        </select>
+                        @error('selected_responsable_id')
+                            <p class="club-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="club-responsable-row"> 
                         <div class="club-responsable-field">
                             <input type="text" name="RESP_NOM" id="RESP_NOM" value="{{ old('RESP_NOM') }}" class="club-input" placeholder="Nom" required>
                             @error('RESP_NOM')
@@ -82,6 +96,35 @@
                             <p class="club-error">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <script>
+                        (function(){
+                            const select = document.getElementById('selected_responsable_id');
+                            const inputs = ['RESP_NOM','RESP_PRENOM','RESP_EMAIL','RESP_NOM_UTILISATEUR'].map(id => document.getElementById(id));
+
+                            function toggle() {
+                                if (select && select.value) {
+                                    // existing user selected: disable new fields
+                                    inputs.forEach(i => {
+                                        i.disabled = true;
+                                        i.required = false;
+                                    });
+                                } else {
+                                    // creating new responsable
+                                    inputs.forEach(i => {
+                                        i.disabled = false;
+                                        i.required = true;
+                                    });
+                                }
+                            }
+
+                            if (select) {
+                                select.addEventListener('change', toggle);
+                                // initial call
+                                toggle();
+                            }
+                        })();
+                    </script>
                 </div>
 
                 <div class="club-form-actions">

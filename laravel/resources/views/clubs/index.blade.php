@@ -49,13 +49,12 @@
                             <td>{{ $club->CLU_CODE_POSTAL }}</td>
                             <td>{{ $club->CLU_VILLE }}</td>
                             <td>
-                                @if($club->responsable && $club->responsable->UTI_DATE_NAISSANCE)
+                                @if($club->responsable)
                                     <span class="text-green-600 font-medium">
                                         {{ $club->responsable->UTI_PRENOM }} {{ $club->responsable->UTI_NOM }}
-                                    </span>
-                                @elseif($club->responsable)
-                                    <span class="text-orange-600">
-                                        <em>En attente de validation</em>
+                                        @if(!empty($pendingClubIds) && in_array($club->CLU_ID, $pendingClubIds))
+                                            <small class="text-orange-600">&nbsp;(en attente de validation)</small>
+                                        @endif
                                     </span>
                                 @else
                                     <span class="text-gray-500">

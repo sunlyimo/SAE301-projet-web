@@ -24,6 +24,12 @@ class LoginController extends Controller {
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
 
+        // If an intent was stored (e.g., to show an invitation), redirect there and forget it
+        $intent = session()->pull('post_login_intent', null);
+        if ($intent) {
+            return redirect($intent);
+        }
+
         session()->flash('welcome', Auth::user()->UTI_NOM_UTILISATEUR);
 
         return redirect()->intended('/');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boîte mail - {{ $club->responsable->UTI_EMAIL }}</title>
+    <title>Boîte mail - {{ $invitedUser->UTI_EMAIL ?? ($club->responsable->UTI_EMAIL ?? 'Boîte') }}</title>
     <style>
         /* Styles Gmail-like */
         body {
@@ -264,7 +264,7 @@
             Boîte de réception
         </div>
         <div class="gmail-user-info">
-            {{ $club->responsable->UTI_EMAIL }}
+            {{ $invitedUser->UTI_EMAIL ?? ($club->responsable->UTI_EMAIL ?? 'noreply@clubmanagement.com') }}
         </div>
     </div>
 
@@ -317,41 +317,70 @@
                     <div class="gmail-email-subject-full">Invitation a rejoindre le club "{{ $club->CLU_NOM }}"</div>
                     <div class="gmail-email-meta">
                         <strong>De:</strong> Club Management System &lt;admin@clubmanagement.com&gt;<br>
-                        <strong>A:</strong> {{ $club->responsable->UTI_EMAIL }}<br>
+                        <strong>A:</strong> {{ $invitedUser->UTI_EMAIL ?? ($club->responsable->UTI_EMAIL ?? 'noreply@clubmanagement.com') }}<br>
                         <strong>Date:</strong> {{ \Carbon\Carbon::now('Europe/Paris')->format('d/m/Y H:i') }}
                     </div>
                 </div>
 
                 <div class="gmail-email-body">
-                    <p>Bonjour {{ $club->responsable->UTI_PRENOM }} {{ $club->responsable->UTI_NOM }},</p>
+                    <p>Bonjour {{ $invitedUser->UTI_PRENOM ?? $invitedUser->UTI_NOM ?? 'Utilisateur' }},</p>
 
-                    <p>Vous avez ete nomme responsable du club <strong>"{{ $club->CLU_NOM }}"</strong>.</p>
+                    <p>Vous avez ete invite(e) a devenir responsable du club <strong>"{{ $club->CLU_NOM }}"</strong>.</p>
 
                     <div class="club-details-box">
                         <h3>Details du club :</h3>
                         <ul>
                             <li><strong>Nom du club :</strong> {{ $club->CLU_NOM }}</li>
                             <li><strong>Adresse :</strong> {{ $club->CLU_RUE }}, {{ $club->CLU_CODE_POSTAL }} {{ $club->CLU_VILLE }}</li>
-                            <li><strong>Votre nom d'utilisateur :</strong> {{ $club->responsable->UTI_NOM_UTILISATEUR }}</li>
-                            <li><strong>Votre email :</strong> {{ $club->responsable->UTI_EMAIL }}</li>
+                            <li><strong>Votre nom d'utilisateur :</strong> {{ $invitedUser->UTI_NOM_UTILISATEUR ?? 'à définir' }}</li>
+                            <li><strong>Votre email :</strong> {{ $invitedUser->UTI_EMAIL ?? 'à définir' }}</li>
                         </ul>
                     </div>
 
                     <p>Veuillez choisir entre accepter ou refuser d'être responsable du club :</p>
 
                     <div class="email-actions">
-                        <form method="POST" action="{{ route('responsable.quick-validate', ['club_id' => $club->CLU_ID, 'token' => $token]) }}" style="display: inline;">
-                            @csrf
-                            <button type="submit" class="gmail-btn gmail-btn-primary" style="margin-bottom: 10px;">
-                                Accepter d'être nommé responsable
-                            </button>
-                        </form>
-                        <form method="POST" action="{{ route('responsable.refuse', ['club_id' => $club->CLU_ID, 'token' => $token]) }}" style="display: inline;">
-                            @csrf
-                            <button type="submit" class="gmail-btn gmail-btn-refuse" style="margin-bottom: 10px; margin-left: 10px;">
-                                Refuser
-                            </button>
-                        </form>
+                        @if(!empty($invitation))
+                            @if(empty($invitedUser->UTI_MOT_DE_PASSE))
+                                <!-- New user: send them to the registration finalization page so they don't need to log in -->
+                                <a href="{{ route('responsable.register', ['club_id' => $club->CLU_ID, 'token' => $token]) }}" class="gmail-btn gmail-btn-primary" style="margin-bottom: 10px; display:inline-block; text-decoration:none;">
+                                    Compléter l'inscription et accepter
+                                </a>
+
+                                <form method="POST" action="{{ route('responsable.refuse', ['club_id' => $club->CLU_ID, 'token' => $token]) }}" style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="gmail-btn gmail-btn-refuse" style="margin-bottom: 10px; margin-left: 10px;">
+                                        Refuser
+                                    </button>
+                                </form>
+                            @else
+                                <!-- Existing user: use the accept flow which requires authentication -->
+                                <a href="{{ route('responsable.invitation.accept.login', ['club_id' => $club->CLU_ID, 'user_id' => $invitedUser->UTI_ID, 'token' => $token]) }}" class="gmail-btn gmail-btn-primary" style="margin-bottom: 10px; display:inline-block; text-decoration:none;">
+                                    Accepter l'invitation
+                                </a>
+
+                                <form method="POST" action="{{ route('responsable.invitation.refuse', ['club_id' => $club->CLU_ID, 'user_id' => $invitedUser->UTI_ID, 'token' => $token]) }}" style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="gmail-btn gmail-btn-refuse" style="margin-bottom: 10px; margin-left: 10px;">
+                                        Refuser
+                                    </button>
+                                </form>
+                            @endif
+
+                        @else
+                            <form method="POST" action="{{ route('responsable.quick-validate', ['club_id' => $club->CLU_ID, 'token' => $token]) }}" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="gmail-btn gmail-btn-primary" style="margin-bottom: 10px;">
+                                    Accepter d'être nommé responsable
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ route('responsable.refuse', ['club_id' => $club->CLU_ID, 'token' => $token]) }}" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="gmail-btn gmail-btn-refuse" style="margin-bottom: 10px; margin-left: 10px;">
+                                    Refuser
+                                </button>
+                            </form>
+                        @endif
                     </div>
 
                     <p>Cette invitation expire dans 24 heures.</p>
