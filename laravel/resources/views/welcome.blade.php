@@ -14,7 +14,7 @@
 </div>
 
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         <div class="lg:col-span-2">
@@ -52,12 +52,12 @@
 
 <!-- Show the latest RAID -->
 
-<div class="max-w-[90rem] mx-auto my-12 p-6 border-t border-gray-200 pb-6">
+<div class="max-w-[90rem] mx-auto p-6 border-t border-gray-200 pb-6">
 
     {{-- En-tête --}}
-    <div class="flex flex-col md:flex-row justify-between items-end mb-10">
+    <div class="flex flex-col md:flex-row justify-between items-end">
         <div>
-            <h1 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Les Raids à venir</h1>
+            <h1 class="text-3xl font-bold text-gray-900 mb-6 uppercase">Les Raids à venir</h1>
         </div>
     </div>
 
@@ -96,6 +96,9 @@
                     <p class="text-sm font-bold text-gray-800">
                         {{ $raid->total_course }} courses
                     </p>
+                    <p class="text-sm text-gray-800">
+                            {{ $raid->RAI_LIEU }}
+                    </p>
 
                     {{-- Dates de l'événement --}}
                     <div class="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
@@ -119,6 +122,7 @@
                             Du {{ \Carbon\Carbon::parse($raid->RAI_INSCRI_DATE_DEBUT)->format('d/m/Y') }} 
                             au {{ \Carbon\Carbon::parse($raid->RAI_INSCRI_DATE_FIN)->format('d/m/Y') }}
                         </p>
+
                     </div>
                 </div>
 
