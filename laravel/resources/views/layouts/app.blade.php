@@ -14,6 +14,7 @@
             <div class="flex justify-between h-20">
 
                 <div class="flex items-center gap-3">
+                    <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
                     <span class="text-2xl font-bold text-black tracking-tight">
                         CartoRun
@@ -77,6 +78,7 @@
             <div class="flex flex-col md:flex-row justify-between items-start gap-12">
                 <!-- Logo and Social Media (Left) -->
                 <div class="flex flex-col items-start flex-shrink-0">
+                    <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-16 w-auto mb-6">
                     <div class="flex gap-4">
                         <a href="#" class="text-gray-900 hover:text-green-600 transition-colors duration-300" aria-label="Instagram">
