@@ -9,11 +9,19 @@ use Illuminate\Support\Facades\DB;
 class Raid extends Model
 {
     public static function getFuturRaid() {
-        $raids = DB::table("vik_course")
-        ->selectRaw("vik_raid.RAI_ID, RAI_NOM , RAI_INSCRI_DATE_DEBUT , RAI_INSCRI_DATE_FIN , RAI_RAID_DATE_DEBUT , RAI_RAID_DATE_FIN, RAI_LIEU, count(*) as total_course")
-        ->join("vik_raid","vik_course.RAI_ID","=","vik_raid.RAI_ID")
+        $raids = DB::table("vik_raid")
+        ->selectRaw("vik_raid.RAI_ID, RAI_NOM , RAI_INSCRI_DATE_DEBUT , RAI_INSCRI_DATE_FIN , RAI_RAID_DATE_DEBUT , RAI_RAID_DATE_FIN, RAI_LIEU, count(cou_id) as total_course")
+        ->leftJoin("vik_course","vik_course.RAI_ID","=","vik_raid.RAI_ID")
         ->where("RAI_RAID_DATE_DEBUT", ">", now())
         ->groupBy("vik_raid.RAI_ID","RAI_NOM" , "RAI_INSCRI_DATE_DEBUT" ,"RAI_INSCRI_DATE_FIN" , "RAI_RAID_DATE_DEBUT" , "RAI_RAID_DATE_FIN" , "RAI_LIEU")
+        ->get();
+        return $raids;
+    }
+
+    public static function getFuturRaidA() {
+        $raids = DB::table("vik_raid")
+        ->selectRaw("vik_raid.RAI_ID, RAI_NOM , RAI_INSCRI_DATE_DEBUT , RAI_INSCRI_DATE_FIN , RAI_RAID_DATE_DEBUT , RAI_RAID_DATE_FIN, RAI_LIEU")
+        ->where("RAI_RAID_DATE_DEBUT", ">", now())
         ->get();
         return $raids;
     }
