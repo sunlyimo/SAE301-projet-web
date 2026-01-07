@@ -55,6 +55,15 @@ class Course extends Model
         return $this->belongsTo(TypeCourse::class, 'TYP_ID', 'TYP_ID');
     }
 
+    /**
+     * Relation avec le Raid parent
+     */
+    public function raid()
+    {
+        // Une course appartient à un Raid via RAI_ID
+        return $this->belongsTo(Raid::class, 'RAI_ID', 'RAI_ID');
+    }
+
     public function equipeDuUser()
     {
         $userId = auth()->id();

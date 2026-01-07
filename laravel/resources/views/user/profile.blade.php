@@ -138,12 +138,98 @@
         </div>
     </form>
 
-    <div class="mt-24 border-t border-gray-100 pt-16">
-        <h2 class="text-3xl text-center font-bold text-gray-900 mb-10 uppercase">
-            Historique des courses
+    <div class="mt-24 border-t border-gray-100 pt-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
+            Historique des Courses
         </h2>
-        <div class="text-center py-10 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
-            <p class="text-gray-400 font-bold uppercase tracking-widest text-sm italic">Aucune donnée disponible</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            @forelse($uniqueCourses as $course)
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-1">
+                    {{-- Badge Type --}}
+                    <div class="mb-3">
+                         <span class="text-[10px] font-bold uppercase text-gray-500">
+                            {{ $course->type->TYP_LIBELLE ?? 'Course' }}
+                        </span>
+                    </div>
+
+                    {{-- Nom & Raid --}}
+                    <h3 class="font-black text-gray-900 uppercase text-lg leading-tight truncate" title="{{ $course->COU_NOM }}">
+                        {{ $course->COU_NOM }}
+                    </h3>
+                    <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1 mb-4 truncate">
+                        {{ $course->raid->RAI_NOM }}
+                    </p>
+
+                    {{-- Infos Minimales --}}
+                    <div class="flex justify-between items-end border-t border-gray-100 pt-3">
+                        <div class="text-xs text-gray-500 font-bold">
+                             <span class="block text-[10px] uppercase text-gray-300">Date</span>
+                             {{ \Carbon\Carbon::parse($course->COU_DATE_DEBUT)->format('d/m/Y') }}
+                             <span class="block text-[10px] uppercase text-gray-300">Lieu</span>
+                             {{ Str::limit($course->COU_LIEU, 50) }}
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full text-center py-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                    <p class="text-gray-400 font-bold text-sm italic">Aucune course terminée.</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+    <div class="mt-16 border-t border-gray-100 pt-12">
+        <h2 class="text-2xl font-black text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
+            Mes Équipes
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            @forelse($allTeams as $equipe)
+                @php
+                    $isChef = ($equipe->UTI_ID == Auth::id());
+                @endphp
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all group flex flex-col h-full">
+                    
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200">
+                            @if($equipe->EQU_IMAGE)
+                                <img src="{{ asset('storage/' . $equipe->EQU_IMAGE) }}" class="w-full h-full object-cover">
+                            @else
+                                <span class="text-xl">🚩</span>
+                            @endif
+                        </div>
+                        <div class="overflow-hidden">
+                            <h3 class="font-black text-gray-900 uppercase text-md truncate" title="{{ $equipe->EQU_NOM }}">
+                                {{ $equipe->EQU_NOM }}
+                            </h3>
+                            @if($isChef)
+                                <span class="text-[10px] font-bold uppercase text-yellow-600 bg-yellow-50 px-1 rounded">👑 Chef d'équipe</span>
+                            @else
+                                <span class="text-[10px] font-bold uppercase text-blue-600 bg-blue-50 px-1 rounded">👤 Membre</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="mb-4 flex-grow">
+                        <p class="text-xs text-gray-400 uppercase font-bold">Participation à :</p>
+                        <p class="text-sm font-bold text-gray-800 truncate">{{ $equipe->course->COU_NOM }}</p>
+                    </div>
+
+                    {{-- Bouton Action --}}
+                    <div class="mt-auto">
+                        <a href="{{ route('teams.show', [$equipe->RAI_ID, $equipe->COU_ID, $equipe->EQU_ID]) }}" 
+                           class="block w-full text-center bg-black text-white py-2 rounded-lg font-bold text-xs hover:bg-green-600 transition-colors uppercase tracking-wide">
+                            Voir l'équipe
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full text-center py-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                    <p class="text-gray-400 font-bold text-sm italic">Aucune équipe rejointe.</p>
+                </div>
+            @endforelse
         </div>
     </div>
 </div>

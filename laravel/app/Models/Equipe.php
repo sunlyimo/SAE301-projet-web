@@ -34,4 +34,11 @@ class Equipe extends Model
                     ->where('RAI_ID', $this->getAttribute('RAI_ID'))
                     ->where('COU_ID', $this->getAttribute('COU_ID'));
     }
+
+    public function getCourseAttribute()
+    {
+        return \App\Models\Course::where('RAI_ID', $this->getAttribute('RAI_ID'))
+                    ->where('COU_ID', $this->getAttribute('COU_ID'))
+                    ->first();
+    }
 }

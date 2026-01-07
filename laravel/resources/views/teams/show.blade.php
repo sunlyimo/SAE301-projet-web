@@ -28,7 +28,7 @@
                     {{-- Le Chef --}}
                     <li class="flex items-center justify-between p-3 bg-yellow-50 rounded-xl border border-yellow-100">
                         <div>
-                            <span class="font-bold text-gray-900">{{ $membre->utilisateur->UTI_NOM_UTILISATEUR }} {{ $equipe->chef->UTI_PRENOM }} {{ $equipe->chef->UTI_NOM }}</span>
+                            <span class="font-bold text-gray-900">{{ $equipe->chef->UTI_PRENOM }} {{ $equipe->chef->UTI_NOM }}</span>
                             <span class="block text-xs text-yellow-600 font-bold uppercase">Chef d'équipe</span>
                         </div>
                         <span class="text-xl">👑</span>

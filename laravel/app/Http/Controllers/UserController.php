@@ -6,17 +6,37 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Equipe;
+use App\Models\Appartient;
 
 class UserController extends Controller
 {
-    public function profile()
+public function show()
     {
-        return view('user.profile', ['user' => Auth::user()]);
-    }
+        $user = Auth::user();
+        $userId = $user->UTI_ID;
+        $equipesChef = Equipe::where('UTI_ID', $userId)->get();
+        $appartenances = Appartient::where('UTI_ID', $userId)->get();
+        $equipesMembre = collect();
+        foreach ($appartenances as $app) {
+            $team = Equipe::where('RAI_ID', $app->RAI_ID)
+                ->where('COU_ID', $app->COU_ID)
+                ->where('EQU_ID', $app->EQU_ID)
+                ->first();
+            
+            if ($team) {
+                $equipesMembre->push($team);
+            }
+        }
+        $allTeams = $equipesChef->concat($equipesMembre);
+        $allTeams = $allTeams->sortByDesc(function($team) {
+            return $team->course->COU_DATE_DEBUT ?? 0;
+        });
 
-    public function edit()
-    {
-        return view('user.edit', ['user' => Auth::user()]);
+        $uniqueCourses = $allTeams->map(fn($t) => $t->course)->unique(function ($course) {
+            return $course ? ($course->RAI_ID . '-' . $course->COU_ID) : null;
+        })->filter();
+        return view('user.profile', compact('user', 'allTeams', 'uniqueCourses'));
     }
 
     public function update(Request $request)
@@ -24,12 +44,18 @@ class UserController extends Controller
         $user = Auth::user();
 
         $data = $request->validate([
-            'UTI_NOM' => 'string|max:50',
-            'UTI_PRENOM' => 'string|max:50',
-            'UTI_NOM_UTILISATEUR' => 'string|max:255',
-            'UTI_EMAIL' => 'email|max:150',
+            'UTI_NOM' => 'required|string|max:50',
+            'UTI_PRENOM' => 'required|string|max:50',
+            'UTI_NOM_UTILISATEUR' => [
+                'required', 'string', 'max:255', 
+                Rule::unique('vik_utilisateur', 'UTI_NOM_UTILISATEUR')->ignore($user->UTI_ID, 'UTI_ID')
+            ],
+            'UTI_EMAIL' => [
+                'required', 'email', 'max:150',
+                Rule::unique('vik_utilisateur', 'UTI_EMAIL')->ignore($user->UTI_ID, 'UTI_ID')
+            ],
             'UTI_TELEPHONE' => 'nullable|string|max:16',
-            'UTI_RUE' => 'nullable|string|max:50',   
+            'UTI_RUE' => 'nullable|string|max:50',    
             'UTI_CODE_POSTAL' => 'nullable|string|max:10',
             'UTI_VILLE' => 'nullable|string|max:50',
         ]);
