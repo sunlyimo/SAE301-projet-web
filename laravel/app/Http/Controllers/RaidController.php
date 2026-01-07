@@ -26,7 +26,7 @@ class RaidController extends Controller
             'RAI_WEB' => 'nullable|url',
             'CLU_ID' => 'required|exists:VIK_CLUB,CLU_ID',
             'UTI_ID' => 'required|exists:VIK_RESPONSABLE_RAID,UTI_ID',
-            'RAI_RAID_DATE_DEBUT' => 'required|date',
+            'RAI_RAID_DATE_DEBUT' => 'required|date|after_or_equal:RAI_INSCRI_DATE_FIN',
             'RAI_RAID_DATE_FIN' => 'required|date|after_or_equal:RAI_RAID_DATE_DEBUT',
             'RAI_INSCRI_DATE_DEBUT' => 'required|date',
             'RAI_INSCRI_DATE_FIN' => 'required|date|after_or_equal:RAI_INSCRI_DATE_DEBUT',
