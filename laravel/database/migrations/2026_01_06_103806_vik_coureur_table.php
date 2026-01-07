@@ -25,7 +25,7 @@ return new class extends Migration
             $table->char('UTI_TELEPHONE', 16)->nullable();
             $table->char('UTI_LICENCE', 15)->nullable();
             $table->char('UTI_NOM_UTILISATEUR', 255);
-            $table->char('UTI_MOT_DE_PASSE', 32)->nullable();
+            $table->char('UTI_MOT_DE_PASSE', 255)->nullable();
         });
     }
 
