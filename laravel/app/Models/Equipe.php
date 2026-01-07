@@ -29,6 +29,14 @@ class Equipe extends Model
         return $this->belongsTo(User::class, 'UTI_ID', 'UTI_ID');
     }
 
+    /**
+     * Relation avec les membres de l'équipe via la table vik_appartient
+     */
+    public function membres()
+    {
+        return $this->hasMany(Appartient::class, 'EQU_ID', 'EQU_ID');
+    }
+
     // Cette fonction remplace la relation "utilisateurs" qui plantait.
     // Elle fait une jointure manuelle pour être sûre de récupérer les bons membres.
     public function getMembresListAttribute()
