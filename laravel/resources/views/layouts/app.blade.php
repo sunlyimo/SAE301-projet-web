@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>CartoRun - @yield('title')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
@@ -15,6 +14,7 @@
             <div class="flex justify-between h-20">
 
                 <div class="flex items-center gap-3">
+                    <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto">
                     <span class="text-2xl font-bold text-black tracking-tight">
                         CartoRun
@@ -59,7 +59,7 @@
 
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-black text-white text-sm font-bold hover:bg-green-600 transition-all duration-300 shadow-md active:scale-95">
+                            <button type="submit" class="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-black text-white text-sm font-bold hover:bg-green-600 transition-all duration-300 shadow-md active:scale-95 cursor-pointer">
                                 Se déconnecter
                             </button>
                         </form>
@@ -78,6 +78,7 @@
             <div class="flex flex-col md:flex-row justify-between items-start gap-12">
                 <!-- Logo and Social Media (Left) -->
                 <div class="flex flex-col items-start flex-shrink-0">
+                    <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-16 w-auto mb-6">
                     <div class="flex gap-4">
                         <a href="#" class="text-gray-900 hover:text-green-600 transition-colors duration-300" aria-label="Instagram">
