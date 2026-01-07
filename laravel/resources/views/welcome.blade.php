@@ -18,7 +18,13 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         <div class="lg:col-span-2">
-            <h2 class="text-3xl font-bold text-gray-900 mb-6">Bienvenue sur CartoRun</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">
+                Bienvenue 
+                @auth
+                    <span class="text-green-600">{{ Auth::user()->UTI_NOM_UTILISATEUR }}</span>
+                @endauth
+                sur CartoRun
+            </h2>
             
             <p class="text-gray-700 mb-4">
                 Gérez facilement vos inscriptions et suivez vos performances dans les raids et courses d'orientation. 

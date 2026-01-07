@@ -209,7 +209,7 @@
         
         setTimeout(() => {
             closeWelcomeNotif();
-        }, 1500);
+        }, 2500);
     </script>
     @endif
 
