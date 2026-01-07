@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Course extends Model
 {
     protected $table = 'VIK_COURSE';
-    
-    // Laravel ne gère pas nativement les clés primaires sous forme de tableau pour les updates
     protected $primaryKey = ['RAI_ID', 'COU_ID'];
     
     public $incrementing = false;
@@ -47,5 +45,32 @@ class Course extends Model
     public function type(): BelongsTo
     {
         return $this->belongsTo(TypeCourse::class, 'TYP_ID', 'TYP_ID');
+    }
+
+    public function equipeDuUser()
+    {
+        $userId = auth()->id();
+        if (!$userId) return null;
+
+        $equipeChef = \App\Models\Equipe::where('RAI_ID', $this->RAI_ID)
+                        ->where('COU_ID', $this->COU_ID)
+                        ->where('UTI_ID', $userId)
+                        ->first();
+
+        if ($equipeChef) return $equipeChef;
+
+        $appartient = \App\Models\Appartient::where('RAI_ID', $this->RAI_ID)
+                        ->where('COU_ID', $this->COU_ID)
+                        ->where('UTI_ID', $userId)
+                        ->first();
+
+        if ($appartient) {
+            return \App\Models\Equipe::where('RAI_ID', $this->RAI_ID)
+                        ->where('COU_ID', $this->COU_ID)
+                        ->where('EQU_ID', $appartient->EQU_ID)
+                        ->first();
+        }
+
+        return null;
     }
 }

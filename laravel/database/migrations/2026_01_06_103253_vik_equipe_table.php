@@ -16,7 +16,8 @@ return new class extends Migration
             $table->integer('COU_ID');
             $table->integer('EQU_ID');
             $table->unsignedInteger('UTI_ID');
-
+            $table->string('EQU_NOM', 50);
+            $table->string('EQU_IMAGE', 255)->nullable();
             $table->primary(['RAI_ID','COU_ID','EQU_ID']);
         });
     }

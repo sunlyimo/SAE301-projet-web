@@ -11,7 +11,8 @@ use App\Http\Controllers\Auth\ClubController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\CourseController;
-
+use App\Http\Controllers\InscriptionController;
+use App\Http\Controllers\TeamController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -85,6 +86,14 @@ Route::post('/courses', [CourseController::class, 'store'])->name('courses.store
 
 Route::get('/courses/{rai_id}/{cou_id}/edit', [CourseController::class, 'edit'])->name('courses.edit');
 Route::patch('/courses/{rai_id}/{cou_id}', [CourseController::class, 'update'])->name('courses.update');
+
+Route::get('/courses/{rai_id}/{cou_id}/inscription', [InscriptionController::class, 'show'])->name('courses.inscription');
+Route::post('/courses/{rai_id}/{cou_id}/team/create', [InscriptionController::class, 'createTeam'])->name('courses.team.create');
+Route::post('/courses/{rai_id}/{cou_id}/team/join', [InscriptionController::class, 'joinTeam'])->name('courses.team.join');
+
+Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
+Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
+
 Route::get('/about', function () {
     return view('about.about');
 })->name('about');
