@@ -52,7 +52,7 @@
 
         <!-- Grille des raids -->
         <div class="flex flex-wrap justify-center gap-6 mb-8">
-            @forelse ($raids->take(4) as $raid)
+            @forelse($raids->take(4) as $raid)
                 <div class="w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] group bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col">
                     
                     <!-- Badge de statut -->
@@ -61,17 +61,15 @@
                         <div class="flex justify-between items-start mb-3">
                             @if($raid->RAI_INSCRI_DATE_DEBUT <= $now && $raid->RAI_INSCRI_DATE_FIN >= $now)
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white">
-                                    <span class="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
-                                    Ouvert
+                                ● Inscriptions ouvertes
                                 </span>
                             @elseif($raid->RAI_INSCRI_DATE_DEBUT > $now)
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-500 text-white">
-                                    <span class="w-2 h-2 bg-white rounded-full mr-2"></span>
-                                    Bientôt
+                                ● Inscriptions non ouvertes
                                 </span>
                             @else
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-400 text-white">
-                                    Terminé
+                                ● Inscriptions terminées
                                 </span>
                             @endif
                             <span class="text-gray-300 font-black text-sm">#{{ $raid->RAI_ID }}</span>
