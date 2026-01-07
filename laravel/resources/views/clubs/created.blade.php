@@ -26,7 +26,13 @@
                 </div>
                 <div class="ml-3 flex-1">
                     <p class="text-sm text-blue-700 mb-3">
-                        Un email d'invitation a été envoyé au responsable <strong>{{ $club->responsable->UTI_PRENOM }} {{ $club->responsable->UTI_NOM }}</strong>.
+                        @if($club->responsable)
+                            Un email d'invitation a été envoyé au responsable <strong>{{ $club->responsable->UTI_PRENOM }} {{ $club->responsable->UTI_NOM }}</strong>.
+                        @elseif(!empty($invitedUser))
+                            Un email d'invitation a été envoyé à <strong>{{ $invitedUser->UTI_PRENOM }} {{ $invitedUser->UTI_NOM }}</strong> (utilisateur existant ou nouvel utilisateur créé).
+                        @else
+                            Un email d'invitation a été envoyé au responsable (utilisateur non précisé).
+                        @endif
                     </p>
                     <button onclick="openMailbox()" id="open-mailbox-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition duration-200">
                         Ouvrir la boîte mail
@@ -42,7 +48,11 @@
             <a href="{{ route('clubs.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200">
                 Retour à la liste des clubs
             </a>
-            <span class="text-sm text-gray-500">Statut : En attente de validation du responsable</span>
+            @if($club->responsable)
+                <span class="text-sm text-green-600">Statut : Responsable validé</span>
+            @elseif(!empty($invitation))
+                <span class="text-sm text-gray-500">Statut : En attente de validation du responsable</span>
+            @endif
         </div>
     </div>
 </div>

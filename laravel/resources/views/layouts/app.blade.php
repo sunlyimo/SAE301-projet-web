@@ -199,7 +199,7 @@
                 opacity: 1;
             }
         }
-        
+
         .animate-slide-in {
             animation: slide-in 0.3s ease-out;
         }
@@ -214,7 +214,7 @@
                 notif.style.display = 'none';
             }, 300);
         }
-        
+
         setTimeout(() => {
             closeWelcomeNotif();
         }, 2500);

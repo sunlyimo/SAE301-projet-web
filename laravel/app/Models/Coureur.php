@@ -28,19 +28,11 @@ class Coureur extends Model
         'UTI_MOT_DE_PASSE',
     ];
 
-    /**
-     * Relation avec le club
-     */
-    public function club()
-    {
-        return $this->belongsTo(Club::class, 'CLU_ID', 'CLU_ID');
+    public function user() {
+        return $this->belongsTo(User::class, 'UTI_ID', 'UTI_ID');
     }
 
-    /**
-     * Relation avec l'utilisateur
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'UTI_ID', 'UTI_ID');
+    public function club(){
+        return $this->belongsTo(Club::class, 'CLU_ID', 'CLU_ID');
     }
 }
