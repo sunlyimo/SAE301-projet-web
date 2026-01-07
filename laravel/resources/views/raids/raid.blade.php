@@ -71,8 +71,8 @@
                             Date d'inscription
                         </div>
                         <p class="text-sm font-bold text-gray-800">
-                            Du {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m/Y') }} 
-                            au {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_FIN)->format('d/m/Y') }}
+                            Du {{ \Carbon\Carbon::parse($raid->RAI_INSCRI_DATE_DEBUT)->format('d/m/Y') }} 
+                            au {{ \Carbon\Carbon::parse($raid->RAI_INSCRI_DATE_FIN)->format('d/m/Y') }}
                         </p>
                     </div>
                 </div>
