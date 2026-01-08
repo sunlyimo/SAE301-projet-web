@@ -4,8 +4,6 @@
 
 @section('content')
 <div class="max-w-[90rem] mx-auto my-12 p-6">
-
-    {{-- En-tête --}}
     <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-200 pb-6">
         <div>
             <h1 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Les Raids</h1>
@@ -14,7 +12,6 @@
         
         {{-- Bouton Créer (si admin) --}}
     </div>
-
     <div class="flex flex-wrap justify-center gap-6 mb-8">
         @forelse($raids as $raid)
                 <div class="w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] group bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col">
@@ -65,10 +62,7 @@
                             {{ $raid->total_course }} {{ $raid->total_course > 1 ? 'courses' : 'course' }}
                         </div>
                     </div>
-
-                    <!-- Informations détaillées -->
                     <div class="p-6 flex-grow space-y-4">
-                        <!-- Dates de l'événement -->
                         <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
                             <div class="flex items-center text-xs text-blue-700 font-bold uppercase mb-2">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,8 +76,6 @@
                                 {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_FIN)->format('d/m/Y') }}
                             </p>
                         </div>
-
-                        <!-- Dates d'inscription -->
                         <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
                             <div class="flex items-center text-xs text-purple-700 font-bold uppercase mb-2">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,8 +90,6 @@
                             </p>
                         </div>
                     </div>
-
-                    <!-- Bouton d'action -->
                     <div class="p-6 pt-0">
                         <a href="{{ route('raids.courses', $raid->RAI_ID) }}" 
                            class="block w-full py-3 bg-gradient-to-r from-black to-gray-800 text-white text-center rounded-xl font-bold text-sm hover:from-green-600 hover:to-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex justify-center items-center">
