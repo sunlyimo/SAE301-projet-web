@@ -7,12 +7,47 @@
         Retour à la liste
     </a>
 
+    @if(session('success'))
+        <div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <h1 class="text-4xl font-bold text-gray-900 mb-10 tracking-tighter uppercase">Créer une nouvelle course</h1>
 
-    <form action="{{ route('courses.store') }}" method="POST" class="bg-white p-10 rounded-3xl shadow-2xl border border-gray-100 space-y-10">
+    <form action="{{ route('courses.store') }}" method="POST" class="p-10 rounded-3xl border border-gray-100 space-y-10">
         @csrf
+        <section class="space-y-6 bg-yellow-50 p-6 rounded-2xl border border-yellow-100">
+            <h2 class="text-xl font-bold border-b border-yellow-200 pb-2 text-yellow-700 uppercase tracking-widest text-sm flex items-center">
+                Responsable de la course
+            </h2>
+            
+            <div class="space-y-2 relative">
+                <label class="text-xs font-bold text-gray-400 uppercase">Rechercher par Nom d'utilisateur</label>
+                
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
+                        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" 
+                           list="users_list" 
+                           id="responsable_search" 
+                           placeholder="Commencez à taper un pseudo..." 
+                           autocomplete="off"
+                           class="w-full p-4 pl-12 bg-white rounded-2xl border-2 focus:ring-0 outline-none transition-all font-bold text-gray-800 placeholder-gray-300 @error('responsable_id') border-red-500 @else border-yellow-200 focus:border-yellow-500 @enderror">
+                </div>
+                <datalist id="users_list">
+                    @foreach($users as $user)
+                        <option data-id="{{ $user->UTI_ID }}" value="{{ $user->UTI_NOM_UTILISATEUR }} ({{ $user->UTI_PRENOM }} {{ $user->UTI_NOM }})">
+                    @endforeach
+                </datalist>
 
-        {{-- Informations Générales --}}
+                <input type="hidden" name="responsable_id" id="responsable_id" value="{{ old('responsable_id') }}">
+
+                @error('responsable_id') <p class="text-red-500 text-xs font-bold mt-1">{{ $message }}</p> @enderror
+            </div>
+        </section>
+
         <section class="space-y-6">
             <h2 class="text-xl font-bold border-b pb-2 text-green-600 uppercase tracking-widest text-sm">Informations Générales</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -44,7 +79,6 @@
             </div>
         </section>
 
-        {{-- Horaires --}}
         <section class="space-y-6">
             <h2 class="text-xl font-bold border-b pb-2 text-green-600 uppercase tracking-widest text-sm">Horaires</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -63,7 +97,6 @@
             </div>
         </section>
 
-        {{-- Âges et Difficulté --}}
         <section class="space-y-6">
             <h2 class="text-xl font-bold border-b pb-2 text-green-600 uppercase tracking-widest text-sm">Âges et Difficulté</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -94,7 +127,6 @@
             </div>
         </section>
 
-        {{-- Tarification --}}
         <section class="space-y-6">
             <h2 class="text-xl font-bold border-b pb-2 text-green-600 uppercase tracking-widest text-sm">Tarifs</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -125,7 +157,6 @@
             </div>
         </section>
 
-        {{-- Capacité & Équipes --}}
         <section class="space-y-6">
             <h2 class="text-xl font-bold border-b pb-2 text-green-600 uppercase tracking-widest text-sm">Capacité & Équipes</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -167,4 +198,23 @@
         </button>
     </form>
 </div>
+
+<script>
+    document.getElementById('responsable_search').addEventListener('input', function(e) {
+        var input = e.target;
+        var list = document.getElementById('users_list');
+        var hiddenInput = document.getElementById('responsable_id');
+        for (var i = 0; i < list.options.length; i++) {
+            if (list.options[i].value === input.value) {
+                hiddenInput.value = list.options[i].getAttribute('data-id');
+                input.classList.remove('border-yellow-200', 'focus:border-yellow-500');
+                input.classList.add('border-green-500', 'focus:border-green-600');
+                return;
+            }
+        }
+        hiddenInput.value = "";
+        input.classList.remove('border-green-500', 'focus:border-green-600');
+        input.classList.add('border-yellow-200', 'focus:border-yellow-500');
+    });
+</script>
 @endsection
