@@ -10,7 +10,7 @@ class RaidController extends Controller
 {
     public function index() {
         return view('raids.raid')
-        ->with('raids',Raid::getFuturRaid());
+        ->with('raids', Raid::getAllRaids());
     }
 
     public function create() /* affichage du formulaire */

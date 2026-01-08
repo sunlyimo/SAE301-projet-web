@@ -20,11 +20,10 @@ class UserController extends Controller
         $user = Auth::user()->load('coureur');
         $clubs = Club::orderBy('CLU_NOM')->get();
         $userId = $user->UTI_ID;
-        $allTeams = Equipe::where('UTI_ID', $userId)
-            ->orWhereHas('membres', function ($query) use ($userId) {
-                $query->where('vik_appartient.UTI_ID', $userId);
-            })
-            ->get();
+        $allTeams = Equipe::whereHas('membres', function ($query) use ($userId) {
+            $query->where('vik_appartient.UTI_ID', $userId);
+        })
+        ->get();
         $courseGroups = [];
         foreach ($allTeams as $team) {
             $rai = $team->getAttribute('RAI_ID');
