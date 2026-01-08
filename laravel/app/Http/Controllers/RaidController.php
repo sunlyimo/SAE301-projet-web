@@ -10,7 +10,7 @@ class RaidController extends Controller
 {
     public function index() {
         return view('raids.raid')
-        ->with('raids',Raid::getFuturRaid());
+        ->with('raids', Raid::getAllRaids());
     }
 
     public function create() /* affichage du formulaire */
@@ -294,6 +294,6 @@ class RaidController extends Controller
             }
         }
 
-        return redirect()->route('raids.courses', $raid_id)->with('success', 'Raid modifié avec succès !');
+        return redirect()->route('raids.index', $raid_id)->with('success', 'Raid modifié avec succès !');
     }
 }
