@@ -79,6 +79,11 @@ class User extends Authenticatable
     );
     }
 
+    public function administrateur()
+    {
+        return $this->hasOne(Administrateur::class, 'UTI_ID', 'UTI_ID');
+    }
+
     /**
      * Relation avec le club via la table vik_coureur
      */
