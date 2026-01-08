@@ -430,7 +430,7 @@
             </div>
         </form>
     </div>
-    <div class="mt-24 border-t border-gray-100 pt-12">
+    <div class="mt-24 border-t border-gray-100 pt-12" id="historique">
         <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center justify-center gap-2">
             Historique des Courses
         </h2>
