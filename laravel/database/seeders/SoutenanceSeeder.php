@@ -46,6 +46,7 @@ class SoutenanceSeeder extends Seeder
             [68, 'sylvian.delhoumi@unicaen.fr', 'DELHOUMI', 'Sylvian', '1985-06-02', '47 rue des chênes', '14000', 'Caen', '0705324567', '2025-D2SI13', 'sylvian.delhoumi', 'pass123'],
             [69, 'jeanfrancois.anne@unicaen.fr', 'ANNE', 'Jean-François', '1964-11-05', '27 rue des tilleuls', '14123', 'Cormeilles Le Royal', '0645389485', '56723478', 'jeanfrancois.anne', 'pass123'],
             [70, 'marc.rousseau@test.fr', 'ROUSSEAU', 'Marc', '1990-01-01', 'Place de la Liberté', '14000', 'Caen', '0600000070', '70070', 'marc.rousseau', 'pass123'],
+            [100, 'admin.vikazim@mail.fr', 'Admin', 'Vikazim', '2006-10-16', 'Rue des lilas', '76000', 'Caen', '0600000070', '70070', 'admin_sys', 'Root123!'],
         ];
 
         foreach ($utilisateurs as $user) {
