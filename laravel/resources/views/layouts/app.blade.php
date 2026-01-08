@@ -35,10 +35,10 @@
                     @php
                     $links = [
                         'Accueil' => '/',
+                        'Clubs' => '/clubs',
+                        'Raids' => '/raids',
                         'Contact' => '/contact',
                         'À propos' => '/about',
-                        'Raids' => '/raids',
-                        'Clubs' => '/clubs',
                         'Historique' => '/profile#historique'
                     ];
                     
