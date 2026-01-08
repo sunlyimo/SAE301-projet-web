@@ -80,6 +80,10 @@ class RaidController extends Controller
 
         $raid = DB::table('vik_raid')->where('RAI_ID', $raid_id)->first();
 
+        if (!Auth::check() || $raid === null || ($raid->UTI_ID ?? null) != Auth::id()) {
+            return redirect('/raids')->with('error', 'Impossible de modifier ce raid : vous n\'êtes pas le responsable.');
+        }
+
         return view('raids.raid-edit', compact('clubs', 'responsables', 'raid'));
     }
 
