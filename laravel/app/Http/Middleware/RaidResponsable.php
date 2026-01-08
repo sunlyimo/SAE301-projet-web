@@ -16,11 +16,16 @@ class RaidResponsable
      */
     public function handle(Request $request, Closure $next)
     {
-        $exists = DB::table('vik_responsable_raid')
-                    ->where('UTI_ID', auth()->id())
-                    ->exists();
-        if (!$exists) {
-            return redirect('/')->with('error', "Accès réservé aux responsables de raid.");
+        $userId = auth()->id();
+        $raiId = $request->input('RAI_ID') ?? $request->route('rai_id');
+        if ($raiId) {
+            $isRaidOwner = DB::table('vik_raid')
+                ->where('RAI_ID', $raiId)
+                ->where('UTI_ID', $userId)
+                ->exists();
+            if (!$isRaidOwner) {
+                return redirect('/')->with('error', "Vous n'avez pas les droits sur ce raid.");
+            }
         }
         return $next($request);
     }

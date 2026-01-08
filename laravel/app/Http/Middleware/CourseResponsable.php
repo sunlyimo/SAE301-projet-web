@@ -16,13 +16,21 @@ class CourseResponsable
      */
     public function handle(Request $request, Closure $next)
     {
-        $exists = DB::table('vik_responsable_course')
-                    ->where('UTI_ID', auth()->id())
-                    ->exists();
-
-        if (!$exists) {
-            return redirect('/')->with('error', "Accès réservé aux responsables de course.");
+        $userId = auth()->id();
+        $raiId = $request->route('rai_id');
+        $couId = $request->route('cou_id');
+        $isOwner = DB::table('vik_course')
+            ->where('RAI_ID', $raiId)
+            ->where('COU_ID', $couId)
+            ->where('UTI_ID', $userId)
+            ->exists();
+        $isRaidOwner = DB::table('vik_raid')
+            ->where('RAI_ID', $raiId)
+            ->where('UTI_ID', $userId)
+            ->exists();
+        if ($isOwner || $isRaidOwner) {
+            return $next($request);
         }
-        return $next($request);
+        return redirect('/')->with('error', "Vous n'êtes pas responsable de cette épreuve.");
     }
 }
