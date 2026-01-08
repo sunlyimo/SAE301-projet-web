@@ -50,6 +50,18 @@
                     if (auth()->check() && DB::table('VIK_RESPONSABLE_CLUB')->where('UTI_ID', auth()->id())->exists()) {
                         $links['Créer un raid'] = '/raids/create';
                     }
+                    
+                    if (auth()->check()) {
+                        $raid = DB::table('vik_raid')->where('UTI_ID', auth()->id())->first();
+                        if ($raid) {
+                            $links['Mes Raids'] = '/my-raids';
+                        }
+                        
+                        $course = DB::table('vik_course')->where('UTI_ID', auth()->id())->first();
+                        if ($course) {
+                            $links['Mes Courses'] = '/my-courses';
+                        }
+                    }
                     @endphp
 
                     @foreach($links as $name => $url)

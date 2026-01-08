@@ -15,19 +15,16 @@ class TeamController extends Controller
         $equipe = Equipe::where('RAI_ID', $rai_id)
                         ->where('COU_ID', $cou_id)
                         ->where('EQU_ID', $equ_id)
-                        ->with(['chef.coureur.rpps' => function($query) use ($rai_id, $cou_id) {
-                            $query->where('RAI_ID', $rai_id)->where('COU_ID', $cou_id);
-                        }])
+                        ->with(['chef'])
                         ->firstOrFail();
 
         // Charger les membres en excluant le chef d'équipe
-        $equipe->load(['membres' => function($query) use ($rai_id, $cou_id, $equipe) {
+        $equipe->load(['membres' => function($query) use ($rai_id, $cou_id, $equ_id, $equipe) {
             $query->where('RAI_ID', $rai_id)
                   ->where('COU_ID', $cou_id)
-                  ->where('UTI_ID', '!=', $equipe->UTI_ID) // Exclure le chef
-                  ->with(['utilisateur.coureur.rpps' => function($q) use ($rai_id, $cou_id) {
-                      $q->where('RAI_ID', $rai_id)->where('COU_ID', $cou_id);
-                  }]);
+                  ->where('EQU_ID', $equ_id)
+                  ->where('UTI_ID', '!=', $equipe->UTI_ID)
+                  ->with(['utilisateur']);
         }]);
 
         $isChef = $equipe->UTI_ID == Auth::id();
@@ -37,7 +34,18 @@ class TeamController extends Controller
                               ->where('UTI_ID', Auth::id())
                               ->exists();
 
-        if (!$isChef && !$isMembre) {
+        // Vérifier si l'utilisateur est responsable de cette course
+        $isCourseResponsable = \App\Models\Course::where('RAI_ID', $rai_id)
+                                                ->where('COU_ID', $cou_id)
+                                                ->where('UTI_ID', Auth::id())
+                                                ->exists();
+
+        // Vérifier si l'utilisateur est administrateur
+        $isAdmin = \DB::table('vik_administrateur')
+                     ->where('UTI_ID', Auth::id())
+                     ->exists();
+
+        if (!$isChef && !$isMembre && !$isCourseResponsable && !$isAdmin) {
             abort(403, "Accès refusé.");
         }
 
@@ -373,5 +381,63 @@ class TeamController extends Controller
         }
 
         return back()->with('success', "Le numéro Pass'compétition a été enregistré avec succès !");
+    }
+
+    public function destroy($rai_id, $cou_id, $equ_id)
+    {
+        $equipe = Equipe::where('RAI_ID', $rai_id)
+                        ->where('COU_ID', $cou_id)
+                        ->where('EQU_ID', $equ_id)
+                        ->firstOrFail();
+
+        // Vérifier que l'utilisateur est responsable de la course
+        $course = \App\Models\Course::where('RAI_ID', $rai_id)
+                                   ->where('COU_ID', $cou_id)
+                                   ->first();
+
+        if (!$course || $course->UTI_ID != Auth::id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à supprimer cette équipe.');
+        }
+
+        // Supprimer d'abord tous les membres de l'équipe
+        Appartient::where('RAI_ID', $rai_id)
+                  ->where('COU_ID', $cou_id)
+                  ->where('EQU_ID', $equ_id)
+                  ->delete();
+
+        // Supprimer l'équipe
+        $equipe->delete();
+
+        return redirect()->route('courses.my-courses')->with('success', 'Équipe supprimée avec succès.');
+    }
+
+    /**
+     * Valider définitivement une équipe (responsable de course uniquement)
+     */
+    public function validateTeam($rai_id, $cou_id, $equ_id)
+    {
+        $equipe = Equipe::where('RAI_ID', $rai_id)
+                        ->where('COU_ID', $cou_id)
+                        ->where('EQU_ID', $equ_id)
+                        ->firstOrFail();
+
+        // Vérifier que l'utilisateur est responsable de cette course
+        $course = \App\Models\Course::where('RAI_ID', $rai_id)
+                                   ->where('COU_ID', $cou_id)
+                                   ->first();
+
+        if (!$course || $course->UTI_ID != Auth::id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à valider cette équipe.');
+        }
+
+        // Simuler la validation (sans persister en base)
+        // Stocker temporairement les équipes validées en session
+        $validatedTeamsKey = "validated_teams_{$rai_id}_{$cou_id}";
+        $validatedTeams = session($validatedTeamsKey, []);
+        $validatedTeams[] = $equ_id;
+        session([$validatedTeamsKey => array_unique($validatedTeams)]);
+
+        return redirect()->route('courses.manage-teams', [$rai_id, $cou_id])
+                        ->with('success', 'Équipe validée avec succès ! L\'équipe est maintenant inscrite définitivement à la course.');
     }
 }

@@ -30,24 +30,21 @@ class RaidController extends Controller
         $validated = $request->validate([
             'RAI_NOM' => 'required|max:50',
             'RAI_LIEU' => 'required|max:100',
-            'RAI_WEB' => 'nullable|url',
+            'RAI_WEB' => 'nullable',
             'CLU_ID' => 'required|exists:VIK_CLUB,CLU_ID',
             'UTI_ID' => 'required|exists:VIK_UTILISATEUR,UTI_ID',
-            'RAI_RAID_DATE_DEBUT' => 'required|date|after_or_equal:RAI_INSCRI_DATE_FIN',
+            'RAI_RAID_DATE_DEBUT' => 'required|date',
             'RAI_RAID_DATE_FIN' => 'required|date|after_or_equal:RAI_RAID_DATE_DEBUT',
             'RAI_INSCRI_DATE_DEBUT' => 'required|date',
             'RAI_INSCRI_DATE_FIN' => 'required|date|after_or_equal:RAI_INSCRI_DATE_DEBUT',
             'RAI_CONTACT' => 'required|email|max:100',
-            'RAI_TELEPHONE' => 'nullable|regex:/^[0-9\s\.\-\+\(\)]{10,20}$/|max:20',
             'RAI_IMAGE' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'RAI_NOM.required' => 'Le nom du raid est obligatoire.',
             'RAI_NOM.max' => 'La taille du nom doit être inférieure ou égale à 50 caractères. Veuillez entrer un nom plus court.',
             'RAI_LIEU.max' => 'La taille du lieu doit être inférieure ou égale à 100 caractères. Veuillez entrer un lieu plus court.',
             'RAI_LIEU.required' => 'Le lieu de départ est obligatoire.',
-            'RAI_WEB.url' => "L'URL du site web n'est pas valide.",
             'RAI_CONTACT.email' => 'Veuillez entrer une adresse email valide (cette erreur ne devrait pas apparaître si vous avez sélectionné un responsable dans la liste).',
-            'RAI_RAID_DATE_DEBUT.after_or_equal' => 'La date de début du raid doit être postérieure à la date de clôture des inscriptions.',
             'RAI_RAID_DATE_FIN.after_or_equal' => 'La date de fin du raid doit être postérieure ou égale à la date de début du raid.',
             'RAI_INSCRI_DATE_FIN.after_or_equal' => 'La date de fin des inscriptions doit être postérieure ou égale à la date de début des inscriptions.',
             'RAI_INSCRI_DATE_DEBUT.date' => 'La date de début des inscriptions doit être une date valide.',
@@ -66,7 +63,98 @@ class RaidController extends Controller
             'RAI_CONTACT.required' => "L'adresse e-mail du contact est obligatoire."
         ]);
 
+        // Validation personnalisée : la date de début du raid doit être après la date de fin des inscriptions
+        $raidStart = \Carbon\Carbon::parse($validated['RAI_RAID_DATE_DEBUT']);
+        $inscriptionEnd = \Carbon\Carbon::parse($validated['RAI_INSCRI_DATE_FIN']);
+        
+        if ($raidStart < $inscriptionEnd) {
+            return back()->withErrors(['RAI_RAID_DATE_DEBUT' => 'La date de début du raid doit être postérieure à la date de clôture des inscriptions.'])->withInput();
+        }
+
         // Récupère les coordonnées depuis VIK_UTILISATEUR
+        $user = DB::table('VIK_UTILISATEUR')
+            ->where('UTI_ID', $validated['UTI_ID'])
+            ->select('UTI_EMAIL', 'UTI_TELEPHONE')
+            ->first();
+
+        if ($user) {
+            $validated['RAI_CONTACT'] = $user->UTI_EMAIL;
+            // Note: RAI_TELEPHONE n'existe pas dans la table vik_raid
+        }
+
+        // gérer le fichier image correctement (ne pas insérer le temp path)
+        if ($request->hasFile('RAI_IMAGE')) {
+            $path = $request->file('RAI_IMAGE')->store('raids', 'public');
+            $validated['RAI_IMAGE'] = $path;
+        }
+
+        Raid::create($validated);
+
+        return redirect('/')->with('success', 'Raid créé avec succès !');
+    }
+
+    public function myRaids()
+    {
+        $raids = Raid::where('UTI_ID', auth()->id())->get();
+        return view('raids.my-raids', compact('raids'));
+    }
+
+    public function edit($raid_id)
+    {
+        $raid = Raid::findOrFail($raid_id);
+        
+        // Vérifier que l'utilisateur est responsable de ce raid
+        if ($raid->UTI_ID != auth()->id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à modifier ce raid.');
+        }
+
+        $clubs = DB::table('VIK_CLUB')->orderBy('CLU_NOM')->pluck('CLU_NOM', 'CLU_ID');
+
+        $responsables = DB::table('VIK_UTILISATEUR')
+            ->select('UTI_ID', 'UTI_EMAIL', 'UTI_TELEPHONE', DB::raw("CONCAT(UTI_PRENOM, ' ', UTI_NOM) as name"))
+            ->orderBy('UTI_NOM')
+            ->get();
+
+        return view('raid-edit', compact('raid', 'clubs', 'responsables'));
+    }
+
+    public function update(Request $request, $raid_id)
+    {
+        $raid = Raid::findOrFail($raid_id);
+        
+        // Vérifier que l'utilisateur est responsable de ce raid
+        if ($raid->UTI_ID != auth()->id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à modifier ce raid.');
+        }
+
+        $validated = $request->validate([
+            'RAI_NOM' => 'required|max:50',
+            'RAI_LIEU' => 'required|max:100',
+            'RAI_WEB' => 'nullable',
+            'CLU_ID' => 'required|exists:VIK_CLUB,CLU_ID',
+            'UTI_ID' => 'required|exists:VIK_UTILISATEUR,UTI_ID',
+            'RAI_RAID_DATE_DEBUT' => 'required|date|after_or_equal:RAI_INSCRI_DATE_FIN',
+            'RAI_RAID_DATE_FIN' => 'required|date|after_or_equal:RAI_RAID_DATE_DEBUT',
+            'RAI_INSCRI_DATE_DEBUT' => 'required|date',
+            'RAI_INSCRI_DATE_FIN' => 'required|date|after_or_equal:RAI_INSCRI_DATE_DEBUT',
+            'RAI_CONTACT' => 'required|email|max:100',
+            'RAI_TELEPHONE' => 'nullable|regex:/^[0-9\s\.\-\+\(\)]{10,20}$/|max:20',
+            'RAI_IMAGE' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'RAI_NOM.required' => 'Le nom du raid est obligatoire.',
+            'RAI_NOM.max' => 'La taille du nom doit être inférieure ou égale à 50 caractères. Veuillez entrer un nom plus court.',
+            'RAI_LIEU.max' => 'La taille du lieu doit être inférieure ou égale à 100 caractères. Veuillez entrer un lieu plus court.',
+            'RAI_LIEU.required' => 'Le lieu de départ est obligatoire.',
+            'RAI_CONTACT.email' => 'Veuillez entrer une adresse email valide (cette erreur ne devrait pas apparaître si vous avez sélectionné un responsable dans la liste).',
+            'RAI_RAID_DATE_DEBUT.after_or_equal' => 'La date de début du raid doit être postérieure à la date de clôture des inscriptions.',
+            'RAI_RAID_DATE_FIN.after_or_equal' => 'La date de fin du raid doit être postérieure à la date de début du raid.',
+            'RAI_INSCRI_DATE_FIN.after_or_equal' => 'La date de clôture des inscriptions doit être postérieure à la date d\'ouverture des inscriptions.',
+            'RAI_TELEPHONE.regex' => 'Le numéro de téléphone n\'est pas valide.',
+            'RAI_IMAGE.image' => 'Le fichier doit être une image.',
+            'RAI_IMAGE.mimes' => 'L\'image doit être au format JPEG, PNG, JPG ou GIF.',
+            'RAI_IMAGE.max' => 'La taille de l\'image ne doit pas dépasser 2 Mo.',
+        ]);
+
         $user = DB::table('VIK_UTILISATEUR')
             ->where('UTI_ID', $validated['UTI_ID'])
             ->select('UTI_EMAIL', 'UTI_TELEPHONE')
@@ -83,8 +171,8 @@ class RaidController extends Controller
             $validated['RAI_IMAGE'] = $path;
         }
 
-        Raid::create($validated);
+        $raid->update($validated);
 
-        return redirect('/')->with('success', 'Raid créé avec succès !');
+        return redirect()->route('raids.courses', $raid_id)->with('success', 'Raid modifié avec succès !');
     }
 }

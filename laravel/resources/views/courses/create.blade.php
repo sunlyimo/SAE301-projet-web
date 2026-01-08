@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto px-6 py-12">
-    <a href="{{ route('courses.index') }}" class="inline-flex items-center text-gray-500 hover:text-black font-bold mb-8 transition-all group">
+    <a href="{{ route('raids.my-raids') }}" class="inline-flex items-center text-gray-500 hover:text-black font-bold mb-8 transition-all group">
         <svg class="w-5 h-5 mr-2 transform group-hover:-translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-        Retour à la liste
+        Retour à Mes Raids
     </a>
 
     @if(session('success'))
@@ -15,8 +15,35 @@
 
     <h1 class="text-4xl font-bold text-gray-900 mb-10 tracking-tighter uppercase">Créer une nouvelle course</h1>
 
+    @if($raids->isEmpty())
+        <div class="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+            <p class="text-2xl text-gray-400 font-bold mb-4">Vous n'êtes responsable d'aucun raid.</p>
+            <p class="text-gray-500">Vous ne pouvez pas créer de courses pour le moment.</p>
+            <a href="{{ route('courses.index') }}" class="text-black underline font-bold hover:text-green-600 mt-4 inline-block">Retour à la liste des courses</a>
+        </div>
+    @else
+
     <form action="{{ route('courses.store') }}" method="POST" class="p-10 rounded-3xl border border-gray-100 space-y-10">
         @csrf
+        <section class="space-y-6 bg-blue-50 p-6 rounded-2xl border border-blue-100">
+            <h2 class="text-xl font-bold border-b border-blue-200 pb-2 text-blue-700 uppercase tracking-widest text-sm flex items-center">
+                Sélection du Raid
+            </h2>
+            
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-gray-400 uppercase">Raid</label>
+                <select name="rai_id" id="rai_id" class="w-full p-4 bg-white rounded-2xl border-2 focus:ring-0 outline-none transition-all font-bold text-gray-800 @error('rai_id') border-red-500 @else border-blue-200 focus:border-blue-500 @enderror" required>
+                    <option value="">Sélectionnez un raid</option>
+                    @foreach($raids as $raid)
+                        <option value="{{ $raid->RAI_ID }}" data-start="{{ $raid->RAI_RAID_DATE_DEBUT }}" data-end="{{ $raid->RAI_RAID_DATE_FIN }}" {{ isset($selectedRaidId) && $selectedRaidId == $raid->RAI_ID ? 'selected' : '' }}>
+                            {{ $raid->RAI_NOM }} ({{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m/Y H:i') }} - {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_FIN)->format('d/m/Y H:i') }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('rai_id') <p class="text-red-500 text-xs font-bold mt-1">{{ $message }}</p> @enderror
+            </div>
+        </section>
+
         <section class="space-y-6 bg-yellow-50 p-6 rounded-2xl border border-yellow-100">
             <h2 class="text-xl font-bold border-b border-yellow-200 pb-2 text-yellow-700 uppercase tracking-widest text-sm flex items-center">
                 Responsable de la course
@@ -197,7 +224,36 @@
             Publier la course
         </button>
     </form>
+
+    <script>
+        document.getElementById('rai_id').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const startDate = selectedOption.getAttribute('data-start');
+            const endDate = selectedOption.getAttribute('data-end');
+            
+            const debutInput = document.querySelector('input[name="COU_DATE_DEBUT"]');
+            const finInput = document.querySelector('input[name="COU_DATE_FIN"]');
+            
+            if (startDate && endDate) {
+                // Convert to datetime-local format (YYYY-MM-DDTHH:MM)
+                const start = new Date(startDate).toISOString().slice(0, 16);
+                const end = new Date(endDate).toISOString().slice(0, 16);
+                
+                debutInput.min = start;
+                debutInput.max = end;
+                finInput.min = start;
+                finInput.max = end;
+            } else {
+                debutInput.removeAttribute('min');
+                debutInput.removeAttribute('max');
+                finInput.removeAttribute('min');
+                finInput.removeAttribute('max');
+            }
+        });
+    </script>
 </div>
+
+@endif
 
 <script>
     document.getElementById('responsable_search').addEventListener('input', function(e) {
