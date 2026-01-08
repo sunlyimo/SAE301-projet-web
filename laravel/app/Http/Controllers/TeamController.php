@@ -137,7 +137,6 @@ class TeamController extends Controller
         // Vérifier si la période d'inscription est active
         $inscriptionsOuvertes = $now->gte($raid->RAI_INSCRI_DATE_DEBUT) && $now->lte($raid->RAI_INSCRI_DATE_FIN);
 
-        // Calculer le nombre de participants (membres non-chef + chef si il participe)
         $nbMembres = Appartient::where('RAI_ID', $rai_id)
                                ->where('COU_ID', $cou_id)
                                ->where('EQU_ID', $equ_id)
@@ -165,12 +164,9 @@ class TeamController extends Controller
         if ($equipe->UTI_ID != Auth::id()) {
             abort(403, "Seul le chef d'équipe peut ajouter des membres.");
         }
-
-        // Récupérer le Raid pour vérifier les dates d'inscription
         $raid = \App\Models\Raid::findOrFail($rai_id);
         $now = now();
 
-        // Vérifier si la période d'inscription est active
         if ($now->lt($raid->RAI_INSCRI_DATE_DEBUT)) {
             return back()->withErrors(['pseudo' => "Les inscriptions n'ont pas encore commencé."]);
         }
@@ -178,17 +174,13 @@ class TeamController extends Controller
         if ($now->gt($raid->RAI_INSCRI_DATE_FIN)) {
             return back()->withErrors(['pseudo' => "Les inscriptions sont terminées. Impossible d'ajouter des participants."]);
         }
-
         $course = \App\Models\Course::where('RAI_ID', $rai_id)->where('COU_ID', $cou_id)->first();
-
-        // Vérifier le nombre de participants (membres + chef si il participe)
+        
         $chefParticipe = Appartient::where('RAI_ID', $rai_id)
                                    ->where('COU_ID', $cou_id)
                                    ->where('EQU_ID', $equ_id)
                                    ->where('UTI_ID', $equipe->UTI_ID)
                                    ->exists();
-
-        // Compter les membres (excluant le chef)
         $nbMembres = Appartient::where('RAI_ID', $rai_id)
                                ->where('COU_ID', $cou_id)
                                ->where('EQU_ID', $equ_id)
@@ -196,13 +188,27 @@ class TeamController extends Controller
                                ->count();
 
         $nbParticipants = $nbMembres + ($chefParticipe ? 1 : 0);
-
         if ($nbParticipants >= $course->COU_PARTICIPANT_PAR_EQUIPE_MAX) {
             return back()->withErrors(['pseudo' => "L'équipe est complète !"]);
         }
-
         $userToAdd = User::where('UTI_NOM_UTILISATEUR', $request->pseudo)->first();
-
+        \App\Models\Coureur::firstOrCreate(
+            ['UTI_ID' => $userToAdd->UTI_ID],
+            [
+                'UTI_NOM_UTILISATEUR' => $userToAdd->UTI_NOM_UTILISATEUR,
+                'UTI_EMAIL' => $userToAdd->UTI_EMAIL,
+                'UTI_NOM' => $userToAdd->UTI_NOM,
+                'UTI_PRENOM' => $userToAdd->UTI_PRENOM,
+                'UTI_DATE_NAISSANCE' => $userToAdd->UTI_DATE_NAISSANCE,
+                'UTI_RUE' => $userToAdd->UTI_RUE,
+                'UTI_CODE_POSTAL' => $userToAdd->UTI_CODE_POSTAL,
+                'UTI_VILLE' => $userToAdd->UTI_VILLE,
+                'UTI_TELEPHONE' => $userToAdd->UTI_TELEPHONE,
+                'UTI_LICENCE' => $userToAdd->UTI_LICENCE,
+                'UTI_MOT_DE_PASSE' => $userToAdd->UTI_MOT_DE_PASSE,
+                'CLU_ID' => null
+            ]
+        );
         $exists = Appartient::where('RAI_ID', $rai_id)
                             ->where('COU_ID', $cou_id)
                             ->where('EQU_ID', $equ_id)
@@ -228,7 +234,6 @@ class TeamController extends Controller
             'COU_ID' => $cou_id,
             'EQU_ID' => $equ_id
         ]);
-
         return back()->with('success', "{$userToAdd->UTI_PRENOM} a été ajouté à l'équipe !");
     }
 

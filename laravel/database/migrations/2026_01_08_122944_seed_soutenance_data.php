@@ -34,6 +34,7 @@ return new class extends Migration
         DB::table('VIK_COUREUR')->whereBetween('UTI_ID', [51, 70])->delete();
         DB::table('VIK_UTILISATEUR')->whereBetween('UTI_ID', [51, 70])->delete();
         DB::table('VIK_CLUB')->whereIn('CLU_ID', [4, 5, 6, 7])->delete();
+        DB::table('vik_tranche_difficulte')->whereBetween('DIF_NIVEAU', [1, 5])->delete();
         */
     }
 };

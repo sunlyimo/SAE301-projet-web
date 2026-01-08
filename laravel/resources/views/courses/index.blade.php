@@ -28,7 +28,7 @@
         <div>
             @if(isset($raid))
                 <div class="flex items-center gap-3 mb-2">
-                    <a href="{{ route('raids.my-raids') }}" class="text-gray-400 hover:text-black transition-colors flex items-center gap-1 font-bold text-sm group">
+                    <a href="{{ route('raids.index') }}" class="text-gray-400 hover:text-black transition-colors flex items-center gap-1 font-bold text-sm group">
                         <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                         Retour à Mes Raids
                     </a>
@@ -40,12 +40,6 @@
                     Courses du {{ $raid->RAI_NOM }}
                 </h2>
                 <p class="text-gray-500 mt-2">Voici les épreuves disponibles pour ce raid.</p>
-                <div class="mt-4">
-                    <a href="{{ route('raids.edit', $raid->RAI_ID) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        Modifier le Raid
-                    </a>
-                </div>
             @else
                 <h2 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Toutes les Courses</h2>
                 <p class="text-gray-500 mt-2">Voici toutes les épreuves disponibles.</p>
@@ -66,7 +60,6 @@
             @if($isRaidManager)
                 <p class="text-gray-500">Utilisez le bouton "Ajouter une course" ci-dessus pour commencer.</p>
             @else
-                {{-- On retire le elseif($isCourseManager) ici car la variable n'existe pas encore --}}
                 <a href="{{ route('raids.index') }}" class="text-black underline font-bold hover:text-green-600">Retourner à la liste des raids</a>
             @endif
         </div>
@@ -86,12 +79,10 @@
                             </span>
                         </div>
                         <div class="flex flex-col items-end">
-                            <span class="text-xs font-bold text-gray-400 uppercase">Difficulté</span>
-                            <div class="flex text-yellow-400 text-sm">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <span>{{ $i <= $course->DIF_NIVEAU ? '★' : '☆' }}</span>
-                                @endfor
-                            </div>
+                                <span class="text-xs font-bold text-gray-400 uppercase">Difficulté</span>
+                                <div class="text-sm text-gray-700 font-medium">
+                                    {{ $course->tranche->DIF_DESCRIPTION ?? ('Niveau '.$course->DIF_NIVEAU) }}
+                                </div>
                         </div>
                     </div>
                     
@@ -216,7 +207,11 @@
                         </a>
                     </div>
                     @php 
-                        $monEquipe = $course->equipeDuUser(); 
+                        $monEquipe = $course->equipeDuUser();
+                        $now = now();
+                        $inscriptionsOuvertes = $now->between($course->raid->RAI_INSCRI_DATE_DEBUT, $course->raid->RAI_INSCRI_DATE_FIN);
+                        $isCourseManager = ((int)$course->UTI_ID === (int)$userId);
+                        $canEdit = $isRaidManager || $isCourseManager;
                     @endphp
 
                     <div class="flex gap-2">
@@ -224,19 +219,26 @@
                             <a href="{{ route('teams.show', [$course->RAI_ID, $course->COU_ID, $monEquipe->EQU_ID]) }}" 
                                class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg flex justify-center items-center group text-sm uppercase tracking-tighter">
                                 <span>Voir mon équipe</span>
-                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                             </a>
-                        @else
+                        @elseif($inscriptionsOuvertes)
                             <a href="{{ route('courses.inscription', [$course->RAI_ID, $course->COU_ID]) }}" 
                                class="flex-1 bg-black text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-lg flex justify-center items-center group text-sm uppercase tracking-tighter">
                                 <span>S'inscrire (Créer une équipe)</span>
                                 <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                             </a>
+                        @else
+                            <button disabled 
+                                    class="flex-1 bg-gray-200 text-gray-400 py-3 rounded-xl font-bold cursor-not-allowed shadow-none flex justify-center items-center text-sm uppercase tracking-tighter"
+                                    title="Inscriptions du {{ \Carbon\Carbon::parse($course->raid->RAI_INSCRI_DATE_DEBUT)->format('d/m/Y') }} au {{ \Carbon\Carbon::parse($course->raid->RAI_INSCRI_DATE_FIN)->format('d/m/Y') }}">
+                                @if($now < $course->raid->RAI_INSCRI_DATE_DEBUT)
+                                    <span>Ouvre le {{ \Carbon\Carbon::parse($course->raid->RAI_INSCRI_DATE_DEBUT)->format('d/m') }}</span>
+                                @else
+                                    <span>Inscriptions Closes</span>
+                                @endif
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            </button>
                         @endif
-                        @php
-                            $isCourseManager = ((int)$course->UTI_ID === (int)$userId);
-                            $canEdit = $isRaidManager || $isCourseManager;
-                        @endphp
 
                         @if($canEdit)
                             <a href="{{ route('courses.edit', [$course->RAI_ID, $course->COU_ID]) }}" 

@@ -16,7 +16,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = Course::with(['type', 'responsable', 'raid'])->get();
+        $courses = Course::with(['type', 'responsable', 'raid', 'tranche'])->get();
         return view('courses.index', compact('courses'));
     }
 
@@ -26,8 +26,8 @@ class CourseController extends Controller
     public function myCourses()
     {
         $courses = Course::where('UTI_ID', auth()->id())
-                        ->with(['type', 'raid'])
-                        ->get();
+                ->with(['type', 'raid', 'tranche'])
+                ->get();
 
         return view('courses.my-courses', compact('courses'));
     }
@@ -191,8 +191,8 @@ class CourseController extends Controller
     {
         $raid = \App\Models\Raid::findOrFail($raid_id);
         $courses = Course::where('RAI_ID', $raid_id)
-                        ->with(['type', 'responsable'])
-                        ->get();
+                ->with(['type', 'responsable', 'tranche'])
+                ->get();
 
         // Ajouter manuellement le comptage des équipes et des participants pour chaque course
         foreach ($courses as $course) {

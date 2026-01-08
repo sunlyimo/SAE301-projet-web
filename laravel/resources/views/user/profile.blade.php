@@ -435,34 +435,36 @@
             Historique des Courses
         </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="flex flex-wrap justify-center gap-6 mb-10">
             @forelse($uniqueCourses as $course)
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-1">
-                    {{-- Badge Type --}}
+                <div class="w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] max-w-sm bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-1 flex flex-col h-full">
                     <div class="mb-3">
                          <span class="text-[10px] font-bold uppercase text-gray-500">
                             {{ $course->type->TYP_LIBELLE ?? 'Course' }}
                         </span>
                     </div>
-
-                    {{-- Nom & Raid --}}
-                    <h3 class="font-black text-gray-900 uppercase text-lg leading-tight truncate" title="{{ $course->COU_NOM }}">
-                        {{ $course->COU_NOM }}
-                    </h3>
-                    <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1 mb-4 truncate">
-                        {{ $course->raid->RAI_NOM }}
-                    </p>
-
-                    {{-- Infos Minimales --}}
-                    <div class="flex justify-between items-end border-t border-gray-100 pt-3">
-                        <div class="text-xs text-gray-500 font-bold">
-                             <span class="block text-[10px] uppercase text-gray-300">Date</span>
-                             {{ \Carbon\Carbon::parse($course->COU_DATE_DEBUT)->format('d/m/Y') }}
-                             <span class="block text-[10px] uppercase text-gray-300">Lieu</span>
-                             {{ Str::limit($course->COU_LIEU, 50) }}
+                    <div class="flex-grow">
+                        {{-- Nom & Raid --}}
+                        <h3 class="font-black text-gray-900 uppercase text-lg leading-tight truncate" title="{{ $course->COU_NOM }}">
+                            {{ $course->COU_NOM }}
+                        </h3>
+                        <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1 mb-4 truncate">
+                            {{ $course->raid->RAI_NOM }}
+                        </p>
+                        <div class="flex justify-between items-end border-t border-gray-100 pt-3">
+                            <div class="text-xs text-gray-500 font-bold w-full">
+                                 <div class="mb-2">
+                                     <span class="block text-[10px] uppercase text-gray-300">Date</span>
+                                     {{ \Carbon\Carbon::parse($course->COU_DATE_DEBUT)->format('d/m/Y') }}
+                                 </div>
+                                 <div>
+                                     <span class="block text-[10px] uppercase text-gray-300">Lieu</span>
+                                     <span class="truncate block">{{ Str::limit($course->COU_LIEU, 25) }}</span>
+                                 </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="mt-auto mb-4 py-2">
+                    <div class="mt-4 pt-2">
                         <a href="{{ route('raids.courses', $course->RAI_ID) }}"
                            class="block w-full text-center bg-gray-100 text-gray-800 py-2 rounded-lg font-bold text-xs hover:bg-black hover:text-white transition-colors uppercase tracking-wide">
                             Voir la course
@@ -470,7 +472,7 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                <div class="w-full text-center py-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
                     <p class="text-gray-400 font-bold text-sm italic">Aucune course terminée.</p>
                 </div>
             @endforelse
@@ -492,11 +494,7 @@
 
                     <div class="flex items-center gap-4 mb-4">
                         <div class="w-12 h-12 rounded-xl bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200">
-                            @if($equipe->EQU_IMAGE)
-                                <img src="{{ Storage::url('app/public/' . $equipe->EQU_IMAGE) }}" class="w-full h-full object-cover">
-                            @else
-                                <span class="text-xl">🚩</span>
-                            @endif
+                            <span class="text-xl">🚩</span>
                         </div>
                         <div class="overflow-hidden">
                             <h3 class="font-black text-gray-900 uppercase text-md truncate" title="{{ $equipe->EQU_NOM }}">

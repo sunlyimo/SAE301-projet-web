@@ -9,6 +9,9 @@ class ResponsableClub extends Model
     protected $table = 'vik_responsable_club';
     protected $primaryKey = 'UTI_ID';
     public $timestamps = false;
+    // Primary key is not auto-incrementing in this table
+    public $incrementing = false;
+    protected $keyType = 'int';
 
     protected $fillable = [
         'UTI_ID',

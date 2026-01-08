@@ -95,7 +95,7 @@ class InscriptionController extends Controller
     {
         $request->validate([
             'EQU_NOM' => 'required|string|max:50',
-            'EQU_IMAGE' => 'nullable|image|max:2048'
+            // image upload removed to avoid saving files into the repository
         ]);
 
         // Vérifier les chevauchements d'horaires pour le chef d'équipe
@@ -124,7 +124,8 @@ class InscriptionController extends Controller
             'EQU_ID' => $newEquId,
             'UTI_ID' => \Illuminate\Support\Facades\Auth::id(),
             'EQU_NOM' => $request->EQU_NOM,
-            'EQU_IMAGE' => $imagePath
+            // Do not store uploaded images in the repository
+            'EQU_IMAGE' => null
         ]);
 
         return redirect()->route('teams.show', [$rai_id, $cou_id, $newEquId])

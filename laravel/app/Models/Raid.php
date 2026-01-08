@@ -38,10 +38,35 @@ class Raid extends Model
         return $raids;
     }
 
-    protected $table = 'vik_raid';
-    
-    protected $primaryKey = 'RAI_ID';
+    public static function getAllRaids() {
+        $raids = DB::table("vik_raid")
+        ->selectRaw("
+            vik_raid.RAI_ID,
+            vik_raid.UTI_ID,
+            RAI_NOM, 
+            RAI_INSCRI_DATE_DEBUT, 
+            RAI_INSCRI_DATE_FIN, 
+            RAI_RAID_DATE_DEBUT, 
+            RAI_RAID_DATE_FIN, 
+            RAI_LIEU, 
+            count(vik_course.cou_id) as total_course, 
+            CONCAT(vik_utilisateur.UTI_PRENOM, ' ', vik_utilisateur.UTI_NOM) as responsable_nom
+        ")
+        ->leftJoin("vik_course","vik_course.RAI_ID","=","vik_raid.RAI_ID")
+        ->leftJoin("vik_utilisateur","vik_utilisateur.UTI_ID","=","vik_raid.UTI_ID")
+        ->groupBy(
+            "vik_raid.RAI_ID","vik_raid.UTI_ID","RAI_NOM", "RAI_INSCRI_DATE_DEBUT", 
+            "RAI_INSCRI_DATE_FIN", "RAI_RAID_DATE_DEBUT", 
+            "RAI_RAID_DATE_FIN", "RAI_LIEU", "responsable_nom"
+        )
+        ->orderByDesc("RAI_RAID_DATE_DEBUT") 
+        ->get();
+        
+        return $raids;
+    }
 
+    protected $table = 'vik_raid';
+    protected $primaryKey = 'RAI_ID';
     public $timestamps = false;
 
     protected $fillable = [

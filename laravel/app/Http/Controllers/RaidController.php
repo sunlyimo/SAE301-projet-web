@@ -10,7 +10,7 @@ class RaidController extends Controller
 {
     public function index() {
         return view('raids.raid')
-        ->with('raids',Raid::getFuturRaid());
+        ->with('raids', Raid::getAllRaids());
     }
 
     public function create() /* affichage du formulaire */
@@ -38,7 +38,7 @@ class RaidController extends Controller
             'RAI_INSCRI_DATE_DEBUT' => 'required|date',
             'RAI_INSCRI_DATE_FIN' => 'required|date|after_or_equal:RAI_INSCRI_DATE_DEBUT',
             'RAI_CONTACT' => 'required|email|max:100',
-            'RAI_IMAGE' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // RAI_IMAGE upload removed to avoid saving files into the repository
         ], [
             'RAI_NOM.required' => 'Le nom du raid est obligatoire.',
             'RAI_NOM.max' => 'La taille du nom doit être inférieure ou égale à 50 caractères. Veuillez entrer un nom plus court.',
@@ -53,9 +53,7 @@ class RaidController extends Controller
             'RAI_RAID_DATE_FIN.required' => 'La date de fin du raid est obligatoire.',
             'RAI_INSCRI_DATE_DEBUT.required' => 'La date de début des inscriptions est obligatoire.',
             'RAI_INSCRI_DATE_FIN.required' => 'La date de fin des inscriptions est obligatoire.',
-            'RAI_IMAGE.image' => "Le fichier téléchargé doit être une image.",
-            'RAI_IMAGE.mimes' => "L'image doit être au format jpeg, png, jpg ou gif.",
-            'RAI_IMAGE.max' => "La taille de l'image ne doit pas dépasser 2 Mo.",
+            // image validation/messages removed
             'CLU_ID.exists' => "Le club sélectionné n'existe pas.",
             'UTI_ID.exists' => "Le responsable sélectionné n'existe pas.",
             'CLU_ID.required' => "Pas de club renseigné.",
@@ -82,11 +80,7 @@ class RaidController extends Controller
             // Note: RAI_TELEPHONE n'existe pas dans la table vik_raid
         }
 
-        // gérer le fichier image correctement (ne pas insérer le temp path)
-        if ($request->hasFile('RAI_IMAGE')) {
-            $path = $request->file('RAI_IMAGE')->store('raids', 'public');
-            $validated['RAI_IMAGE'] = $path;
-        }
+        // Image upload disabled: do not store uploaded image paths
 
         Raid::create($validated);
 
@@ -152,8 +146,15 @@ class RaidController extends Controller
     {
         $raid = Raid::findOrFail($raid_id);
         
-        // Vérifier que l'utilisateur est responsable de ce raid
-        if ($raid->UTI_ID != auth()->id()) {
+        // Vérifier que l'utilisateur est responsable de ce raid, admin, ou responsable du club
+        $isOwner = ($raid->UTI_ID == auth()->id());
+        $isAdmin = auth()->user() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin();
+        $isClubResponsable = DB::table('vik_responsable_club')
+            ->where('UTI_ID', auth()->id())
+            ->where('CLU_ID', $raid->CLU_ID)
+            ->exists();
+
+        if (!($isOwner || $isAdmin || $isClubResponsable)) {
             abort(403, 'Vous n\'êtes pas autorisé à modifier ce raid.');
         }
 
@@ -171,8 +172,15 @@ class RaidController extends Controller
     {
         $raid = Raid::findOrFail($raid_id);
         
-        // Vérifier que l'utilisateur est responsable de ce raid
-        if ($raid->UTI_ID != auth()->id()) {
+        // Vérifier que l'utilisateur est responsable de ce raid, admin, ou responsable du club
+        $isOwner = ($raid->UTI_ID == auth()->id());
+        $isAdmin = auth()->user() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin();
+        $isClubResponsable = DB::table('vik_responsable_club')
+            ->where('UTI_ID', auth()->id())
+            ->where('CLU_ID', $raid->CLU_ID)
+            ->exists();
+
+        if (!($isOwner || $isAdmin || $isClubResponsable)) {
             abort(403, 'Vous n\'êtes pas autorisé à modifier ce raid.');
         }
 
@@ -191,7 +199,6 @@ class RaidController extends Controller
             'RAI_INSCRI_DATE_FIN' => 'required|date|after_or_equal:RAI_INSCRI_DATE_DEBUT',
             'RAI_CONTACT' => 'required|email|max:100',
             'RAI_TELEPHONE' => 'nullable|regex:/^[0-9\s\.\-\+\(\)]{10,20}$/|max:20',
-            'RAI_IMAGE' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'RAI_NOM.required' => 'Le nom du raid est obligatoire.',
             'RAI_NOM.max' => 'La taille du nom doit être inférieure ou égale à 50 caractères. Veuillez entrer un nom plus court.',
@@ -202,9 +209,7 @@ class RaidController extends Controller
             'RAI_RAID_DATE_FIN.after_or_equal' => 'La date de fin du raid doit être postérieure à la date de début du raid.',
             'RAI_INSCRI_DATE_FIN.after_or_equal' => 'La date de clôture des inscriptions doit être postérieure à la date d\'ouverture des inscriptions.',
             'RAI_TELEPHONE.regex' => 'Le numéro de téléphone n\'est pas valide.',
-            'RAI_IMAGE.image' => 'Le fichier doit être une image.',
-            'RAI_IMAGE.mimes' => 'L\'image doit être au format JPEG, PNG, JPG ou GIF.',
-            'RAI_IMAGE.max' => 'La taille de l\'image ne doit pas dépasser 2 Mo.',
+            // image validation/messages removed
         ]);
 
         $user = DB::table('vik_utilisateur')
@@ -217,11 +222,7 @@ class RaidController extends Controller
             $validated['RAI_TELEPHONE'] = $user->UTI_TELEPHONE;
         }
 
-        // gérer le fichier image correctement (ne pas insérer le temp path)
-        if ($request->hasFile('RAI_IMAGE')) {
-            $path = $request->file('RAI_IMAGE')->store('raids', 'public');
-            $validated['RAI_IMAGE'] = $path;
-        }
+        // Image upload disabled: do not store uploaded image paths
 
         $raid->update($validated);
 
@@ -293,6 +294,6 @@ class RaidController extends Controller
             }
         }
 
-        return redirect()->route('raids.courses', $raid_id)->with('success', 'Raid modifié avec succès !');
+        return redirect()->route('raids.index', $raid_id)->with('success', 'Raid modifié avec succès !');
     }
 }
