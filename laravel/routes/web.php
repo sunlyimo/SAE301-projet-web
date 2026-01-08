@@ -103,14 +103,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/courses/{rai_id}/{cou_id}/resultats', [ResultatController::class, 'store'])->name('resultats.store');
   });
 
-    Route::middleware(RaidResponsable::class)->group(function () {
+    Route::middleware(ClubResponsable::class)->group(function () {
+      Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
       Route::post('/raids', [RaidController::class, 'store'])->name('raids.store');
+      Route::get('/raids/{raid_id}/edit', [RaidController::class, 'edit'])->name('raids.edit');
+      Route::patch('/raids/{raid_id}', [RaidController::class, 'update'])->name('raids.update');
       Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
       Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     });
 
-    Route::middleware(ClubResponsable::class)->group(function () {
-      Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
+    Route::middleware(RaidResponsable::class)->group(function () {
     });
 
         Route::middleware('admin')->group(function () {
