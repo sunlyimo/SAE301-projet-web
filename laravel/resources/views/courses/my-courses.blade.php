@@ -73,6 +73,16 @@
                                 Gérer les Équipes
                             </a>
 
+                            @if($course->COU_DATE_FIN && \Carbon\Carbon::parse($course->COU_DATE_FIN)->isPast())
+                                <a href="{{ route('resultats.index', [$course->RAI_ID, $course->COU_ID]) }}"
+                                   class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                                    </svg>
+                                    Classement
+                                </a>
+                            @endif
+
                             <form action="{{ route('courses.destroy', [$course->RAI_ID, $course->COU_ID]) }}" method="POST" class="inline-block w-full"
                                   onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette course ?')">
                                 @csrf

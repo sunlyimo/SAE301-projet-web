@@ -200,12 +200,14 @@
                 </div>
 
                 <div class="p-5 pt-0 mt-auto">
-                    <div class="mb-3">
-                        <a href="{{ route('resultats.index', [$course->RAI_ID, $course->COU_ID]) }}" 
-                           class="w-full flex items-center justify-center gap-2 bg-yellow-400 text-black py-2 rounded-xl font-black text-xs hover:bg-yellow-500 transition-colors uppercase tracking-wide shadow-sm">
-                           Classement
-                        </a>
-                    </div>
+                    @if($course->COU_DATE_FIN && \Carbon\Carbon::parse($course->COU_DATE_FIN)->isPast())
+                        <div class="mb-3">
+                            <a href="{{ route('resultats.index', [$course->RAI_ID, $course->COU_ID]) }}"
+                               class="w-full flex items-center justify-center gap-2 bg-yellow-400 text-black py-2 rounded-xl font-black text-xs hover:bg-yellow-500 transition-colors uppercase tracking-wide shadow-sm">
+                               Classement
+                            </a>
+                        </div>
+                    @endif
                     @php 
                         $monEquipe = $course->equipeDuUser();
                         $now = now();
