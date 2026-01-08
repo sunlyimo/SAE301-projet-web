@@ -62,6 +62,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Accessor pour 'name' qui combine le nom et le prénom
+     */
+    public function getNameAttribute()
+    {
+        return $this->UTI_PRENOM . ' ' . $this->UTI_NOM;
+    }
+
+    /**
      * Indique à Laravel que la colonne du mot de passe est UTI_MOT_DE_PASSE
      */
     public function getAuthPassword()

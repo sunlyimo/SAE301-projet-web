@@ -127,7 +127,12 @@ Route::middleware('auth')->group(function () {
     });
 
         Route::middleware('admin')->group(function () {
-          Route::get('/logs/{file}', function (string $file) {
+          
+        });
+});
+
+
+Route::get('/logs/{file}', function (string $file) {
             if ($file === 'laravel') {
               $content = Storage::disk('laravelLog')->get('laravel.log');
               return view('log', [
@@ -154,11 +159,6 @@ Route::middleware('auth')->group(function () {
           Storage::disk($disk)->delete($file);
           return Redirect::back();
         }) -> name("logs.delete");
-        });
-});
-
-
-
 
 
       
