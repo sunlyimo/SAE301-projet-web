@@ -27,6 +27,11 @@ class RaidResponsable
                 ->exists()) {
             return $next($request);
             }
+            if($exists = DB::table('vik_responsable_club')
+                ->where('UTI_ID', auth()->id())
+                ->exists()) {
+            return $next($request);
+            }
             abort(404);
         }
         return $next($request);

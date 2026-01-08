@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto px-6 py-12">
-    <a href="{{ route('courses.index') }}" class="inline-flex items-center text-gray-500 hover:text-black font-bold mb-8 transition-all group">
+    <a href="{{ route('courses.my-courses') }}" class="inline-flex items-center text-gray-500 hover:text-black font-bold mb-8 transition-all group">
         <svg class="w-5 h-5 mr-2 transform group-hover:-translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         Annuler les modifications
     </a>
@@ -120,6 +120,20 @@
                 <input type="number" step="0.01" min="0" name="COU_REDUCTION" value="{{ old('COU_REDUCTION', $course->COU_REDUCTION) }}" 
                     class="w-full p-4 bg-gray-50 rounded-2xl border-2 font-bold text-red-500 focus:ring-0 outline-none @error('COU_REDUCTION') border-red-500 @else border-transparent focus:border-yellow-500 @enderror">
                 @error('COU_REDUCTION') <p class="text-red-500 text-xs font-bold mt-1">{{ $message }}</p> @enderror
+            </div>
+        </section>
+
+        <section class="space-y-6 bg-yellow-50 p-6 rounded-2xl border border-yellow-100">
+            <h2 class="text-xl font-bold border-b border-yellow-200 pb-2 text-yellow-700 uppercase tracking-widest text-sm flex items-center">
+                Responsable de la course
+            </h2>
+
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-gray-400 uppercase">Responsable actuel</label>
+                <div class="w-full p-4 bg-gray-100 rounded-2xl border-2 border-gray-200 font-bold text-gray-700">
+                    {{ $course->responsable ? $course->responsable->UTI_PRENOM . ' ' . $course->responsable->UTI_NOM : 'Non défini' }}
+                </div>
+                <input type="hidden" name="responsable_id" value="{{ $course->UTI_ID }}">
             </div>
         </section>
 

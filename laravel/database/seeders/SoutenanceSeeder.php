@@ -125,6 +125,35 @@ class SoutenanceSeeder extends Seeder
             ]);
         }
 
+        // Responsables CLUB
+        foreach ([56, 53, 55, 69] as $id) {
+            $user = DB::table('vik_utilisateur')->where('UTI_ID', $id)->first();
+
+            // Déterminer le CLU_ID en fonction de l'utilisateur
+            $clubId = match($id) {
+                56 => 4, // CO Azimut 77 - DUPONT Claire
+                53 => 6, // Balise 25 - PETIT Antoine
+                55 => 5, // Raidlinks - BERNARD Lucas
+                69 => 7, // VIKAZIM - ANNE Jean-François
+            };
+
+            DB::table('vik_responsable_club')->insert([
+                'UTI_ID' => $user->UTI_ID,
+                'CLU_ID' => $clubId,
+                'UTI_EMAIL' => $user->UTI_EMAIL,
+                'UTI_NOM' => $user->UTI_NOM,
+                'UTI_PRENOM' => $user->UTI_PRENOM,
+                'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+                'UTI_RUE' => $user->UTI_RUE,
+                'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+                'UTI_VILLE' => $user->UTI_VILLE,
+                'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+                'UTI_LICENCE' => $user->UTI_LICENCE,
+                'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+                'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            ]);
+        }
+
         // RAIDS
         DB::table('vik_raid')->insert([
             [

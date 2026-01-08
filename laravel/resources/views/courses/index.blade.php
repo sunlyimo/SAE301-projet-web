@@ -4,10 +4,10 @@
 
 @php
     $userId = Auth::id();
-    $isRaidManager = DB::table('vik_raid')
+    $isRaidManager = isset($raid) ? DB::table('vik_raid')
         ->where('RAI_ID', $raid->RAI_ID)
         ->where('UTI_ID', $userId)
-        ->exists();
+        ->exists() : false;
 @endphp
 
 <div class="max-w-7xl mx-auto my-12 p-6">
@@ -28,9 +28,9 @@
         <div>
             @if(isset($raid))
                 <div class="flex items-center gap-3 mb-2">
-                    <a href="{{ route('raids.index') }}" class="text-gray-400 hover:text-black transition-colors flex items-center gap-1 font-bold text-sm group">
+                    <a href="{{ route('raids.my-raids') }}" class="text-gray-400 hover:text-black transition-colors flex items-center gap-1 font-bold text-sm group">
                         <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                        Retour aux Raids
+                        Retour à Mes Raids
                     </a>
                     <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded uppercase">
                         Raid #{{ $raid->RAI_ID }}
@@ -40,8 +40,15 @@
                     Courses du {{ $raid->RAI_NOM }}
                 </h2>
                 <p class="text-gray-500 mt-2">Voici les épreuves disponibles pour ce raid.</p>
+                <div class="mt-4">
+                    <a href="{{ route('raids.edit', $raid->RAI_ID) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        Modifier le Raid
+                    </a>
+                </div>
             @else
-                <h2 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Aucune Course disponible</h2>
+                <h2 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Toutes les Courses</h2>
+                <p class="text-gray-500 mt-2">Voici toutes les épreuves disponibles.</p>
             @endif
         </div>
 
@@ -55,7 +62,7 @@
 
     @if($courses->isEmpty())
         <div class="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-            <p class="text-2xl text-gray-400 font-bold mb-4">Aucune course n'est encore configurée pour ce raid.</p>
+            <p class="text-2xl text-gray-400 font-bold mb-4">Aucune course n'est encore configurée.</p>
             @if($isRaidManager)
                 <p class="text-gray-500">Utilisez le bouton "Ajouter une course" ci-dessus pour commencer.</p>
             @else
@@ -102,6 +109,10 @@
                     </p>
                     <p class="text-sm text-gray-500 italic flex items-center">
                         Contact : {{ $course->responsable->UTI_TELEPHONE ?? 'Inconnu' }}
+                    </p>
+                    <p class="text-sm text-gray-500 italic flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Raid : {{ $course->raid->RAI_NOM ?? 'Inconnu' }} ({{ \Carbon\Carbon::parse($course->raid->RAI_RAID_DATE_DEBUT)->format('d/m/Y H:i') ?? '' }} - {{ \Carbon\Carbon::parse($course->raid->RAI_RAID_DATE_FIN)->format('d/m/Y H:i') ?? '' }})
                     </p>
                 </div>
 
