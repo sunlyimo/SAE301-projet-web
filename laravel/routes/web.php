@@ -33,8 +33,6 @@ Route::get('/raids', [RaidController::class, 'index'])->name('raids.index');
 Route::get('/raids/{raid_id}/courses', [CourseController::class, 'coursesByRaid'])->name('raids.courses');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 
-Route::post('/raids', [RaidController::class, 'store'])->name('raids.store');
-
 Route::get('/repair', function() {
     Artisan::call('view:clear');
     Artisan::call('cache:clear');
@@ -57,6 +55,8 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+    Route::resource('clubs', ClubController::class);
+
     // Profil
     Route::get('/profile', [UserController::class, 'show'])->name('user.profile');
     Route::patch('/profile', [UserController::class, 'update'])->name('user.update');
@@ -68,7 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/toggle-chef', [TeamController::class, 'toggleChefParticipation'])->name('teams.toggle-chef');
     Route::patch('/teams/{rai_id}/{cou_id}/{equ_id}/rpps/{uti_id}', [TeamController::class, 'updateRpps'])->name('teams.update-rpps');
     Route::get('/courses/{rai_id}/{cou_id}/inscription', [InscriptionController::class, 'show'])->name('courses.inscription');
-    
+
     Route::get('/api/users/search', [TeamController::class, 'searchUsers'])->name('api.users.search');
 
     // Résultats
@@ -91,10 +91,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Gestion Club/Responsable
-
-Route::resource('clubs', ClubController::class);
 Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
-Route::patch('/courses/{rai_id}/{cou_id}', [CourseController::class, 'update'])->name('courses.update');
 
 // Mailbox
 Route::get('/responsable/mailbox/{club_id}/{token}', [ClubController::class, 'showFakeMailbox'])->name('responsable.mailbox');
@@ -144,7 +141,13 @@ Route::get('/clubs/created/{club}/{token}', [ClubController::class, 'showCreated
       }
     })->name('logs.show');
 
-    Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
-      Storage::disk($disk)->delete($file);
-      return Redirect::back();
-    })->name("logs.delete");
+Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
+  Storage::disk($disk)->delete($file);
+  return Redirect::back();
+}) -> name("logs.delete");
+
+
+Route::middleware('auth')->group(function () {
+    Route::post('/courses/{rai_id}/{cou_id}/team/create', [InscriptionController::class, 'createTeam'])->name('courses.team.create');
+    Route::post('/courses/{rai_id}/{cou_id}/team/join', [InscriptionController::class, 'joinTeam'])->name('courses.team.join');
+});
