@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,7 @@ class Admin
      */
     public function handle(Request $request, Closure $next)
     {
+        
         $exists = DB::table('vik_administrateur')
                     ->where('UTI_ID', auth()->id())
                     ->exists();

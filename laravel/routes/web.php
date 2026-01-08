@@ -17,6 +17,11 @@ use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ResultatController;
+use App\Http\Middleware\RaidResponsable;
+use App\Http\Middleware\CourseResponsable;
+use App\Http\Middleware\ClubResponsable;
+
+
 
 // Public
 
@@ -92,17 +97,21 @@ Route::middleware('auth')->group(function () {
   Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/accept', [ClubController::class, 'acceptInvitation'])->name('responsable.invitation.accept');
   Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/refuse', [ClubController::class, 'refuseInvitation'])->name('responsable.invitation.refuse');
 
-  Route::middleware('course_respo')->group(function () {
+  Route::middleware(CourseResponsable::class)->group(function () {
     Route::get('/courses/{rai_id}/{cou_id}/edit', [CourseController::class, 'edit'])->name('courses.edit');
     Route::patch('/courses/{rai_id}/{cou_id}', [CourseController::class, 'update'])->name('courses.update');
     Route::post('/courses/{rai_id}/{cou_id}/resultats', [ResultatController::class, 'store'])->name('resultats.store');
+  });
 
-    Route::middleware('raid_respo')->group(function () {
+    Route::middleware(RaidResponsable::class)->group(function () {
       Route::post('/raids', [RaidController::class, 'store'])->name('raids.store');
       Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
       Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+    });
 
-      Route::middleware('club_respo')->group(function () {
+    Route::middleware(ClubResponsable::class)->group(function () {
+      Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
+    });
 
         Route::middleware('admin')->group(function () {
           Route::get('/logs/{file}', function (string $file) {
@@ -133,13 +142,10 @@ Route::middleware('auth')->group(function () {
           return Redirect::back();
         }) -> name("logs.delete");
         });
-      });       
-    });
-  });
 });
 
 
 
 
 
-        Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
+      
