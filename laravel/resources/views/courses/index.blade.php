@@ -4,10 +4,10 @@
 
 @php
     $userId = Auth::id();
-    $isRaidManager = DB::table('vik_raid')
+    $isRaidManager = isset($raid) ? DB::table('vik_raid')
         ->where('RAI_ID', $raid->RAI_ID)
         ->where('UTI_ID', $userId)
-        ->exists();
+        ->exists() : false;
 @endphp
 
 <div class="max-w-7xl mx-auto my-12 p-6">
@@ -41,7 +41,8 @@
                 </h2>
                 <p class="text-gray-500 mt-2">Voici les épreuves disponibles pour ce raid.</p>
             @else
-                <h2 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Aucune Course disponible</h2>
+                <h2 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Toutes les Courses</h2>
+                <p class="text-gray-500 mt-2">Voici toutes les épreuves disponibles.</p>
             @endif
         </div>
 
@@ -55,7 +56,7 @@
 
     @if($courses->isEmpty())
         <div class="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-            <p class="text-2xl text-gray-400 font-bold mb-4">Aucune course n'est encore configurée pour ce raid.</p>
+            <p class="text-2xl text-gray-400 font-bold mb-4">Aucune course n'est encore configurée.</p>
             @if($isRaidManager)
                 <p class="text-gray-500">Utilisez le bouton "Ajouter une course" ci-dessus pour commencer.</p>
             @else
