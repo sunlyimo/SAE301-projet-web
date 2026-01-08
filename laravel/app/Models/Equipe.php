@@ -61,6 +61,7 @@ class Equipe extends Model
      */
     public function course()
     {
-        return $this->belongsTo(Course::class, ['RAI_ID', 'COU_ID'], ['RAI_ID', 'COU_ID']);
+        return $this->belongsTo(Course::class, 'COU_ID', 'COU_ID')
+                    ->whereColumn('vik_course.RAI_ID', 'vik_equipe.RAI_ID');
     }
 }

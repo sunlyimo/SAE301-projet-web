@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Equipe;
+use App\Models\Course;
 use App\Models\Appartient;
 use App\Models\User;
 
@@ -19,15 +20,35 @@ class UserController extends Controller
         $user = Auth::user()->load('coureur');
         $clubs = Club::orderBy('CLU_NOM')->get();
         $userId = $user->UTI_ID;
-        $allTeams = Equipe::with('course.raid', 'course.type')
-            ->where('UTI_ID', $userId)
+        $allTeams = Equipe::where('UTI_ID', $userId)
             ->orWhereHas('membres', function ($query) use ($userId) {
                 $query->where('vik_appartient.UTI_ID', $userId);
             })
-            ->get()
-            ->sortByDesc(function($team) {
-                return optional($team->course)->COU_DATE_DEBUT ?? 0;
-            });
+            ->get();
+        $courseGroups = [];
+        foreach ($allTeams as $team) {
+            $rai = $team->getAttribute('RAI_ID');
+            $cou = $team->getAttribute('COU_ID');
+            if ($rai === null || $cou === null) continue;
+            $courseGroups[$rai][] = $cou;
+        }
+        $courses = collect();
+        foreach ($courseGroups as $rai => $couIds) {
+            $courses = $courses->merge(Course::with('raid', 'type')
+                ->where('RAI_ID', $rai)
+                ->whereIn('COU_ID', array_values(array_unique($couIds)))
+                ->get());
+        }
+        $coursesByKey = $courses->keyBy(function ($c) {
+            return $c->RAI_ID . '-' . $c->COU_ID;
+        });
+        foreach ($allTeams as $team) {
+            $key = $team->getAttribute('RAI_ID') . '-' . $team->getAttribute('COU_ID');
+            $team->setRelation('course', $coursesByKey->get($key));
+        }
+        $allTeams = $allTeams->sortByDesc(function($team) {
+            return optional($team->course)->COU_DATE_DEBUT ?? 0;
+        });
         $uniqueCourses = $allTeams->map(function($team) {
             return $team->course;
         })->filter()->unique(function ($course) {
