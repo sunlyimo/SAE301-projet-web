@@ -137,6 +137,21 @@
         </div>
         </div>
     <main class="flex-1">
+        @if(session('success') || session('error'))
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+                @if(session('success'))
+                    <div class="mb-4 p-4 rounded-md bg-green-50 border border-green-200 text-green-800">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="mb-4 p-4 rounded-md bg-red-50 border border-red-200 text-red-800">
+                        {{ session('error') }}
+                    </div>
+                @endif
+            </div>
+        @endif
+
         @yield('content')
     </main>
 

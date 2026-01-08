@@ -2,13 +2,6 @@
 @extends('layouts.app')
 <?php
 use Illuminate\Support\Facades\DB;
-
-if (auth()->check() && DB::table('VIK_RESPONSABLE_CLUB')->where('UTI_ID', auth()->id())->exists()) {
-    
-}
-else {
-    //abort(403, 'Accès refusé');
-}
 ?>
 
 @section('content')
@@ -19,7 +12,7 @@ else {
                 <div class="flex items-center gap-4 mb-4">
                     <i class="fas fa-person-running text-3xl text-gray-900"></i>
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Créer un nouveau Raid</h1>
+                        <h1 class="text-3xl font-bold text-gray-900">Modification du raid</h1>
                         <p class="text-sm text-gray-600">Configuration de l'événement et informations de contact</p>
                     </div>
                 </div>
@@ -32,8 +25,9 @@ else {
                         </ul>
                     </div>
                     @endif
-                    <form action="{{ route('raids.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ isset($raid) ? route('raids.update', ['raid_id' => $raid->RAI_ID]) : route('raids.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        @method('PATCH')
 
                         <div class="flex items-center gap-3 mb-4">
                             <span class="inline-flex items-center justify-center rounded-full bg-green-600 text-white px-3 py-1 text-sm font-semibold">1</span>
@@ -42,14 +36,14 @@ else {
 
                         <div class="mb-4">
                             <label for="RAI_NOM" class="block text-sm font-medium text-gray-700">Nom de l'événement</label>
-                            <input type="text" name="RAI_NOM" id="RAI_NOM" value="{{ old('RAI_NOM') }}"
+                            <input type="text" name="RAI_NOM" id="RAI_NOM" value="{{ old('RAI_NOM', $raid->RAI_NOM ?? '') }}"
                                 class="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-green-600 p-3 @error('RAI_NOM') border-red-400 @enderror" placeholder="Nom du raid">
                             @error('RAI_NOM') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <div class="mb-4">
                             <label for="RAI_LIEU" class="block text-sm font-medium text-gray-700">Lieu de départ</label>
-                            <input type="text" name="RAI_LIEU" id="RAI_LIEU" value="{{ old('RAI_LIEU') }}" class="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-green-600 p-3" placeholder="Lieu">
+                            <input type="text" name="RAI_LIEU" id="RAI_LIEU" value="{{ old('RAI_LIEU', $raid->RAI_LIEU ?? '') }}" class="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-green-600 p-3" placeholder="Lieu">
                         </div>
 
                         <div class="flex items-center gap-3 mb-4 mt-6">
@@ -63,11 +57,11 @@ else {
                                     <label class="block text-xs font-semibold text-gray-500 uppercase">Événement</label>
                                     <div class="mt-2">
                                         <label class="block text-sm text-gray-600">Début</label>
-                                        <input type="datetime-local" name="RAI_RAID_DATE_DEBUT" class="mt-1 block w-full rounded-md border-gray-200 p-2">
+                                        <input type="datetime-local" name="RAI_RAID_DATE_DEBUT" value="{{ old('RAI_RAID_DATE_DEBUT', $raid->RAI_RAID_DATE_DEBUT ? date('Y-m-d\TH:i', strtotime($raid->RAI_RAID_DATE_DEBUT)) : '') }}" class="mt-1 block w-full rounded-md border-gray-200 p-2">
                                     </div>
                                     <div class="mt-3">
                                         <label class="block text-sm text-gray-600">Fin</label>
-                                        <input type="datetime-local" name="RAI_RAID_DATE_FIN" class="mt-1 block w-full rounded-md border-gray-200 p-2">
+                                        <input type="datetime-local" name="RAI_RAID_DATE_FIN" value="{{ old('RAI_RAID_DATE_FIN', $raid->RAI_RAID_DATE_FIN ? date('Y-m-d\TH:i', strtotime($raid->RAI_RAID_DATE_FIN)) : '') }}" class="mt-1 block w-full rounded-md border-gray-200 p-2">
                                     </div>
                                 </div>
                             </div>
@@ -76,11 +70,11 @@ else {
                                     <label class="block text-xs font-semibold text-gray-500 uppercase">Inscriptions</label>
                                     <div class="mt-2">
                                         <label class="block text-sm text-gray-600">Ouverture</label>
-                                        <input type="datetime-local" name="RAI_INSCRI_DATE_DEBUT" class="mt-1 block w-full rounded-md border-gray-200 p-2">
+                                        <input type="datetime-local" name="RAI_INSCRI_DATE_DEBUT" value="{{ old('RAI_INSCRI_DATE_DEBUT', $raid->RAI_INSCRI_DATE_DEBUT ? date('Y-m-d\TH:i', strtotime($raid->RAI_INSCRI_DATE_DEBUT)) : '') }}" class="mt-1 block w-full rounded-md border-gray-200 p-2">
                                     </div>
                                     <div class="mt-3">
                                         <label class="block text-sm text-gray-600">Clôture</label>
-                                        <input type="datetime-local" name="RAI_INSCRI_DATE_FIN" class="mt-1 block w-full rounded-md border-gray-200 p-2">
+                                        <input type="datetime-local" name="RAI_INSCRI_DATE_FIN" value="{{ old('RAI_INSCRI_DATE_FIN', $raid->RAI_INSCRI_DATE_FIN ? date('Y-m-d\TH:i', strtotime($raid->RAI_INSCRI_DATE_FIN)) : '') }}" class="mt-1 block w-full rounded-md border-gray-200 p-2">
                                     </div>
                                 </div>
                             </div>
@@ -97,19 +91,19 @@ else {
                                 <select name="CLU_ID" id="CLU_ID" class="mt-1 block w-full rounded-md border-gray-200 p-3">
                                     <option value="">Choisir un club...</option>
                                     @foreach($clubs ?? [] as $id => $name)
-                                    <option value="{{ $id }}" {{ old('CLU_ID') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                        <option value="{{ $id }}" {{ old('CLU_ID', $raid->CLU_ID ?? '') == $id ? 'selected' : '' }}>{{ $name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
                                 <label for="responsable_input" class="block text-sm font-medium text-gray-700">Responsable</label>
-                                <input list="responsable_list" id="responsable_input" name="responsable_name" class="mt-1 block w-full rounded-md border-gray-200 p-3" placeholder="Rechercher un membre..." autocomplete="off" value="{{ old('responsable_name') }}">
+                                <input list="responsable_list" id="responsable_input" name="responsable_name" class="mt-1 block w-full rounded-md border-gray-200 p-3" placeholder="Rechercher un membre..." autocomplete="off" value="{{ old('responsable_name', (collect($responsables ?? [])->firstWhere('UTI_ID', $raid->UTI_ID ?? null)->name) ?? '') }}">
                                 <datalist id="responsable_list">
                                     @foreach($responsables ?? [] as $resp)
                                         <option value="{{ $resp->name }}"></option>
                                     @endforeach
                                 </datalist>
-                                <input type="hidden" name="UTI_ID" id="UTI_ID" value="{{ old('UTI_ID') }}">
+                                <input type="hidden" name="UTI_ID" id="UTI_ID" value="{{ old('UTI_ID', $raid->UTI_ID ?? '') }}">
                             </div>
                         </div>
 
@@ -121,13 +115,13 @@ else {
                         <div class="grid gap-4 md:grid-cols-2 mb-4">
                             <div>
                                 <label for="RAI_CONTACT" class="block text-sm font-medium text-gray-700">Email</label>
-                                <input type="email" name="RAI_CONTACT" id="RAI_CONTACT" value="{{ old('RAI_CONTACT') }}"
+                                <input type="email" name="RAI_CONTACT" id="RAI_CONTACT" value="{{ old('RAI_CONTACT', $raid->RAI_CONTACT ?? '') }}"
                                     class="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-green-600 p-3 @error('RAI_CONTACT') border-red-400 @enderror" readonly placeholder="Email">
                                 @error('RAI_CONTACT') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                             <div>
                                 <label for="RAI_WEB" class="block text-sm font-medium text-gray-700">Site internet (facultatif)</label>
-                                <input type="url" name="RAI_WEB" id="RAI_WEB" value="{{ old('RAI_WEB') }}" class="mt-1 block w-full rounded-md border-gray-200 p-3" placeholder="Site web">
+                                <input type="url" name="RAI_WEB" id="RAI_WEB" value="{{ old('RAI_WEB', $raid->RAI_WEB ?? '') }}" class="mt-1 block w-full rounded-md border-gray-200 p-3" placeholder="Site web">
                             </div>
                         </div>
 

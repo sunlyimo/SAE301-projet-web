@@ -27,30 +27,42 @@
 
     <div class="flex flex-wrap justify-center gap-6 mb-8">
         @forelse($raids as $raid)
-            <div class="w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] group bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col">
+            <div class="w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] group bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col relative">
                 
+                @auth
+                    @if(auth()->user()->UTI_ID == $raid->UTI_ID)
+                        <div class="absolute top-4 right-4 z-20">
+                                     <a href="{{ route('raids.edit', ['raid_id' => $raid->RAI_ID]) }}" 
+                               class="flex items-center justify-center w-10 h-10 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full text-gray-700 hover:text-green-600 hover:border-green-600 shadow-sm transition-all"
+                               title="Modifier ce raid">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    @endif
+                @endauth
+
                 <div class="p-6 bg-gradient-to-br from-gray-50 to-white border-b border-gray-100">
                     @php $now = now(); @endphp
                     <div class="flex justify-between items-start mb-3">
                         @if($raid->RAI_INSCRI_DATE_DEBUT <= $now && $raid->RAI_INSCRI_DATE_FIN >= $now)
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white">
-                                Inscriptions ouvertes
+                                ● Inscriptions ouvertes
                             </span>
                         @elseif($raid->RAI_INSCRI_DATE_DEBUT > $now)
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-500 text-white">
-                                Inscriptions non ouvertes
+                                ● Inscriptions non ouvertes
                             </span>
                         @else
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-400 text-white">
-                                Inscriptions terminées
+                                ● Inscriptions terminées
                             </span>
                         @endif
-                        <span class="text-gray-300 font-black text-sm">#{{ $raid->RAI_ID }}</span>
                     </div>
-                    
-                    <h3 class="text-xl font-black text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
-                        {{ $raid->RAI_NOM }}
-                    </h3>
+                        <h3 class="text-xl font-black text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
+                            {{ $raid->RAI_NOM }}
+                        </h3>
 
                     <p class="text-sm text-gray-500 italic flex items-center mb-1">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,26 +116,54 @@
                     </div>
                 </div>
 
-                <div class="p-6 pt-0 mt-auto flex gap-2">
-                    <a href="{{ route('raids.courses', $raid->RAI_ID) }}" 
-                       class="flex-1 py-3 bg-gradient-to-r from-black to-gray-800 text-white text-center rounded-xl font-bold text-sm hover:from-green-600 hover:to-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex justify-center items-center">
-                        Voir les courses
-                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
-                    </a>
-
-                    @php
-                        $userId = Auth::id();
-                        $canEdit = ($raid->UTI_ID == $userId) || (Auth::user() && Auth::user()->isAdmin());
-                    @endphp
-
-                    @if($canEdit)
-                        <a href="{{ route('raids.edit', $raid->RAI_ID) }}" 
-                           class="w-12 bg-gray-100 text-gray-600 rounded-xl flex items-center justify-center hover:bg-yellow-400 hover:text-white transition-all shadow-inner border border-gray-200" 
-                           title="Modifier ce raid">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        <div class="flex items-center text-sm text-gray-600 mb-1">
+                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            {{ $raid->RAI_LIEU }}
+                        </div>
+                        
+                        <div class="flex items-center text-sm font-bold text-gray-900">
+                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            {{ $raid->total_course }} {{ $raid->total_course > 1 ? 'courses' : 'course' }}
+                        </div>
+                    <div class="p-6 flex-grow space-y-4">
+                        <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                            <div class="flex items-center text-xs text-blue-700 font-bold uppercase mb-2">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                Événement
+                            </div>
+                            <p class="text-sm font-bold text-gray-900">
+                                {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m/Y') }}
+                                <span class="text-gray-400">→</span>
+                                {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_FIN)->format('d/m/Y') }}
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                            <div class="flex items-center text-xs text-purple-700 font-bold uppercase mb-2">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                Inscriptions
+                            </div>
+                            <p class="text-sm font-bold text-gray-900">
+                                {{ \Carbon\Carbon::parse($raid->RAI_INSCRI_DATE_DEBUT)->format('d/m/Y') }} 
+                                <span class="text-gray-400">→</span>
+                                {{ \Carbon\Carbon::parse($raid->RAI_INSCRI_DATE_FIN)->format('d/m/Y') }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <a href="{{ route('raids.courses', $raid->RAI_ID) }}" 
+                           class="block w-full py-3 bg-gradient-to-r from-black to-gray-800 text-white text-center rounded-xl font-bold text-sm hover:from-green-600 hover:to-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex justify-center items-center">
+                            Voir les courses
+                            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                             </svg>
                         </a>
                     @endif
