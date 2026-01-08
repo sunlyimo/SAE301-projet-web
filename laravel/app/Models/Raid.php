@@ -50,5 +50,27 @@ class Raid extends Model
         'RAI_INSCRI_DATE_DEBUT', 'RAI_INSCRI_DATE_FIN',
         'RAI_CONTACT', 'RAI_WEB', 'RAI_LIEU', 'RAI_IMAGE'
     ];
-    
+
+    protected $casts = [
+        'RAI_RAID_DATE_DEBUT' => 'datetime',
+        'RAI_RAID_DATE_FIN' => 'datetime',
+        'RAI_INSCRI_DATE_DEBUT' => 'datetime',
+        'RAI_INSCRI_DATE_FIN' => 'datetime',
+    ];
+
+    /**
+     * Relation avec le responsable (Utilisateur)
+     */
+    public function responsable()
+    {
+        return $this->belongsTo(User::class, 'UTI_ID', 'UTI_ID');
+    }
+
+    /**
+     * Relation avec le club organisateur
+     */
+    public function club()
+    {
+        return $this->belongsTo(Club::class, 'CLU_ID', 'CLU_ID');
+    }
 }

@@ -35,13 +35,22 @@ Route::get('/contact', [ContactController::class, 'show'])->name('contact.show')
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 Route::get('/raids', [RaidController::class, 'index'])->name('raids.index');
+Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
+Route::post('/raids', [RaidController::class, 'store'])->name('raids.store');
+Route::get('/raids/{raid_id}/edit', [RaidController::class, 'edit'])->name('raids.edit');
+Route::put('/raids/{raid_id}', [RaidController::class, 'update'])->name('raids.update');
 Route::get('/raids/{raid_id}/courses', [CourseController::class, 'coursesByRaid'])->name('raids.courses');
+Route::get('/my-raids', [RaidController::class, 'myRaids'])->name('raids.my-raids');
+Route::get('/my-courses', [CourseController::class, 'myCourses'])->name('courses.my-courses');
+Route::get('/courses/{rai_id}/{cou_id}/manage-teams', [CourseController::class, 'manageTeams'])->name('courses.manage-teams');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/clubs/created/{club}/{token}', [ClubController::class, 'showCreated'])->name('clubs.created');
 Route::get('/admin/refusal-notification/{club_id}/{token}', [ClubController::class, 'showAdminRefusalNotification'])->name('admin.refusal-notification');
 Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/admin-accept', [ClubController::class, 'adminAcceptInvitation'])->name('responsable.invitation.admin-accept');
 Route::post('/admin/recreate-club/{club_id}/{token}', [ClubController::class, 'recreateClub'])->name('admin.recreate-club');
 Route::get('/responsable/mailbox/{club_id}/{token}', [ClubController::class, 'showFakeMailbox'])->name('responsable.mailbox');
+// Allow unauthenticated users to hit this route so the controller can set the intended URL
+Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept-login', [ClubController::class, 'redirectToLoginForInvitation'])->name('responsable.invitation.accept.login');
 Route::post('/responsable/quick-validate/{club_id}/{token}', [ClubController::class, 'quickValidateResponsable'])->name('responsable.quick-validate');
 Route::post('/responsable/refuse/{club_id}/{token}', [ClubController::class, 'refuseResponsable'])->name('responsable.refuse');
 Route::get('/responsable/quick-validated/{club}/{token}', [ClubController::class, 'showQuickValidated'])->name('responsable.quick-validated');
@@ -92,7 +101,7 @@ Route::middleware('auth')->group(function () {
 
   Route::get('/responsable/invitation/{club_id}/{user_id}/{token}', [ClubController::class, 'showInvitation'])->name('responsable.invitation.show');
   Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept', [ClubController::class, 'showInvitation'])->name('responsable.invitation.accept.show');
-  Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept-login', [ClubController::class, 'redirectToLoginForInvitation'])->name('responsable.invitation.accept.login');
+  
   Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept-after-login', [ClubController::class, 'acceptAfterLogin'])->name('responsable.invitation.accept.after_login');
   Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/accept', [ClubController::class, 'acceptInvitation'])->name('responsable.invitation.accept');
   Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/refuse', [ClubController::class, 'refuseInvitation'])->name('responsable.invitation.refuse');
@@ -100,6 +109,10 @@ Route::middleware('auth')->group(function () {
   Route::middleware(CourseResponsable::class)->group(function () {
     Route::get('/courses/{rai_id}/{cou_id}/edit', [CourseController::class, 'edit'])->name('courses.edit');
     Route::patch('/courses/{rai_id}/{cou_id}', [CourseController::class, 'update'])->name('courses.update');
+    Route::delete('/courses/{rai_id}/{cou_id}', [CourseController::class, 'destroy'])->name('courses.destroy');
+    Route::get('/courses/{rai_id}/{cou_id}/manage-teams', [CourseController::class, 'manageTeams'])->name('courses.manage-teams');
+    Route::delete('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'destroy'])->name('teams.destroy');
+    Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/validate', [TeamController::class, 'validateTeam'])->name('teams.validate');
     Route::post('/courses/{rai_id}/{cou_id}/resultats', [ResultatController::class, 'store'])->name('resultats.store');
   });
 
@@ -116,7 +129,12 @@ Route::middleware('auth')->group(function () {
     });
 
         Route::middleware('admin')->group(function () {
-          Route::get('/logs/{file}', function (string $file) {
+          
+        });
+});
+
+
+Route::get('/logs/{file}', function (string $file) {
             if ($file === 'laravel') {
               $content = Storage::disk('laravelLog')->get('laravel.log');
               return view('log', [
@@ -143,11 +161,6 @@ Route::middleware('auth')->group(function () {
           Storage::disk($disk)->delete($file);
           return Redirect::back();
         }) -> name("logs.delete");
-        });
-});
-
-
-
 
 
       

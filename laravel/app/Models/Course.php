@@ -56,6 +56,14 @@ class Course extends Model
     }
 
     /**
+     * Relation vers la tranche de difficulté
+     */
+    public function tranche(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\TrancheDifficulte::class, 'DIF_NIVEAU', 'DIF_NIVEAU');
+    }
+
+    /**
      * Relation avec le Raid parent
      */
     public function raid()
@@ -99,4 +107,6 @@ class Course extends Model
 
         return null;
     }
+
+    // difficulty description is provided via the `tranche` relation
 }

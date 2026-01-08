@@ -414,7 +414,11 @@ class ClubController extends Controller
 
     public function edit(Club $club)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
+        if (!Auth::check()) {
+            abort(403, 'Veuillez vous connecter pour accéder à cette page.');
+        }
+
+        if (!Auth::user()->isAdmin() && !Auth::user()->isResponsableOf($club)) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -442,7 +446,11 @@ class ClubController extends Controller
 
     public function update(Request $request, Club $club)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
+        if (!Auth::check()) {
+            abort(403, 'Veuillez vous connecter pour accéder à cette page.');
+        }
+
+        if (!Auth::user()->isAdmin() && !Auth::user()->isResponsableOf($club)) {
             abort(403, 'Accès non autorisé.');
         }
 

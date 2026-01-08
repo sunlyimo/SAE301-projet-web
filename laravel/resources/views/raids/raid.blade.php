@@ -10,10 +10,35 @@
             <p class="text-gray-500 mt-2">Tous les raids à venir.</p>
         </div>
         
+        {{-- Bouton Créer (visible si responsable de club ou administrateur) --}}
         @auth
-            <a href="{{ route('raids.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl font-bold transition-colors">
-                + Créer un raid
-            </a>
+            @php
+                $isResponsible = false;
+                try {
+                    $isResponsible = \Illuminate\Support\Facades\DB::table('vik_responsable_club')
+                        ->where('UTI_ID', auth()->id())
+                        ->exists();
+                    if (!$isResponsible) {
+                        $isResponsible = \Illuminate\Support\Facades\DB::table('vik_administrateur')
+                            ->where('UTI_ID', auth()->id())
+                            ->exists();
+                    }
+                } catch (\Exception $e) {
+                    // DB may be unavailable during setup; default to false
+                    $isResponsible = false;
+                }
+            @endphp
+
+            @if($isResponsible)
+                <div class="mt-4 md:mt-0">
+                    <a href="{{ route('raids.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all shadow-md">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        Créer un Raid
+                    </a>
+                </div>
+            @endif
         @endauth
     </div>
     <div class="flex flex-wrap justify-center gap-6 mb-8">

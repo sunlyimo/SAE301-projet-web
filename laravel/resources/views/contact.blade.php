@@ -53,6 +53,9 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+                @else
+                    <input type="hidden" name="name" value="{{ auth()->user()->name }}">
+                    <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                 @endguest
 
                 <div>

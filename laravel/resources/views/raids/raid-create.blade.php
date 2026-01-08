@@ -2,6 +2,13 @@
 @extends('layouts.app')
 <?php
 use Illuminate\Support\Facades\DB;
+
+if (auth()->check() && DB::table('vik_responsable_club')->where('UTI_ID', auth()->id())->exists()) {
+    
+}
+else {
+    abort(403, 'Accès refusé');
+}
 ?>
 
 @section('content')

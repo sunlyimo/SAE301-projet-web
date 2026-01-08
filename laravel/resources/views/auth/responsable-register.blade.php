@@ -57,16 +57,16 @@
             <div class="club-info-details">
                 <p><strong>Nom du club :</strong> {{ $club->CLU_NOM }}</p>
                 <p><strong>Adresse :</strong> {{ $club->CLU_RUE }}, {{ $club->CLU_CODE_POSTAL }} {{ $club->CLU_VILLE }}</p>
-                <p><strong>Votre nom d'utilisateur :</strong> {{ $user->UTI_NOM_UTILISATEUR }}</p>
-                <p><strong>Votre email :</strong> {{ $user->UTI_EMAIL }}</p>
+                <p><strong>Votre nom d'utilisateur :</strong> {{ optional($user)->UTI_NOM_UTILISATEUR ?? 'à définir' }}</p>
+                <p><strong>Votre email :</strong> {{ optional($user)->UTI_EMAIL ?? 'à définir' }}</p>
             </div>
         </div>
 
         <form method="POST" action="{{ route('responsable.complete-registration') }}">
             @csrf
             <input type="hidden" name="club_id" value="{{ $club->CLU_ID }}">
-            <input type="hidden" name="responsable_id" value="{{ $user->UTI_ID }}">
-            <input type="hidden" name="invitation_token" value="{{ $invitation->token }}">
+            <input type="hidden" name="responsable_id" value="{{ optional($user)->UTI_ID ?? '' }}">
+            <input type="hidden" name="invitation_token" value="{{ $invitation->token ?? ($token ?? '') }}">
 
             <div class="form-section">
                 <h3>Informations pré-remplies</h3>
@@ -83,12 +83,12 @@
 
                 <div class="form-group">
                     <label for="UTI_EMAIL" class="form-label">Email</label>
-                    <input type="email" name="UTI_EMAIL" id="UTI_EMAIL" value="{{ old('UTI_EMAIL', $user->UTI_EMAIL ?? '') }}" class="form-input" readonly>
+                    <input type="email" name="UTI_EMAIL" id="UTI_EMAIL" value="{{ old('UTI_EMAIL', optional($user)->UTI_EMAIL ?? '') }}" class="form-input" readonly>
                 </div>
 
                 <div class="form-group">
                     <label for="UTI_NOM_UTILISATEUR" class="form-label">Nom d'utilisateur</label>
-                    <input type="text" name="UTI_NOM_UTILISATEUR" id="UTI_NOM_UTILISATEUR" value="{{ old('UTI_NOM_UTILISATEUR', $user->UTI_NOM_UTILISATEUR ?? '') }}" class="form-input" readonly>
+                    <input type="text" name="UTI_NOM_UTILISATEUR" id="UTI_NOM_UTILISATEUR" value="{{ old('UTI_NOM_UTILISATEUR', optional($user)->UTI_NOM_UTILISATEUR ?? '') }}" class="form-input" readonly>
                 </div>
             </div>
 

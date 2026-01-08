@@ -430,7 +430,7 @@
             </div>
         </form>
     </div>
-    <div class="mt-24 border-t border-gray-100 pt-12">
+    <div class="mt-24 border-t border-gray-100 pt-12" id="historique">
         <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center justify-center gap-2">
             Historique des Courses
         </h2>
@@ -492,11 +492,7 @@
 
                     <div class="flex items-center gap-4 mb-4">
                         <div class="w-12 h-12 rounded-xl bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200">
-                            @if($equipe->EQU_IMAGE)
-                                <img src="{{ asset('storage/' . $equipe->EQU_IMAGE) }}" class="w-full h-full object-cover">
-                            @else
-                                <span class="text-xl">🚩</span>
-                            @endif
+                            <span class="text-xl">🚩</span>
                         </div>
                         <div class="overflow-hidden">
                             <h3 class="font-black text-gray-900 uppercase text-md truncate" title="{{ $equipe->EQU_NOM }}">

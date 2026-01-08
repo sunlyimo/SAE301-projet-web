@@ -31,7 +31,7 @@ class RegisterController extends Controller
             'UTI_NOM' => 'required|string|max:50',
             'UTI_PRENOM' => 'required|string|max:50',
             'UTI_EMAIL' => 'required|string|email|max:100',
-            'UTI_NOM_UTILISATEUR' => 'required|string|max:50|unique:VIK_UTILISATEUR,UTI_NOM_UTILISATEUR',
+            'UTI_NOM_UTILISATEUR' => 'required|string|max:50|unique:vik_utilisateur,UTI_NOM_UTILISATEUR',
             'UTI_DATE_NAISSANCE' => 'required|date',
             'UTI_RUE' => 'required|string|max:100',
             'UTI_CODE_POSTAL' => 'required|string|max:10',

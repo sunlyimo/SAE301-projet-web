@@ -23,12 +23,19 @@ class SoutenanceSeeder extends Seeder
             ['CLU_ID' => 6, 'CLU_NOM' => 'Balise 25', 'CLU_RUE' => '2 Avenue Léo Lagrange', 'CLU_CODE_POSTAL' => '25000', 'CLU_VILLE' => 'Besançon'],
             ['CLU_ID' => 7, 'CLU_NOM' => 'VIKAZIM', 'CLU_RUE' => '28 rue des bleuets', 'CLU_CODE_POSTAL' => '14000', 'CLU_VILLE' => 'CAEN'],
         ]);
+        DB::table('vik_tranche_difficulte')->insert([
+            ['DIF_NIVEAU' => 1, 'DIF_DESCRIPTION' => 'Licorne'],
+            ['DIF_NIVEAU' => 2, 'DIF_DESCRIPTION' => 'Gazelle'],
+            ['DIF_NIVEAU' => 3, 'DIF_DESCRIPTION' => 'Modere'],
+            ['DIF_NIVEAU' => 4, 'DIF_DESCRIPTION' => 'Complexe'],
+            
+        ]);
 
         // Utilisateurs supplémentaires
         $utilisateurs = [
             [51, 'julien.martin@unicaen.fr', 'MARTIN', 'Julien', '1990-04-15', '12 rue des sports', '77000', 'Melun', '0612345678', '77001234', 'jmartin', 'pass123'],
             [52, 'claire.dumont@test.fr', 'DUMONT', 'Clara', '1985-09-22', '45 rue des plantes', '14123', 'IFS', '0698765432', '25004567', 'cdumont', 'pass123'],
-            [53, 'antoine.petit@test.fr', 'PETIT', 'Antoine', '2002-03-01', '5 chemin du Lac', '25140', 'Charquemont', '25140', 'Charquemont', '0711223344', '2025-T11LF3', 'antoine.petit', 'pass123'],
+            [53, 'antoine.petit@test.fr', 'PETIT', 'Antoine', '2002-03-01', '5 chemin du Lac', '25140', 'Charquemont', '0711223344', '2025-T11LF3', 'antoine.petit', 'pass123'],
             [54, 'sandra.marveli@test.fr', 'MARVELI', 'Sandra', '1995-07-18', '8 bis rue du Parc', '14400', 'BAYEUX', '0655443322', '64006678', 'sandra.marveli', 'pass123'],
             [55, 'lucas.bernard@test.fr', 'BERNARD', 'Lucas', '1988-01-11', '3 allée des Sports', '91002', 'EVRY', '0766778899', '91002345', 'lucas.bernard', 'pass123'],
             [56, 'c.dumont@email.fr', 'DUPONT', 'Claire', '1992-05-14', '12 rue des Pins', '77100', 'MEAUX', '0612457890', '1204558', 'c.dumont', 'pass123'],
@@ -46,6 +53,7 @@ class SoutenanceSeeder extends Seeder
             [68, 'sylvian.delhoumi@unicaen.fr', 'DELHOUMI', 'Sylvian', '1985-06-02', '47 rue des chênes', '14000', 'Caen', '0705324567', '2025-D2SI13', 'sylvian.delhoumi', 'pass123'],
             [69, 'jeanfrancois.anne@unicaen.fr', 'ANNE', 'Jean-François', '1964-11-05', '27 rue des tilleuls', '14123', 'Cormeilles Le Royal', '0645389485', '56723478', 'jeanfrancois.anne', 'pass123'],
             [70, 'marc.rousseau@test.fr', 'ROUSSEAU', 'Marc', '1990-01-01', 'Place de la Liberté', '14000', 'Caen', '0600000070', '70070', 'marc.rousseau', 'pass123'],
+            [100, 'admin.vikazim@mail.fr', 'Admin', 'Vikazim', '2006-10-16', 'Rue des lilas', '76000', 'Caen', '0600000070', '70070', 'admin_sys', 'Root123!'],
         ];
 
         foreach ($utilisateurs as $user) {
@@ -64,6 +72,46 @@ class SoutenanceSeeder extends Seeder
                 'UTI_MOT_DE_PASSE' => Hash::make($user[11]),
             ]);
         }
+
+        $pass = Hash::make('Root123!');
+        // Ensure admin user exists (create or update) with UTI_ID = 100
+        DB::table('vik_utilisateur')->updateOrInsert(
+            ['UTI_ID' => 100],
+            [
+                'UTI_NOM' => 'Admin',
+                'UTI_PRENOM' => 'Vikazim',
+                'UTI_EMAIL' => 'admin.vikazim@mail.fr',
+                'UTI_DATE_NAISSANCE' => '1980-01-01',
+                'UTI_MOT_DE_PASSE' => $pass,
+                'UTI_NOM_UTILISATEUR' => 'admin_sys',
+                'UTI_RUE' => 'Rue des lilas',
+                'UTI_CODE_POSTAL' => '76000',
+                'UTI_VILLE' => 'Rouen',
+                'UTI_TELEPHONE' => '0600000000',
+                'UTI_LICENCE' => "10000",
+                'UTI_ID' => 100,
+            ]
+        );
+
+        DB::table('vik_administrateur')->updateOrInsert(
+            ['UTI_ID' => 100],
+            [
+                'UTI_EMAIL' => 'admin.vikazim@mail.fr',
+                'UTI_NOM' => 'Admin',
+                'UTI_PRENOM' => 'Vikazim',
+                'UTI_DATE_NAISSANCE' => '1980-01-01',
+                'UTI_MOT_DE_PASSE' => $pass,
+                'UTI_NOM_UTILISATEUR' => 'admin_sys',
+                'UTI_RUE' => 'Rue des lilas',
+                'UTI_CODE_POSTAL' => '76000',
+                'UTI_VILLE' => 'Rouen',
+                'UTI_TELEPHONE' => '0600000000',
+                'UTI_LICENCE' => "10000",
+                'UTI_ID' => 100,
+            ]
+        );
+
+
 
         // Coureurs supplémentaires
         for ($id = 51; $id <= 70; $id++) {
@@ -124,6 +172,35 @@ class SoutenanceSeeder extends Seeder
             ]);
         }
 
+        // Responsables CLUB
+        foreach ([56, 53, 55, 69] as $id) {
+            $user = DB::table('vik_utilisateur')->where('UTI_ID', $id)->first();
+
+            // Déterminer le CLU_ID en fonction de l'utilisateur
+            $clubId = match($id) {
+                56 => 4, // CO Azimut 77 - DUPONT Claire
+                53 => 6, // Balise 25 - PETIT Antoine
+                55 => 5, // Raidlinks - BERNARD Lucas
+                69 => 7, // VIKAZIM - ANNE Jean-François
+            };
+
+            DB::table('vik_responsable_club')->insert([
+                'UTI_ID' => $user->UTI_ID,
+                'CLU_ID' => $clubId,
+                'UTI_EMAIL' => $user->UTI_EMAIL,
+                'UTI_NOM' => $user->UTI_NOM,
+                'UTI_PRENOM' => $user->UTI_PRENOM,
+                'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+                'UTI_RUE' => $user->UTI_RUE,
+                'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+                'UTI_VILLE' => $user->UTI_VILLE,
+                'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+                'UTI_LICENCE' => $user->UTI_LICENCE,
+                'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+                'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            ]);
+        }
+
         // RAIDS
         DB::table('vik_raid')->insert([
             [
@@ -154,6 +231,10 @@ class SoutenanceSeeder extends Seeder
                 'RAI_LIEU' => 'Parc des Noues - 7 boulevard de la République 77130 MONTERAUT',
                 'RAI_IMAGE' => 'raid_obivwak.png',
             ],
+        ]);
+        DB::table('vik_course_type')->insert([
+            ['TYP_ID' => 1, 'TYP_DESCRIPTION' => 'Loisir'],
+            ['TYP_ID' => 2, 'TYP_DESCRIPTION' => 'Competition'],
         ]);
 
         // COURSES pour RAID CHAMPETRE
@@ -211,7 +292,7 @@ class SoutenanceSeeder extends Seeder
             [
                 'RAI_ID' => 101,
                 'COU_ID' => 1,
-                'TYP_ID' => 3,
+                'TYP_ID' => 2,
                 'DIF_NIVEAU' => 4,
                 'UTI_ID' => 70,
                 'COU_NOM' => 'Parcours A',
@@ -234,8 +315,8 @@ class SoutenanceSeeder extends Seeder
             [
                 'RAI_ID' => 101,
                 'COU_ID' => 2,
-                'TYP_ID' => 3,
-                'DIF_NIVEAU' => 2,
+                'TYP_ID' => 1,
+                'DIF_NIVEAU' => 3,
                 'UTI_ID' => 56,
                 'COU_NOM' => 'Parcours B',
                 'COU_DATE_DEBUT' => '2026-05-24 04:00:00',

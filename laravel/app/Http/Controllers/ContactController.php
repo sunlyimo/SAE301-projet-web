@@ -17,8 +17,8 @@ class ContactController extends Controller
     {
         // Si l'utilisateur est connecté, utiliser ses informations
         if (auth()->check()) {
-            $name = auth()->user()->uti_nom . ' ' . auth()->user()->uti_prenom;
-            $email = auth()->user()->uti_email;
+            $name = auth()->user()->name;
+            $email = auth()->user()->email;
 
             $validated = $request->validate([
                 'message' => 'required|string|max:5000',
