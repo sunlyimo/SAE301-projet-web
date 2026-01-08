@@ -16,18 +16,20 @@ class CourseOverlapTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
+    /**
+     * Helper pour insérer les données de référence nécessaires.
+     */
+    private function seedReferenceData()
     {
-        parent::setUp();
-
-        // Créer un type de course
-        \DB::table('vik_course_type')->insert([
-            'TYP_ID' => 1
+        \DB::table('vik_course_type')->insertOrIgnore([
+            ['TYP_ID' => 1, 'TYP_DESCRIPTION' => 'Course de vitesse'],
+            ['TYP_ID' => 2, 'TYP_DESCRIPTION' => 'Course d\'endurance'],
         ]);
 
-        // Créer une tranche de difficulté
-        \DB::table('vik_tranche_difficulte')->insert([
-            'DIF_NIVEAU' => 3
+        \DB::table('vik_tranche_difficulte')->insertOrIgnore([
+            ['DIF_NIVEAU' => 1, 'DIF_DESCRIPTION' => 'Débutant'],
+            ['DIF_NIVEAU' => 2, 'DIF_DESCRIPTION' => 'Intermédiaire'],
+            ['DIF_NIVEAU' => 3, 'DIF_DESCRIPTION' => 'Avancé'],
         ]);
     }
 
@@ -57,6 +59,8 @@ class CourseOverlapTest extends TestCase
      */
     public function test_user_cannot_create_team_for_overlapping_course()
     {
+        $this->seedReferenceData();
+
         // Créer un utilisateur et un club
         $user = User::factory()->create();
         $club = Club::factory()->create();
@@ -147,6 +151,8 @@ class CourseOverlapTest extends TestCase
      */
     public function test_user_cannot_join_team_for_overlapping_course()
     {
+        $this->seedReferenceData();
+
         // Créer deux utilisateurs
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
@@ -268,6 +274,8 @@ class CourseOverlapTest extends TestCase
      */
     public function test_user_can_create_team_for_non_overlapping_course()
     {
+        $this->seedReferenceData();
+
         $user = User::factory()->create();
         $club = Club::factory()->create();
 
