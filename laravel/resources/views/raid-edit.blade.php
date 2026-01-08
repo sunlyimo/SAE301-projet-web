@@ -121,15 +121,7 @@
                             </div>
                         </div>
 
-                        <div class="mb-5">
-                            <label class="block text-sm font-medium text-gray-700">IMAGE DE COUVERTURE</label>
-                            <div class="mt-2">
-                                <input type="file" name="RAI_IMAGE" class="block w-full text-sm text-gray-700">
-                                @if($raid->RAI_IMAGE)
-                                    <p class="text-sm text-gray-500 mt-1">Image actuelle : {{ $raid->RAI_IMAGE }}</p>
-                                @endif
-                            </div>
-                        </div>
+                        {{-- Image upload removed to prevent storing images in repository --}}
 
                         <div class="grid gap-3 md:grid-cols-3">
                             <div class="md:col-span-2">

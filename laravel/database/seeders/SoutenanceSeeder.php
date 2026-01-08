@@ -23,12 +23,19 @@ class SoutenanceSeeder extends Seeder
             ['CLU_ID' => 6, 'CLU_NOM' => 'Balise 25', 'CLU_RUE' => '2 Avenue Léo Lagrange', 'CLU_CODE_POSTAL' => '25000', 'CLU_VILLE' => 'Besançon'],
             ['CLU_ID' => 7, 'CLU_NOM' => 'VIKAZIM', 'CLU_RUE' => '28 rue des bleuets', 'CLU_CODE_POSTAL' => '14000', 'CLU_VILLE' => 'CAEN'],
         ]);
+        DB::table('vik_tranche_difficulte')->insert([
+            ['DIF_NIVEAU' => 1, 'DIF_DESCRIPTION' => 'Licorne'],
+            ['DIF_NIVEAU' => 2, 'DIF_DESCRIPTION' => 'Gazelle'],
+            ['DIF_NIVEAU' => 3, 'DIF_DESCRIPTION' => 'Modere'],
+            ['DIF_NIVEAU' => 4, 'DIF_DESCRIPTION' => 'Complexe'],
+            
+        ]);
 
         // Utilisateurs supplémentaires
         $utilisateurs = [
             [51, 'julien.martin@unicaen.fr', 'MARTIN', 'Julien', '1990-04-15', '12 rue des sports', '77000', 'Melun', '0612345678', '77001234', 'jmartin', 'pass123'],
             [52, 'claire.dumont@test.fr', 'DUMONT', 'Clara', '1985-09-22', '45 rue des plantes', '14123', 'IFS', '0698765432', '25004567', 'cdumont', 'pass123'],
-            [53, 'antoine.petit@test.fr', 'PETIT', 'Antoine', '2002-03-01', '5 chemin du Lac', '25140', 'Charquemont', '25140', 'Charquemont', '0711223344', '2025-T11LF3', 'antoine.petit', 'pass123'],
+            [53, 'antoine.petit@test.fr', 'PETIT', 'Antoine', '2002-03-01', '5 chemin du Lac', '25140', 'Charquemont', '0711223344', '2025-T11LF3', 'antoine.petit', 'pass123'],
             [54, 'sandra.marveli@test.fr', 'MARVELI', 'Sandra', '1995-07-18', '8 bis rue du Parc', '14400', 'BAYEUX', '0655443322', '64006678', 'sandra.marveli', 'pass123'],
             [55, 'lucas.bernard@test.fr', 'BERNARD', 'Lucas', '1988-01-11', '3 allée des Sports', '91002', 'EVRY', '0766778899', '91002345', 'lucas.bernard', 'pass123'],
             [56, 'c.dumont@email.fr', 'DUPONT', 'Claire', '1992-05-14', '12 rue des Pins', '77100', 'MEAUX', '0612457890', '1204558', 'c.dumont', 'pass123'],
@@ -225,6 +232,10 @@ class SoutenanceSeeder extends Seeder
                 'RAI_IMAGE' => 'raid_obivwak.png',
             ],
         ]);
+        DB::table('vik_course_type')->insert([
+            ['TYP_ID' => 1, 'TYP_DESCRIPTION' => 'Loisir'],
+            ['TYP_ID' => 2, 'TYP_DESCRIPTION' => 'Competition'],
+        ]);
 
         // COURSES pour RAID CHAMPETRE
         DB::table('vik_course')->insert([
@@ -281,7 +292,7 @@ class SoutenanceSeeder extends Seeder
             [
                 'RAI_ID' => 101,
                 'COU_ID' => 1,
-                'TYP_ID' => 3,
+                'TYP_ID' => 2,
                 'DIF_NIVEAU' => 4,
                 'UTI_ID' => 70,
                 'COU_NOM' => 'Parcours A',
@@ -304,8 +315,8 @@ class SoutenanceSeeder extends Seeder
             [
                 'RAI_ID' => 101,
                 'COU_ID' => 2,
-                'TYP_ID' => 3,
-                'DIF_NIVEAU' => 2,
+                'TYP_ID' => 1,
+                'DIF_NIVEAU' => 3,
                 'UTI_ID' => 56,
                 'COU_NOM' => 'Parcours B',
                 'COU_DATE_DEBUT' => '2026-05-24 04:00:00',

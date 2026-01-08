@@ -86,12 +86,10 @@
                             </span>
                         </div>
                         <div class="flex flex-col items-end">
-                            <span class="text-xs font-bold text-gray-400 uppercase">Difficulté</span>
-                            <div class="flex text-yellow-400 text-sm">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <span>{{ $i <= $course->DIF_NIVEAU ? '★' : '☆' }}</span>
-                                @endfor
-                            </div>
+                                <span class="text-xs font-bold text-gray-400 uppercase">Difficulté</span>
+                                <div class="text-sm text-gray-700 font-medium">
+                                    {{ $course->tranche->DIF_DESCRIPTION ?? ('Niveau '.$course->DIF_NIVEAU) }}
+                                </div>
                         </div>
                     </div>
                     

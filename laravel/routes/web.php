@@ -49,6 +49,8 @@ Route::get('/admin/refusal-notification/{club_id}/{token}', [ClubController::cla
 Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/admin-accept', [ClubController::class, 'adminAcceptInvitation'])->name('responsable.invitation.admin-accept');
 Route::post('/admin/recreate-club/{club_id}/{token}', [ClubController::class, 'recreateClub'])->name('admin.recreate-club');
 Route::get('/responsable/mailbox/{club_id}/{token}', [ClubController::class, 'showFakeMailbox'])->name('responsable.mailbox');
+// Allow unauthenticated users to hit this route so the controller can set the intended URL
+Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept-login', [ClubController::class, 'redirectToLoginForInvitation'])->name('responsable.invitation.accept.login');
 Route::post('/responsable/quick-validate/{club_id}/{token}', [ClubController::class, 'quickValidateResponsable'])->name('responsable.quick-validate');
 Route::post('/responsable/refuse/{club_id}/{token}', [ClubController::class, 'refuseResponsable'])->name('responsable.refuse');
 Route::get('/responsable/quick-validated/{club}/{token}', [ClubController::class, 'showQuickValidated'])->name('responsable.quick-validated');
@@ -99,7 +101,7 @@ Route::middleware('auth')->group(function () {
 
   Route::get('/responsable/invitation/{club_id}/{user_id}/{token}', [ClubController::class, 'showInvitation'])->name('responsable.invitation.show');
   Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept', [ClubController::class, 'showInvitation'])->name('responsable.invitation.accept.show');
-  Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept-login', [ClubController::class, 'redirectToLoginForInvitation'])->name('responsable.invitation.accept.login');
+  
   Route::get('/responsable/invitation/{club_id}/{user_id}/{token}/accept-after-login', [ClubController::class, 'acceptAfterLogin'])->name('responsable.invitation.accept.after_login');
   Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/accept', [ClubController::class, 'acceptInvitation'])->name('responsable.invitation.accept');
   Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/refuse', [ClubController::class, 'refuseInvitation'])->name('responsable.invitation.refuse');
