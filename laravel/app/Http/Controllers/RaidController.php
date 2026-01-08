@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 class RaidController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return view('raids.raid')
-        ->with('raids',Raid::getFuturRaid());
+            ->with('raids', Raid::getFuturRaid());
     }
 
     public function create() /* affichage du formulaire */
@@ -21,6 +22,7 @@ class RaidController extends Controller
             ->select('UTI_ID', 'UTI_EMAIL', 'UTI_TELEPHONE', DB::raw("CONCAT(UTI_PRENOM, ' ', UTI_NOM) as name"))
             ->orderBy('UTI_NOM')
             ->get();
+
 
         return view('raid-create', compact('clubs', 'responsables'));
     }
@@ -66,15 +68,25 @@ class RaidController extends Controller
             'RAI_CONTACT.required' => "L'adresse e-mail du contact est obligatoire."
         ]);
 
-        // Récupère les coordonnées depuis VIK_UTILISATEUR
-        $user = DB::table('VIK_UTILISATEUR')
+        echo '<script>alert("Validated Data:", ' . json_encode($validated) . ');</script>';
+
+        $user = DB::table('VIK_UTILISATEUR') /* récup l'utilisateur */
             ->where('UTI_ID', $validated['UTI_ID'])
-            ->select('UTI_EMAIL', 'UTI_TELEPHONE')
+            ->select('UTI_ID', 'UTI_EMAIL', 'UTI_TELEPHONE', 'UTI_NOM', 'UTI_PRENOM', 'UTI_NOM_UTILISATEUR')
             ->first();
 
         if ($user) {
             $validated['RAI_CONTACT'] = $user->UTI_EMAIL;
             $validated['RAI_TELEPHONE'] = $user->UTI_TELEPHONE;
+
+            DB::table('VIK_RESPONSABLE_RAID')->insertOrIgnore([
+                'UTI_ID' => $user->UTI_ID,
+                'UTI_EMAIL' => $user->UTI_EMAIL,
+                'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+                'UTI_NOM' => $user->UTI_NOM,
+                'UTI_PRENOM' => $user->UTI_PRENOM,
+                'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            ]);
         }
 
         // gérer le fichier image correctement (ne pas insérer le temp path)
