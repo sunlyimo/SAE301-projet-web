@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\TypeCourse;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
@@ -24,27 +26,39 @@ class CourseController extends Controller
     public function create()
     {
         $types = TypeCourse::all();
-        return view('courses.create', compact('types'));
+        $users = User::orderBy('UTI_NOM_UTILISATEUR')->get();
+        return view('courses.create', compact('types','users'));
     }
 
     /**
      * Enregistrement d'une nouvelle course.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $validated = $this->validateRequest($request);
-
         $rai_id = 1; 
+        $responsableId = $request->responsable_id;
+        $userInfo = DB::table('vik_utilisateur')->where('UTI_ID', $responsableId)->first();
+
+        if (!$userInfo) {
+            return redirect()->back()->withErrors(['responsable_id' => "L'utilisateur n'existe pas."]);
+        }
+
+        $userData = (array) $userInfo;
+        unset($userData['created_at']);
+        unset($userData['updated_at']);
+
+        DB::table('vik_responsable_course')->updateOrInsert(
+            ['UTI_ID' => $responsableId],
+            $userData
+        );
         $lastCouId = Course::where('RAI_ID', $rai_id)->max('COU_ID') ?? 0;
         $newCouId = $lastCouId + 1;
-
         Course::create(array_merge($validated, [
             'RAI_ID' => $rai_id,
             'COU_ID' => $newCouId,
-            'UTI_ID' => Auth::id(), 
+            'UTI_ID' => $responsableId,
         ]));
-
-        return redirect()->route('courses.index')->with('success', 'Course créée avec succès.');
+        return redirect()->route('courses.index')->with('success', 'La course a été créée avec succès !');
     }
 
     /**
@@ -98,11 +112,16 @@ class CourseController extends Controller
                         ->with(['type', 'responsable'])
                         ->get();
 
-        // Ajouter manuellement le comptage des équipes pour chaque course
+        // Ajouter manuellement le comptage des équipes et des participants pour chaque course
         foreach ($courses as $course) {
             $course->equipes_count = \App\Models\Equipe::where('RAI_ID', $course->RAI_ID)
                                                         ->where('COU_ID', $course->COU_ID)
                                                         ->count();
+
+            $course->participants_count = \DB::table('vik_appartient')
+                                            ->where('RAI_ID', $course->RAI_ID)
+                                            ->where('COU_ID', $course->COU_ID)
+                                            ->count();
         }
 
         return view('courses.index', compact('courses', 'raid'));

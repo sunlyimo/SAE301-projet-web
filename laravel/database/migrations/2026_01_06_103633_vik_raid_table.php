@@ -22,7 +22,7 @@ return new class extends Migration
             $table->dateTime('RAI_INSCRI_DATE_FIN')->nullable();
             $table->char('RAI_CONTACT', 50)->nullable();
             $table->char('RAI_WEB', 50)->nullable();
-            $table->char('RAI_LIEU', 50)->nullable();
+            $table->char('RAI_LIEU', 100)->nullable();
             $table->char('RAI_IMAGE', 50)->nullable();
 
         });

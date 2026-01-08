@@ -642,14 +642,17 @@ WHERE UTI_ID in (7, 8);
 INSERT INTO VIK_RAID (RAI_ID, CLU_ID, UTI_ID, RAI_NOM, RAI_RAID_DATE_DEBUT, RAI_RAID_DATE_FIN, RAI_INSCRI_DATE_DEBUT, RAI_INSCRI_DATE_FIN, RAI_CONTACT, RAI_WEB, RAI_LIEU, RAI_IMAGE)
 VALUES
 (1,1,5,'Raid Normandie 2026','2026-03-10 08:00:00','2026-03-10 18:00:00','2026-02-01 00:00:00','2026-03-09 23:59:59','contact@vikazim.fr','www.vikazim.fr','Rouen','raid1.png'),
-(2,2,6,'Raid Caen 2026','2026-04-15 09:00:00','2026-04-15 17:00:00','2026-03-01 00:00:00','2026-04-14 23:59:59','contact@caenclub.fr','www.caenclub.fr','Caen','raid2.png');
+(2,2,6,'Raid Caen 2026','2026-04-15 09:00:00','2026-04-15 17:00:00','2026-03-01 00:00:00','2026-04-14 23:59:59','contact@caenclub.fr','www.caenclub.fr','Caen','raid2.png'),
+(3,2,6,'Raid Inscriptions Ouvertes','2026-04-15 09:00:00','2026-04-15 17:00:00','2026-01-01 00:00:00','2026-04-14 23:59:59','contact@caenclub.fr','www.caenclub.fr','Caen','raid2.png');
 
 INSERT INTO VIK_COURSE (RAI_ID, COU_ID, TYP_ID, DIF_NIVEAU, UTI_ID, COU_NOM, COU_DATE_DEBUT, COU_DATE_FIN, COU_PRIX, COU_PRIX_ENFANT, COU_PARTICIPANT_MIN, COU_PARTICIPANT_MAX, COU_EQUIPE_MIN, COU_EQUIPE_MAX, COU_PARTICIPANT_PAR_EQUIPE_MAX, COU_REPAS_PRIX, COU_REDUCTION, COU_LIEU, COU_AGE_MIN, COU_AGE_SEUL, COU_AGE_ACCOMPAGNATEUR)
 VALUES
 (1,1,1,1,7,'Course Vitesse Rouen','2026-03-10 08:30:00','2026-03-10 10:30:00',15.00,10.00,5,50,1,10,5,5.00,0.0,'Forêt de Rouen',12,16,18),
 (1,2,2,2,8,'Course Endurance Rouen','2026-03-10 11:00:00','2026-03-10 14:00:00',20.00,12.00,5,40,2,8,4,7.00,0.0,'Forêt de Rouen',14,18,20),
 (2,1,3,3,7,'Course Relais Caen','2026-04-15 09:30:00','2026-04-15 12:30:00',25.00,15.00,6,60,2,12,5,8.00,0.0,'Parc de Caen',16,20,22),
-(2,2,4,2,8,'Course Equipe Caen','2026-04-15 13:00:00','2026-04-15 16:00:00',18.00,10.00,4,50,2,10,4,6.00,0.0,'Parc de Caen',12,18,20);
+(2,2,4,2,8,'Course Equipe Caen','2026-04-15 13:00:00','2026-04-15 16:00:00',18.00,10.00,4,50,2,10,4,6.00,0.0,'Parc de Caen',12,18,20),
+(3,1,3,3,7,'Course Relais Caen','2026-04-15 09:30:00','2026-04-15 12:30:00',25.00,15.00,6,60,2,12,5,8.00,0.0,'Parc de Caen',16,20,22),
+(3,2,4,2,8,'Course Equipe Caen','2026-04-15 13:00:00','2026-04-15 16:00:00',18.00,10.00,4,50,2,10,4,6.00,0.0,'Parc de Caen',12,18,20);
 
 -- ===================================================
 -- 5. EQUIPES ET APPARTENANCE
@@ -672,3 +675,180 @@ INSERT INTO VIK_RESULTAT (RAI_ID, COU_ID, EQU_ID, RES_RANG, RES_TEMPS, RES_POINT
 (1,1,2,'2','00:50:30',90),
 (1,2,1,'1','01:15:00',100),
 (2,1,1,'1','01:10:15',100);
+
+
+-- ===================================================
+-- 7. DONNÉES POUR LA SOUTENANCE
+-- ===================================================
+
+-- Clubs supplémentaires (DOIT ÊTRE INSÉRÉ AVANT LES UTILISATEURS pour les CLU_ID)
+INSERT INTO VIK_CLUB (CLU_ID, CLU_NOM, CLU_RUE, CLU_CODE_POSTAL, CLU_VILLE) VALUES
+(4, 'CO Azimut 77', '12 rue des sports', '77000', 'Melun'),
+(5, 'Raidlinks', '45 chemin du Bonnet', '77000', 'Melun'),
+(6, 'Balise 25', '5 chemin du Lac', '25140', 'Charquemont'),
+(7, 'VIKAZIM', '47 rue des chênes', '14000', 'Caen');
+
+-- Ajout des utilisateurs supplémentaires depuis l'image "Créer les comptes"
+INSERT INTO VIK_UTILISATEUR
+(UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE, UTI_CODE_POSTAL, UTI_VILLE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE)
+VALUES
+-- Utilisateurs supplémentaires
+(51,'julien.martin@unicaen.fr','MARTIN','Julien','1990-04-15','12 rue des sports, 77000 Melun','77000','Melun','06 12 34 56 78','77001234','jmartin','pass123'),
+(52,'claire.dumont@test.fr','DUMONT','Clara','1985-09-22','45 rue des plantes 14123 IFS','14123','IFS','06 98 76 54 32','25004567','cdumont','pass123'),
+(53,'thomas.leroy@test.fr','PETIT','Antoine','2002-03-01','5 chemin du Lac, 25140 Charquemont','25140','Charquemont','07 11 22 33 44','2025-T11LF3','thomas.leroy','pass123'),
+(54,'sophie.moreau@test.fr','MARVELI','Sandra','1995-07-18','8 bis rue du Parc, 14400 BAYEUX','14400','BAYEUX','06 55 44 33 22','64006678','sophie.moreau','pass123'),
+(55,'lucas.bernard@test.fr','BERNARD','Lucas','1988-01-11','3 allée des Sports, 91002 EVRY','91002','EVRY','07 66 77 88 99','91002345','lucas.bernard','pass123'),
+(56,'c.dumont@email.fr','DUPONT','Claire','1992-05-14','12 rue des Pins, 77100 MEAUX','77100','MEAUX','06 12 45 78 90','1204558','c.dumont','pass123'),
+(57,'t.lefebvre@orange.fr','LEFEBVRE','Thomas','1985-11-23','21 route de Collège, 91300 Montbéliard','91300','Montbéliard','06 54 89 21 33','2298741','t.lefebvre','pass123'),
+(58,'sophie.m60@wanadoo.fr','MOREAU','Sophie','2001-02-02','45 chemin du Bonnet, 77000 Melun','77000','Melun','07 81 02 44 56','6003214','sophie.m60','pass123'),
+(59,'antoine.petit@gmail.com','LEROY','Thomas','1995-08-30','102 rue du Moulin, 77500 Chelles','77500','Chelles','06 33 57 12 88','6901122','antoine.petit','pass123'),
+(60,'julie.garnier@outlook.com','GARNIER','Julie','1988-07-12','3 place de la Mairie, 77000 Melun','77000','Melun','07 65 90 11 22','6700548','julie.garnier','pass123'),
+(61,'m.rousseau@sfr.fr','LEROY','Thomas','1974-01-19','2 rue de la Poste, 77000 Melun','77000','Melun','06 09 88 34 51','6700548','m.rousseau','pass123'),
+(62,'hugo.fontaine@test.fr','FONTAINE','Hugo','2003-10-05','6 rue du Collège, 25200 Mons','25200','Mons','06 73 84 95 16','91006754','hugo.fontaine','pass123'),
+(63,'lea.caron@test.fr','CARON','Lea','1990-04-27','4 rue des Esses, 25140 Montbéliard','25140','Montbéliard','06 14 25 36 47','77009876','lea.caron','pass123'),
+(64,'emma.petit@test.fr','PETIT','Emma','2005-12-08','4 rue des Esses, 25140 Montbéliard','25140','Montbéliard','06 21 43 65 87','77009876','emma.petit','pass123'),
+(65,'nathan.roux@test.fr','ROUX','Nathan','2000-06-26','16 chemin Vert, 25400 Audincourt','25400','Audincourt','07 34 56 78 12','25006789','nathan.roux','pass123'),
+(66,'paul.dorbec@unicaen.fr','DORBEC','Paul','1980-04-02','22 rue des roses 77000 Melun','77000','Melun','07 43 67 23 11','23456789','paul.dorbec','pass123'),
+(67,'julie.jacquier@unicaen.fr','JACQUIER','Yohann','2013-06-03','35 rue des roses 14123 IFS','14123','IFS','06 42 86 46 28','1234567890','julie.jacquier','pass123'),
+(68,'sylvian.delhoumi@unicaen.fr','DELHOUMI','Sylvian','1985-06-02','47 rue des chênes 14000 Caen','14000','Caen','07 05 32 45 67','2025-D2SI13','sylvian.delhoumi','pass123'),
+(69,'jeanfrancois.anne@unicaen.fr','ANNE','Jean-François','1964-11-05','27 rue des tilleuls 14123 Cormeilles Le Royal','14123','Cormeilles Le Royal','06 45 38 94 85','56723478','jeanfrancois.anne','pass123'),
+(70,'marc.rousseau@test.fr','ROUSSEAU','Marc','1990-01-01','Place de la Liberté','14000','Caen','0600000070','70070','marc.rousseau','pass123');
+
+-- Coureurs supplémentaires (DOIT ÊTRE INSÉRÉ AVANT LES EQUIPES)
+INSERT INTO VIK_COUREUR (UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE, UTI_CODE_POSTAL, UTI_VILLE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE, CLU_ID, CRR_PPS)
+SELECT UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE, UTI_CODE_POSTAL, UTI_VILLE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE,
+       4, NULL
+FROM VIK_UTILISATEUR WHERE UTI_ID BETWEEN 51 AND 70;
+
+-- Responsables RAID supplémentaires
+INSERT INTO VIK_RESPONSABLE_RAID
+(UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE, UTI_CODE_POSTAL, UTI_VILLE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE)
+SELECT UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE, UTI_CODE_POSTAL, UTI_VILLE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE
+FROM VIK_UTILISATEUR
+WHERE UTI_ID IN (66, 56);
+
+-- Responsables COURSE supplémentaires
+INSERT INTO VIK_RESPONSABLE_COURSE
+(UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE, UTI_CODE_POSTAL, UTI_VILLE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE)
+SELECT UTI_ID, UTI_EMAIL, UTI_NOM, UTI_PRENOM, UTI_DATE_NAISSANCE, UTI_RUE, UTI_CODE_POSTAL, UTI_VILLE, UTI_TELEPHONE, UTI_LICENCE, UTI_NOM_UTILISATEUR, UTI_MOT_DE_PASSE
+FROM VIK_UTILISATEUR
+WHERE UTI_ID IN (51, 66, 56, 62, 70);
+
+-- RAIDS POUR LA SOUTENANCE
+INSERT INTO VIK_RAID (RAI_ID, CLU_ID, UTI_ID, RAI_NOM, RAI_RAID_DATE_DEBUT, RAI_RAID_DATE_FIN, RAI_INSCRI_DATE_DEBUT, RAI_INSCRI_DATE_FIN, RAI_CONTACT, RAI_WEB, RAI_LIEU, RAI_IMAGE)
+VALUES
+(100, 4, 66, 'Raid CHAMPETRE', '2025-11-13 00:00:00', '2025-11-14 18:00:00', '2025-08-10 00:00:00', '2025-10-30 23:59:59', 'paul.dorbec@unicaen.fr', 'www.coazimut77.fr', 'Milieu naturel - Course d''orientation en milieu naturel', 'raid_champetre.png'),
+(101, 4, 56, 'Raid O''Bivwak', '2026-05-23 10:00:00', '2026-05-24 18:00:00', '2026-01-10 00:00:00', '2026-04-30 23:59:59', 'c.dumont@email.fr', 'www.coazimut77.fr', 'CO AZIMUT 77', 'raid_obivwak.png');
+
+-- COURSES POUR LE RAID CHAMPETRE (RAI_ID = 100)
+INSERT INTO VIK_COURSE (RAI_ID, COU_ID, TYP_ID, DIF_NIVEAU, UTI_ID, COU_NOM, COU_DATE_DEBUT, COU_DATE_FIN, COU_PRIX, COU_PRIX_ENFANT, COU_PARTICIPANT_MIN, COU_PARTICIPANT_MAX, COU_EQUIPE_MIN, COU_EQUIPE_MAX, COU_PARTICIPANT_PAR_EQUIPE_MAX, COU_REPAS_PRIX, COU_REDUCTION, COU_LIEU, COU_AGE_MIN, COU_AGE_SEUL, COU_AGE_ACCOMPAGNATEUR)
+VALUES
+-- Course LUTIN - 13-nov. 02:30 à 13-nov. 10h (durée 5km)
+(100, 1, 1, 1, 51, 'Course LUTIN', '2025-11-13 02:30:00', '2025-11-13 10:00:00', 0.00, 0.00, 5, NULL, 4, NULL, 3, 0.00, 0.00, NULL, 12, NULL, NULL),
+-- Course ELFE - 14-nov. 07:00 à 14-nov. 18h (durée Gazelle)
+(100, 2, 2, 2, 66, 'Course ELFE', '2025-11-14 07:00:00', '2025-11-14 18:00:00', 0.00, 0.00, 8, NULL, 4, NULL, 2, 0.00, 0.00, NULL, 18, NULL, NULL);
+
+-- COURSES POUR LE RAID O'BIVWAK (RAI_ID = 101)
+-- Parcours A - Catégories Âge 21 ans et + (Complexe, 20km, 06:30)
+INSERT INTO VIK_COURSE (RAI_ID, COU_ID, TYP_ID, DIF_NIVEAU, UTI_ID, COU_NOM, COU_DATE_DEBUT, COU_DATE_FIN, COU_PRIX, COU_PRIX_ENFANT, COU_PARTICIPANT_MIN, COU_PARTICIPANT_MAX, COU_EQUIPE_MIN, COU_EQUIPE_MAX, COU_PARTICIPANT_PAR_EQUIPE_MAX, COU_REPAS_PRIX, COU_REDUCTION, COU_LIEU, COU_AGE_MIN, COU_AGE_SEUL, COU_AGE_ACCOMPAGNATEUR)
+VALUES
+(101, 1, 3, 4, 70, 'Parcours A', '2026-05-23 10:00:00', '2026-05-23 20:00:00', 0.00, 0.00, 10, 40, 20, NULL, 2, 0.00, 0.00, NULL, 21, NULL, NULL);
+
+-- Parcours B - Catégories Âge 18 ans et + (Modérée, 10km, 04:00)
+INSERT INTO VIK_COURSE (RAI_ID, COU_ID, TYP_ID, DIF_NIVEAU, UTI_ID, COU_NOM, COU_DATE_DEBUT, COU_DATE_FIN, COU_PRIX, COU_PRIX_ENFANT, COU_PARTICIPANT_MIN, COU_PARTICIPANT_MAX, COU_EQUIPE_MIN, COU_EQUIPE_MAX, COU_PARTICIPANT_PAR_EQUIPE_MAX, COU_REPAS_PRIX, COU_REDUCTION, COU_LIEU, COU_AGE_MIN, COU_AGE_SEUL, COU_AGE_ACCOMPAGNATEUR)
+VALUES
+(101, 2, 3, 2, 56, 'Parcours B', '2026-05-24 10:00:00', '2026-05-24 18:00:00', 0.00, 0.00, 2, 8, 4, NULL, 3, 0.00, 0.00, NULL, 18, NULL, NULL);
+
+-- EQUIPES POUR LE RAID CHAMPETRE (RAI_ID = 100)
+-- Course LUTIN - Equipe 1 (ANNE + Marveli)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(100, 1, 1, 'Equipe 1', 69);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(69, 100, 1, 1),
+(54, 100, 1, 1);
+
+-- Course LUTIN - Equipe 2 (Bernard + Delhoumi)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(100, 1, 2, 'Equipe 2', 55);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(55, 100, 1, 2),
+(68, 100, 1, 2);
+
+-- Course LUTIN - Equipe 3 (Dorbec + Garnier + Dorbec)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(100, 1, 3, 'Equipe 3', 66);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(66, 100, 1, 3),
+(60, 100, 1, 3);
+
+-- Course ELFE - Equipe 1 (Dupont + Dupont + Leroy)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(100, 2, 1, 'Equipe 1', 56);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(56, 100, 2, 1),
+(59, 100, 2, 1);
+
+-- Course ELFE - Equipe 2 (ANNE + Marveli + Bernard + Moreau)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(100, 2, 2, 'Equipe 2', 69);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(69, 100, 2, 2),
+(54, 100, 2, 2),
+(55, 100, 2, 2),
+(58, 100, 2, 2);
+
+-- Course ELFE - Equipe 3 (Roux + Roux + Petit)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(100, 2, 3, 'Equipe 3', 65);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(65, 100, 2, 3),
+(64, 100, 2, 3);
+
+-- Course ELFE - Equipe 4 (Fontaine + Fontaine)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(100, 2, 4, 'Equipe 4', 62);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(62, 100, 2, 4);
+
+-- EQUIPES POUR LE RAID O'BIVWAK (RAI_ID = 101)
+-- Parcours B - Equipe 1 FORMEUR (Dupont + Claire - Responsables du Parcours B dans le RAID OBIWAK)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(101, 2, 1, 'FORMEUR', 56);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(56, 101, 2, 1);
+
+-- Parcours B - Equipe 2 ATCHOUM (Lefebvre + Petit + Lefebvre)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(101, 2, 2, 'ATCHOUM', 57);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(57, 101, 2, 2),
+(64, 101, 2, 2);
+
+-- Parcours B - Equipe 3 SIMPLET (Fontaine + Caron)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(101, 2, 3, 'SIMPLET', 62);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(62, 101, 2, 3),
+(63, 101, 2, 3);
+
+-- Parcours B - Equipe 4 (Fontaine + Garnier + Rousseau)
+INSERT INTO VIK_EQUIPE (RAI_ID, COU_ID, EQU_ID, EQU_NOM, UTI_ID) VALUES
+(101, 2, 4, 'Equipe 4', 62);
+
+INSERT INTO VIK_APPARTIENT (UTI_ID, RAI_ID, COU_ID, EQU_ID) VALUES
+(62, 101, 2, 4),
+(60, 101, 2, 4),
+(70, 101, 2, 4);
+
+-- Réactivation des contraintes
+SET FOREIGN_KEY_CHECKS = 1;

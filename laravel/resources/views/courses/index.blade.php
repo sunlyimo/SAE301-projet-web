@@ -4,14 +4,13 @@
 
 @php
     $userId = Auth::id();
-    $isRaidManager = DB::table('vik_responsable_raid')->where('UTI_ID', $userId)->exists();
-    $isCourseManager = DB::table('vik_responsable_course')->where('UTI_ID', $userId)->exists();
-    $canManage = $isRaidManager || $isCourseManager;
+    $isRaidManager = DB::table('vik_raid')
+        ->where('RAI_ID', $raid->RAI_ID)
+        ->where('UTI_ID', $userId)
+        ->exists();
 @endphp
 
 <div class="max-w-7xl mx-auto my-12 p-6">
-    
-    {{-- Notifications --}}
     <div class="flex justify-between items-center mb-10">
         <div class="w-full max-w-2xl">
             @if(session('success'))
@@ -25,8 +24,6 @@
             @endif
         </div>
     </div>
-
-    {{-- En-tête --}}
     <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-200 pb-6">
         <div>
             @if(isset($raid))
@@ -61,9 +58,8 @@
             <p class="text-2xl text-gray-400 font-bold mb-4">Aucune course n'est encore configurée pour ce raid.</p>
             @if($isRaidManager)
                 <p class="text-gray-500">Utilisez le bouton "Ajouter une course" ci-dessus pour commencer.</p>
-            @elseif($isCourseManager)
-                 <p class="text-gray-500">Aucune course disponible. Seul un Responsable de Raid peut en créer une.</p>
             @else
+                {{-- On retire le elseif($isCourseManager) ici car la variable n'existe pas encore --}}
                 <a href="{{ route('raids.index') }}" class="text-black underline font-bold hover:text-green-600">Retourner à la liste des raids</a>
             @endif
         </div>
@@ -111,7 +107,16 @@
 
                 <div class="p-6 space-y-6 flex-grow">
                     <div class="flex items-center justify-between text-sm text-gray-700 bg-blue-50 p-4 rounded-xl border border-blue-100">
-                        <div class="flex items-center">
+                        <div class="flex items-center gap-3">
+                            <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($course->COU_LIEU) }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="flex-shrink-0 text-red-600 hover:text-red-700 transition-colors hover:scale-110 transform duration-200"
+                               title="Voir sur Google Maps">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
+                            </a>
                             <div>
                                 <p class="font-bold text-blue-900">Lieu</p>
                                 <p>{{ $course->COU_LIEU }}</p>
@@ -180,7 +185,7 @@
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">Participants</p>
-                                <p class="font-black text-lg text-gray-800">0 <span class="text-xs font-normal text-gray-400">/ {{ $course->COU_PARTICIPANT_MAX }}</span></p>
+                                <p class="font-black text-lg text-gray-800">{{ $course->participants_count ?? 0 }} <span class="text-xs font-normal text-gray-400">/ {{ $course->COU_PARTICIPANT_MAX }}</span></p>
                                 <p class="text-[14px] text-gray-400">Min : {{ $course->COU_PARTICIPANT_MIN }}</p>
                             </div>
                             <div>
@@ -217,8 +222,12 @@
                                 <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                             </a>
                         @endif
+                        @php
+                            $isCourseManager = ((int)$course->UTI_ID === (int)$userId);
+                            $canEdit = $isRaidManager || $isCourseManager;
+                        @endphp
 
-                        @if($canManage)
+                        @if($canEdit)
                             <a href="{{ route('courses.edit', [$course->RAI_ID, $course->COU_ID]) }}" 
                                class="w-12 bg-gray-100 text-gray-600 rounded-xl flex items-center justify-center hover:bg-yellow-400 hover:text-white transition-all shadow-inner border border-gray-200" 
                                title="Modifier la course">
