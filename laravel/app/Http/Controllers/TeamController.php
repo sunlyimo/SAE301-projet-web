@@ -7,9 +7,78 @@ use App\Models\Equipe;
 use App\Models\Appartient;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TeamController extends Controller
 {
+    /**
+     * Vérifie si l'utilisateur est déjà inscrit à une course qui chevauche les horaires
+     *
+     * @param int $userId
+     * @param int $raiId
+     * @param int $couId
+     * @return array|null Retourne les détails de la course en conflit ou null
+     */
+    private function checkCourseOverlap($userId, $raiId, $couId)
+    {
+        // Récupérer la course cible
+        $targetCourse = \App\Models\Course::where('RAI_ID', $raiId)
+                              ->where('COU_ID', $couId)
+                              ->firstOrFail();
+
+        // Récupérer toutes les courses auxquelles l'utilisateur est déjà inscrit
+        $userCourses = \DB::table('vik_appartient as a')
+            ->join('vik_course as c', function($join) {
+                $join->on('a.RAI_ID', '=', 'c.RAI_ID')
+                     ->on('a.COU_ID', '=', 'c.COU_ID');
+            })
+            ->where('a.UTI_ID', $userId)
+            ->where(function($query) use ($raiId, $couId) {
+                // Exclure la course actuelle
+                $query->where('a.RAI_ID', '!=', $raiId)
+                      ->orWhere('a.COU_ID', '!=', $couId);
+            })
+            ->select('c.*')
+            ->get();
+
+        // Vérifier également si l'utilisateur est chef d'une équipe
+        $userAsChef = \DB::table('vik_equipe as e')
+            ->join('vik_course as c', function($join) {
+                $join->on('e.RAI_ID', '=', 'c.RAI_ID')
+                     ->on('e.COU_ID', '=', 'c.COU_ID');
+            })
+            ->where('e.UTI_ID', $userId)
+            ->where(function($query) use ($raiId, $couId) {
+                $query->where('e.RAI_ID', '!=', $raiId)
+                      ->orWhere('e.COU_ID', '!=', $couId);
+            })
+            ->select('c.*')
+            ->get();
+
+        // Fusionner les deux collections
+        $allUserCourses = $userCourses->merge($userAsChef)->unique('COU_ID');
+
+        // Vérifier les chevauchements
+        foreach ($allUserCourses as $userCourse) {
+            $targetStart = \Carbon\Carbon::parse($targetCourse->COU_DATE_DEBUT);
+            $targetEnd = \Carbon\Carbon::parse($targetCourse->COU_DATE_FIN);
+            $userStart = \Carbon\Carbon::parse($userCourse->COU_DATE_DEBUT);
+            $userEnd = \Carbon\Carbon::parse($userCourse->COU_DATE_FIN);
+
+            // Vérifier si les horaires se chevauchent
+            // Deux périodes se chevauchent si : (start1 < end2) AND (start2 < end1)
+            if ($targetStart->lt($userEnd) && $userStart->lt($targetEnd)) {
+                return [
+                    'course_name' => $userCourse->COU_NOM,
+                    'start' => $userStart->format('d/m/Y H:i'),
+                    'end' => $userEnd->format('d/m/Y H:i')
+                ];
+            }
+        }
+
+        return null;
+    }
+
     public function show($rai_id, $cou_id, $equ_id)
     {
         $equipe = Equipe::where('RAI_ID', $rai_id)
@@ -144,6 +213,15 @@ class TeamController extends Controller
             return back()->withErrors(['pseudo' => "Cet utilisateur fait déjà partie de l'équipe."]);
         }
 
+        // Vérifier les chevauchements d'horaires pour l'utilisateur à ajouter
+        $overlap = $this->checkCourseOverlap($userToAdd->UTI_ID, $rai_id, $cou_id);
+
+        if ($overlap) {
+            return back()->withErrors([
+                'pseudo' => "Impossible d'ajouter {$userToAdd->UTI_PRENOM} {$userToAdd->UTI_NOM} car il/elle est déjà inscrit(e) à la course \"{$overlap['course_name']}\" dont les horaires se chevauchent ({$overlap['start']} - {$overlap['end']})."
+            ]);
+        }
+
         Appartient::create([
             'UTI_ID' => $userToAdd->UTI_ID,
             'RAI_ID' => $rai_id,
@@ -206,6 +284,15 @@ class TeamController extends Controller
             // Le chef va être ajouté, donc on vérifie si nbMembres + 1 dépasse le max
             if (($nbMembres + 1) > $course->COU_PARTICIPANT_PAR_EQUIPE_MAX) {
                 return back()->withErrors(['chef' => "L'équipe est complète ! Impossible d'ajouter le chef comme participant."]);
+            }
+
+            // Vérifier les chevauchements d'horaires pour le chef
+            $overlap = $this->checkCourseOverlap($equipe->UTI_ID, $rai_id, $cou_id);
+
+            if ($overlap) {
+                return back()->withErrors([
+                    'chef' => "Vous ne pouvez pas participer à cette course car vous êtes déjà inscrit à la course \"{$overlap['course_name']}\" dont les horaires se chevauchent ({$overlap['start']} - {$overlap['end']})."
+                ]);
             }
 
             Appartient::create([

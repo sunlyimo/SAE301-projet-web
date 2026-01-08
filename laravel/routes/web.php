@@ -35,14 +35,9 @@ Route::get('/contact', [ContactController::class, 'show'])->name('contact.show')
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 Route::get('/raids', [RaidController::class, 'index'])->name('raids.index');
-Route::get('/raids/create', [RaidController::class, 'create'])->name('raids.create');
-Route::post('/raids', [RaidController::class, 'store'])->name('raids.store');
 Route::get('/raids/{raid_id}/edit', [RaidController::class, 'edit'])->name('raids.edit');
 Route::put('/raids/{raid_id}', [RaidController::class, 'update'])->name('raids.update');
 Route::get('/raids/{raid_id}/courses', [CourseController::class, 'coursesByRaid'])->name('raids.courses');
-Route::get('/my-raids', [RaidController::class, 'myRaids'])->name('raids.my-raids');
-Route::get('/my-courses', [CourseController::class, 'myCourses'])->name('courses.my-courses');
-Route::get('/courses/{rai_id}/{cou_id}/manage-teams', [CourseController::class, 'manageTeams'])->name('courses.manage-teams');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/clubs/created/{club}/{token}', [ClubController::class, 'showCreated'])->name('clubs.created');
 Route::get('/admin/refusal-notification/{club_id}/{token}', [ClubController::class, 'showAdminRefusalNotification'])->name('admin.refusal-notification');
@@ -79,6 +74,10 @@ Route::middleware('auth')->group(function () {
   Route::get('/profile', [UserController::class, 'show'])->name('user.profile');
   Route::patch('/profile', [UserController::class, 'update'])->name('user.update');
   Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
+
+  // My pages
+  Route::get('/my-raids', [RaidController::class, 'myRaids'])->name('raids.my-raids');
+  Route::get('/my-courses', [CourseController::class, 'myCourses'])->name('courses.my-courses');
 
   Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
   Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
