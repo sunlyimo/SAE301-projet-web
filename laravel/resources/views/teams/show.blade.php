@@ -54,11 +54,11 @@
                     @if($isChef)
                     <form action="{{ route('teams.toggle-chef', [$equipe->RAI_ID, $equipe->COU_ID, $equipe->EQU_ID]) }}" method="POST" class="mt-3 pt-3 border-t border-yellow-200">
                         @csrf
-                        <label class="flex items-center {{ $inscriptionsOuvertes ? 'cursor-pointer' : 'cursor-not-allowed opacity-50' }} group">
+                        <label class="flex items-center {{ ($inscriptionsOuvertes && !$chefOverlap) ? 'cursor-pointer' : 'cursor-not-allowed opacity-50' }} group">
                             <input type="checkbox"
-                                   class="w-5 h-5 text-yellow-600 border-yellow-300 rounded focus:ring-yellow-500 {{ $inscriptionsOuvertes ? 'cursor-pointer' : 'cursor-not-allowed' }}"
+                                   class="w-5 h-5 text-yellow-600 border-yellow-300 rounded focus:ring-yellow-500 {{ ($inscriptionsOuvertes && !$chefOverlap) ? 'cursor-pointer' : 'cursor-not-allowed' }}"
                                    {{ $chefParticipe ? 'checked' : '' }}
-                                   {{ $inscriptionsOuvertes ? '' : 'disabled' }}
+                                   {{ ($inscriptionsOuvertes && !$chefOverlap) ? '' : 'disabled' }}
                                    onchange="this.form.submit()">
                             <span class="ml-3 text-sm font-bold text-gray-700 group-hover:text-yellow-700">
                                 {{ $chefParticipe ? '✓ Je participe à la course' : 'Participer à la course' }}
@@ -66,6 +66,9 @@
                         </label>
                         @if(!$inscriptionsOuvertes)
                             <p class="text-orange-600 text-xs mt-2 font-bold">⚠ Les inscriptions sont fermées</p>
+                        @endif
+                        @if($chefOverlap)
+                            <p class="text-red-500 text-xs mt-2 font-bold">⚠ Vous ne pouvez pas participer à cette course car vous êtes déjà inscrit à la course "{{ $chefOverlap['course_name'] }}" dont les horaires se chevauchent ({{ $chefOverlap['start'] }} - {{ $chefOverlap['end'] }}).</p>
                         @endif
                         @error('chef')
                             <p class="text-red-500 text-xs mt-2 font-bold">{{ $message }}</p>

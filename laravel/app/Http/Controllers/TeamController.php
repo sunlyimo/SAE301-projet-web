@@ -145,7 +145,13 @@ class TeamController extends Controller
 
         $nbParticipants = $nbMembres + ($chefParticipe ? 1 : 0);
 
-        return view('teams.show', compact('equipe', 'isChef', 'chefParticipe', 'course', 'nbParticipants', 'inscriptionsOuvertes', 'raid'));
+        // Vérifier si le chef a un conflit d'horaire
+        $chefOverlap = null;
+        if ($isChef && !$chefParticipe) {
+            $chefOverlap = $this->checkCourseOverlap($equipe->UTI_ID, $rai_id, $cou_id);
+        }
+
+        return view('teams.show', compact('equipe', 'isChef', 'chefParticipe', 'course', 'nbParticipants', 'inscriptionsOuvertes', 'raid', 'chefOverlap'));
     }
 
     public function addMember(Request $request, $rai_id, $cou_id, $equ_id)
