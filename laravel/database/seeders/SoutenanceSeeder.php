@@ -66,6 +66,46 @@ class SoutenanceSeeder extends Seeder
             ]);
         }
 
+        $pass = Hash::make('Root123!');
+        // Ensure admin user exists (create or update) with UTI_ID = 100
+        DB::table('vik_utilisateur')->updateOrInsert(
+            ['UTI_ID' => 100],
+            [
+                'UTI_NOM' => 'Admin',
+                'UTI_PRENOM' => 'Vikazim',
+                'UTI_EMAIL' => 'admin.vikazim@mail.fr',
+                'UTI_DATE_NAISSANCE' => '1980-01-01',
+                'UTI_MOT_DE_PASSE' => $pass,
+                'UTI_NOM_UTILISATEUR' => 'admin_sys',
+                'UTI_RUE' => 'Rue des lilas',
+                'UTI_CODE_POSTAL' => '76000',
+                'UTI_VILLE' => 'Rouen',
+                'UTI_TELEPHONE' => '0600000000',
+                'UTI_LICENCE' => "10000",
+                'UTI_ID' => 100,
+            ]
+        );
+
+        DB::table('vik_administrateur')->updateOrInsert(
+            ['UTI_ID' => 100],
+            [
+                'UTI_EMAIL' => 'admin.vikazim@mail.fr',
+                'UTI_NOM' => 'Admin',
+                'UTI_PRENOM' => 'Vikazim',
+                'UTI_DATE_NAISSANCE' => '1980-01-01',
+                'UTI_MOT_DE_PASSE' => $pass,
+                'UTI_NOM_UTILISATEUR' => 'admin_sys',
+                'UTI_RUE' => 'Rue des lilas',
+                'UTI_CODE_POSTAL' => '76000',
+                'UTI_VILLE' => 'Rouen',
+                'UTI_TELEPHONE' => '0600000000',
+                'UTI_LICENCE' => "10000",
+                'UTI_ID' => 100,
+            ]
+        );
+
+
+
         // Coureurs supplémentaires
         for ($id = 51; $id <= 70; $id++) {
             $user = DB::table('vik_utilisateur')->where('UTI_ID', $id)->first();
