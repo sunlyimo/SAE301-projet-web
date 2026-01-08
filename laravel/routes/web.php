@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/courses/{rai_id}/{cou_id}/resultats', [ResultatController::class, 'index'])->name('resultats.index');
     Route::post('/courses/{rai_id}/{cou_id}/resultats', [ResultatController::class, 'store'])->name('resultats.store');
+    Route::post('/courses/{rai_id}/{cou_id}/resultats/import', [ResultatController::class, 'importCsv'])->name('resultats.import');
 
     Route::get('/logs/{file}', function (string $file) {
       if ($file === 'laravel') {
