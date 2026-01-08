@@ -109,7 +109,6 @@ class UserController extends Controller
             $data['UTI_MOT_DE_PASSE'] = Hash::make($request->new_password);
         }
 
-        /** @var \App\Models\User $user Enleve l'erreur*/
         $user->update($data);
 
         if ($user->coureur) {
