@@ -13,7 +13,6 @@
         </div>
         
         {{-- Bouton Créer (si admin) --}}
-        {{-- Tu pourras ajouter le bouton de création de Raid ici si besoin --}}
     </div>
 
     <div class="flex flex-wrap justify-center gap-6 mb-8">
@@ -43,7 +42,14 @@
                         <h3 class="text-xl font-black text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
                             {{ $raid->RAI_NOM }}
                         </h3>
-                        
+
+                        <p class="text-sm text-gray-500 italic flex items-center mb-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Organisé par : {{ $raid->responsable_nom ?? 'Inconnu' }}
+                        </p>
+
                         <div class="flex items-center text-sm text-gray-600 mb-1">
                             <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -71,7 +77,7 @@
                                 Événement
                             </div>
                             <p class="text-sm font-bold text-gray-900">
-                                {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m/Y') }} 
+                                {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m/Y') }}
                                 <span class="text-gray-400">→</span>
                                 {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_FIN)->format('d/m/Y') }}
                             </p>
