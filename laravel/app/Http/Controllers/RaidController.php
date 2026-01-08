@@ -22,7 +22,7 @@ class RaidController extends Controller
             ->orderBy('UTI_NOM')
             ->get();
 
-        return view('raids/raid-create', compact('clubs', 'responsables'));
+        return view('raid-create', compact('clubs', 'responsables'));
     }
 
     public function store(Request $request) /* ajout d'un nouveau raid à la base de données */
@@ -40,6 +40,30 @@ class RaidController extends Controller
             'RAI_CONTACT' => 'required|email|max:100',
             'RAI_TELEPHONE' => 'nullable|regex:/^[0-9\s\.\-\+\(\)]{10,20}$/|max:20',
             'RAI_IMAGE' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'RAI_NOM.required' => 'Le nom du raid est obligatoire.',
+            'RAI_NOM.max' => 'La taille du nom doit être inférieure ou égale à 50 caractères. Veuillez entrer un nom plus court.',
+            'RAI_LIEU.max' => 'La taille du lieu doit être inférieure ou égale à 100 caractères. Veuillez entrer un lieu plus court.',
+            'RAI_LIEU.required' => 'Le lieu de départ est obligatoire.',
+            'RAI_WEB.url' => "L'URL du site web n'est pas valide.",
+            'RAI_CONTACT.email' => 'Veuillez entrer une adresse email valide (cette erreur ne devrait pas apparaître si vous avez sélectionné un responsable dans la liste).',
+            'RAI_RAID_DATE_DEBUT.after_or_equal' => 'La date de début du raid doit être postérieure à la date de clôture des inscriptions.',
+            'RAI_RAID_DATE_FIN.after_or_equal' => 'La date de fin du raid doit être postérieure ou égale à la date de début du raid.',
+            'RAI_INSCRI_DATE_FIN.after_or_equal' => 'La date de fin des inscriptions doit être postérieure ou égale à la date de début des inscriptions.',
+            'RAI_INSCRI_DATE_DEBUT.date' => 'La date de début des inscriptions doit être une date valide.',
+            'RAI_INSCRI_DATE_FIN.date' => 'La date de fin des inscriptions doit être une date valide.',
+            'RAI_RAID_DATE_DEBUT.required' => 'La date de début du raid est obligatoire.',
+            'RAI_RAID_DATE_FIN.required' => 'La date de fin du raid est obligatoire.',
+            'RAI_INSCRI_DATE_DEBUT.required' => 'La date de début des inscriptions est obligatoire.',
+            'RAI_INSCRI_DATE_FIN.required' => 'La date de fin des inscriptions est obligatoire.',
+            'RAI_IMAGE.image' => "Le fichier téléchargé doit être une image.",
+            'RAI_IMAGE.mimes' => "L'image doit être au format jpeg, png, jpg ou gif.",
+            'RAI_IMAGE.max' => "La taille de l'image ne doit pas dépasser 2 Mo.",
+            'CLU_ID.exists' => "Le club sélectionné n'existe pas.",
+            'UTI_ID.exists' => "Le responsable sélectionné n'existe pas.",
+            'CLU_ID.required' => "Pas de club renseigné.",
+            'UTI_ID.required' => "Pas de responsable renseigné.",
+            'RAI_CONTACT.required' => "L'adresse e-mail du contact est obligatoire."
         ]);
 
         // Récupère les coordonnées depuis VIK_UTILISATEUR

@@ -143,16 +143,18 @@ Route::post('/courses', [CourseController::class, 'store'])->name('courses.store
 Route::get('/courses/{rai_id}/{cou_id}/edit', [CourseController::class, 'edit'])->name('courses.edit');
 Route::patch('/courses/{rai_id}/{cou_id}', [CourseController::class, 'update'])->name('courses.update');
 
-Route::get('/courses/{rai_id}/{cou_id}/inscription', [InscriptionController::class, 'show'])->name('courses.inscription');
-Route::post('/courses/{rai_id}/{cou_id}/team/create', [InscriptionController::class, 'createTeam'])->name('courses.team.create');
-Route::post('/courses/{rai_id}/{cou_id}/team/join', [InscriptionController::class, 'joinTeam'])->name('courses.team.join');
+Route::middleware('auth')->group(function () {
+    Route::get('/courses/{rai_id}/{cou_id}/inscription', [InscriptionController::class, 'show'])->name('courses.inscription');
+    Route::post('/courses/{rai_id}/{cou_id}/team/create', [InscriptionController::class, 'createTeam'])->name('courses.team.create');
+    Route::post('/courses/{rai_id}/{cou_id}/team/join', [InscriptionController::class, 'joinTeam'])->name('courses.team.join');
 
-Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
-Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
-Route::delete('/teams/{rai_id}/{cou_id}/{equ_id}/remove/{uti_id}', [TeamController::class, 'removeMember'])->name('teams.remove');
-Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/toggle-chef', [TeamController::class, 'toggleChefParticipation'])->name('teams.toggle-chef');
-Route::patch('/teams/{rai_id}/{cou_id}/{equ_id}/rpps/{uti_id}', [TeamController::class, 'updateRpps'])->name('teams.update-rpps');
-Route::get('/api/users/search', [TeamController::class, 'searchUsers'])->name('users.search');
+    Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
+    Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
+    Route::delete('/teams/{rai_id}/{cou_id}/{equ_id}/remove/{uti_id}', [TeamController::class, 'removeMember'])->name('teams.remove');
+    Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/toggle-chef', [TeamController::class, 'toggleChefParticipation'])->name('teams.toggle-chef');
+    Route::patch('/teams/{rai_id}/{cou_id}/{equ_id}/rpps/{uti_id}', [TeamController::class, 'updateRpps'])->name('teams.update-rpps');
+    Route::get('/api/users/search', [TeamController::class, 'searchUsers'])->name('users.search');
+});
 
 
 

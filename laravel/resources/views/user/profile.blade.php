@@ -90,7 +90,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Nom
-                                <button type="button" onclick="enableField('UTI_NOM')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
+                                <button type="button" onclick="toggleField('UTI_NOM')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -105,7 +105,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Prénom
-                                <button type="button" onclick="enableField('UTI_PRENOM')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
+                                <button type="button" onclick="toggleField('UTI_PRENOM')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -137,7 +137,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Email
-                                <button type="button" onclick="enableField('UTI_EMAIL')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
+                                <button type="button" onclick="toggleField('UTI_EMAIL')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -152,7 +152,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Rue
-                                <button type="button" onclick="enableField('UTI_RUE')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
+                                <button type="button" onclick="toggleField('UTI_RUE')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -167,7 +167,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Code Postal
-                                <button type="button" onclick="enableField('UTI_CODE_POSTAL')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
+                                <button type="button" onclick="toggleField('UTI_CODE_POSTAL')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -182,7 +182,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Ville
-                                <button type="button" onclick="enableField('UTI_VILLE')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
+                                <button type="button" onclick="toggleField('UTI_VILLE')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -197,7 +197,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Téléphone
-                                <button type="button" onclick="enableField('UTI_TELEPHONE')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
+                                <button type="button" onclick="toggleField('UTI_TELEPHONE')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -256,7 +256,7 @@
                             @foreach($clubs as $club)
                                 <option value="{{ $club->CLU_ID }}"
                                     {{ $selectedClub == $club->CLU_ID ? 'selected' : '' }}>
-                                    {{ $club->CLU_NOM }} ({{ $club->UTI_VILLE }})
+                                    {{ $club->CLU_NOM }} ({{ $club->CLU_VILLE }})
                                 </option>
                             @endforeach
                         </select>
@@ -266,14 +266,20 @@
                     </div>
 
                     {{-- Licence --}}
-                    <div>
+                    <div class="relative">
                         <label class="block text-sm font-semibold text-gray-700">Licence</label>
+                        <button type="button" onclick="toggleField('UTI_LICENCE')" class="absolute top-0 right-0 text-blacktext-black hover:text-green-600 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                        </button>
                         <input
                             type="text"
+                            id="UTI_LICENCE"
                             name="UTI_LICENCE"
                             x-ref="licence"
                             :required="licenceActive"
-                            value="{{ old('UTI_LICENCE', $user->UTI_LICENCE) }}"
+                            value="{{ old('UTI_LICENCE', $user->UTI_LICENCE) }}" readonly
                             class="w-full mt-1 p-3 bg-gray-50 border rounded-xl">
                         @error('UTI_LICENCE')
                         <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -543,17 +549,28 @@
         </div>
     </div>
 
-    <script>
-        function enableField(id) {
-            const input = document.getElementById(id);
+<script>
+    function toggleField(id) {
+        const input = document.getElementById(id);
+
+        const isReadonly = input.hasAttribute('readonly');
+
+        if (isReadonly) {
             input.removeAttribute('readonly');
             input.style.pointerEvents = 'auto';
             input.style.cursor = 'text';
             input.classList.remove('bg-gray-50');
-            input.classList.add('bg-white');
+            input.classList.add('bg-white', 'border-gray-400');
             input.focus();
+        } else {
+            input.setAttribute('readonly', true);
+            input.style.pointerEvents = 'none';
+            input.style.cursor = 'default';
+            input.classList.remove('bg-white', 'border-gray-400');
+            input.classList.add('bg-gray-50');
         }
-    </script>
+    }
+</script>
     <style>
         input[readonly] {
             pointer-events: none;

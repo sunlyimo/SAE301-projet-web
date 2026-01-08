@@ -4,14 +4,22 @@
 <div class="max-w-6xl mx-auto my-12 p-6">
 
     <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-        <div class="flex justify-between items-center mb-8 pb-6 border-b border-gray-100">
-            <div>
-                <h1 class="text-3xl font-black text-gray-900 uppercase">Mon Équipe #{{ $equipe->EQU_ID }}</h1>
-                <p class="text-gray-500">{{ $course->COU_NOM }} - Course #{{ $equipe->COU_ID }} (Raid #{{ $equipe->RAI_ID }})</p>
-                <div class="mt-2 flex items-center space-x-4">
-                    <span class="text-sm font-bold text-gray-600">
-                        Participants: <span class="text-blue-600">{{ $nbParticipants }}</span> / {{ $course->COU_PARTICIPANT_PAR_EQUIPE_MAX }}
-                    </span>
+        <div class="flex justify-between items-start mb-8 pb-6 border-b border-gray-100">
+            <div class="flex items-start gap-6">
+                @if($equipe->EQU_IMAGE)
+                    <img src="{{ asset('storage/' . $equipe->EQU_IMAGE) }}"
+                         alt="{{ $equipe->EQU_NOM }}"
+                         class="w-24 h-24 object-cover rounded-xl border-2 border-gray-200 shadow-md"
+                         onerror="this.style.display='none'">
+                @endif
+                <div>
+                    <h1 class="text-3xl font-black text-gray-900">{{ $equipe->EQU_NOM ?? 'Mon Équipe #' . $equipe->EQU_ID }}</h1>
+                    <p class="text-gray-500">{{ $course->COU_NOM }} ({{ $raid->RAI_NOM }})</p>
+                    <div class="mt-2 flex items-center space-x-4">
+                        <span class="text-sm font-bold text-gray-600">
+                            Participants: <span class="text-blue-600">{{ $nbParticipants }}</span> / {{ $course->COU_PARTICIPANT_PAR_EQUIPE_MAX }}
+                        </span>
+                    </div>
                 </div>
             </div>
             @if($isChef)
@@ -99,9 +107,10 @@
                                             <div class="flex items-center gap-2">
                                                 <input type="text"
                                                        name="rpps"
-                                                       value="{{ $equipe->chef->coureur->CRR_PPS ?? '' }}"
-                                                       placeholder="Ex: 12345678..."
-                                                       maxlength="32"
+                                                       value="{{ $equipe->chef->coureur && $equipe->chef->coureur->rpps->first() ? $equipe->chef->coureur->rpps->first()->CRP_NUMERO_RPPS : '' }}"
+                                                       placeholder="Ex: 12345678901"
+                                                       maxlength="11"
+                                                       pattern="[0-9]{11}"
                                                        class="flex-1 px-3 py-2 text-sm border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 {{ $inscriptionsOuvertes ? '' : 'bg-gray-100 cursor-not-allowed' }}"
                                                        {{ $inscriptionsOuvertes && $isChef ? '' : 'readonly' }}>
                                                 @if($inscriptionsOuvertes && $isChef)
@@ -112,7 +121,7 @@
                                                 @endif
                                             </div>
                                         </label>
-                                        <p class="text-xs text-gray-500">Pour les coureurs sans licence. Valable pour une seule course.</p>
+                                        <p class="text-xs text-gray-500">11 chiffres requis. Valable uniquement pour cette course.</p>
                                     </form>
                                 </div>
                             @else
@@ -157,9 +166,10 @@
                                             <div class="flex items-center gap-2">
                                                 <input type="text"
                                                        name="rpps"
-                                                       value="{{ $membre->utilisateur->coureur->CRR_PPS ?? '' }}"
-                                                       placeholder="Ex: 12345678..."
-                                                       maxlength="32"
+                                                       value="{{ $membre->utilisateur->coureur && $membre->utilisateur->coureur->rpps->first() ? $membre->utilisateur->coureur->rpps->first()->CRP_NUMERO_RPPS : '' }}"
+                                                       placeholder="Ex: 12345678901"
+                                                       maxlength="11"
+                                                       pattern="[0-9]{11}"
                                                        class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $inscriptionsOuvertes ? '' : 'bg-gray-100 cursor-not-allowed' }}"
                                                        {{ $inscriptionsOuvertes && $isChef ? '' : 'readonly' }}>
                                                 @if($inscriptionsOuvertes && $isChef)
@@ -170,7 +180,7 @@
                                                 @endif
                                             </div>
                                         </label>
-                                        <p class="text-xs text-gray-500">Pour les coureurs sans licence. Valable pour une seule course.</p>
+                                        <p class="text-xs text-gray-500">11 chiffres requis. Valable uniquement pour cette course.</p>
                                     </form>
                                 </div>
                             @else

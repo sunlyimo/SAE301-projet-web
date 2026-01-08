@@ -111,7 +111,16 @@
 
                 <div class="p-6 space-y-6 flex-grow">
                     <div class="flex items-center justify-between text-sm text-gray-700 bg-blue-50 p-4 rounded-xl border border-blue-100">
-                        <div class="flex items-center">
+                        <div class="flex items-center gap-3">
+                            <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($course->COU_LIEU) }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="flex-shrink-0 text-red-600 hover:text-red-700 transition-colors hover:scale-110 transform duration-200"
+                               title="Voir sur Google Maps">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
+                            </a>
                             <div>
                                 <p class="font-bold text-blue-900">Lieu</p>
                                 <p>{{ $course->COU_LIEU }}</p>
@@ -180,7 +189,7 @@
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">Participants</p>
-                                <p class="font-black text-lg text-gray-800">0 <span class="text-xs font-normal text-gray-400">/ {{ $course->COU_PARTICIPANT_MAX }}</span></p>
+                                <p class="font-black text-lg text-gray-800">{{ $course->participants_count ?? 0 }} <span class="text-xs font-normal text-gray-400">/ {{ $course->COU_PARTICIPANT_MAX }}</span></p>
                                 <p class="text-[14px] text-gray-400">Min : {{ $course->COU_PARTICIPANT_MIN }}</p>
                             </div>
                             <div>

@@ -30,7 +30,8 @@
 
     <div class="club-card">
         <div class="club-card-content">
-            <table class="club-table">
+            <div class="club-table-wrapper">
+                <table class="club-table">
                 <thead>
                     <tr>
                         <th>Nom</th>
@@ -81,6 +82,7 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>

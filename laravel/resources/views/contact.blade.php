@@ -21,6 +21,40 @@
             <form method="POST" action="{{ route('contact.send') }}" class="space-y-6">
                 @csrf
 
+                @guest
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value="{{ old('name') }}"
+                            placeholder="Votre nom"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all @error('name') border-red-500 @enderror"
+                            required
+                        >
+                        @error('name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="{{ old('email') }}"
+                            placeholder="votre.email@exemple.fr"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all @error('email') border-red-500 @enderror"
+                            required
+                        >
+                        @error('email')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                @endguest
+
                 <div>
                     <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Décrivez-nous votre problème</label>
                     <textarea
@@ -34,6 +68,13 @@
                     @error('message')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
+                </div>
+
+                <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p class="text-sm text-gray-700">
+                        <strong>Note importante :</strong> Ce formulaire est destiné aux questions et demandes d'assistance légitimes.
+                        Tout usage abusif, frauduleux ou contraire aux bonnes pratiques sera signalé et pourra faire l'objet de poursuites.
+                    </p>
                 </div>
 
                 <button

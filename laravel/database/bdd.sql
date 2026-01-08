@@ -642,14 +642,17 @@ WHERE UTI_ID in (7, 8);
 INSERT INTO VIK_RAID (RAI_ID, CLU_ID, UTI_ID, RAI_NOM, RAI_RAID_DATE_DEBUT, RAI_RAID_DATE_FIN, RAI_INSCRI_DATE_DEBUT, RAI_INSCRI_DATE_FIN, RAI_CONTACT, RAI_WEB, RAI_LIEU, RAI_IMAGE)
 VALUES
 (1,1,5,'Raid Normandie 2026','2026-03-10 08:00:00','2026-03-10 18:00:00','2026-02-01 00:00:00','2026-03-09 23:59:59','contact@vikazim.fr','www.vikazim.fr','Rouen','raid1.png'),
-(2,2,6,'Raid Caen 2026','2026-04-15 09:00:00','2026-04-15 17:00:00','2026-03-01 00:00:00','2026-04-14 23:59:59','contact@caenclub.fr','www.caenclub.fr','Caen','raid2.png');
+(2,2,6,'Raid Caen 2026','2026-04-15 09:00:00','2026-04-15 17:00:00','2026-03-01 00:00:00','2026-04-14 23:59:59','contact@caenclub.fr','www.caenclub.fr','Caen','raid2.png'),
+(3,2,6,'Raid Inscriptions Ouvertes','2026-04-15 09:00:00','2026-04-15 17:00:00','2026-01-01 00:00:00','2026-04-14 23:59:59','contact@caenclub.fr','www.caenclub.fr','Caen','raid2.png');
 
 INSERT INTO VIK_COURSE (RAI_ID, COU_ID, TYP_ID, DIF_NIVEAU, UTI_ID, COU_NOM, COU_DATE_DEBUT, COU_DATE_FIN, COU_PRIX, COU_PRIX_ENFANT, COU_PARTICIPANT_MIN, COU_PARTICIPANT_MAX, COU_EQUIPE_MIN, COU_EQUIPE_MAX, COU_PARTICIPANT_PAR_EQUIPE_MAX, COU_REPAS_PRIX, COU_REDUCTION, COU_LIEU, COU_AGE_MIN, COU_AGE_SEUL, COU_AGE_ACCOMPAGNATEUR)
 VALUES
 (1,1,1,1,7,'Course Vitesse Rouen','2026-03-10 08:30:00','2026-03-10 10:30:00',15.00,10.00,5,50,1,10,5,5.00,0.0,'Forêt de Rouen',12,16,18),
 (1,2,2,2,8,'Course Endurance Rouen','2026-03-10 11:00:00','2026-03-10 14:00:00',20.00,12.00,5,40,2,8,4,7.00,0.0,'Forêt de Rouen',14,18,20),
 (2,1,3,3,7,'Course Relais Caen','2026-04-15 09:30:00','2026-04-15 12:30:00',25.00,15.00,6,60,2,12,5,8.00,0.0,'Parc de Caen',16,20,22),
-(2,2,4,2,8,'Course Equipe Caen','2026-04-15 13:00:00','2026-04-15 16:00:00',18.00,10.00,4,50,2,10,4,6.00,0.0,'Parc de Caen',12,18,20);
+(2,2,4,2,8,'Course Equipe Caen','2026-04-15 13:00:00','2026-04-15 16:00:00',18.00,10.00,4,50,2,10,4,6.00,0.0,'Parc de Caen',12,18,20),
+(3,1,3,3,7,'Course Relais Caen','2026-04-15 09:30:00','2026-04-15 12:30:00',25.00,15.00,6,60,2,12,5,8.00,0.0,'Parc de Caen',16,20,22),
+(3,2,4,2,8,'Course Equipe Caen','2026-04-15 13:00:00','2026-04-15 16:00:00',18.00,10.00,4,50,2,10,4,6.00,0.0,'Parc de Caen',12,18,20);
 
 -- ===================================================
 -- 5. EQUIPES ET APPARTENANCE
