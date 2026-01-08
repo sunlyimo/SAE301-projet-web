@@ -72,7 +72,7 @@ class RaidController extends Controller
 
         $user = DB::table('VIK_UTILISATEUR') /* récup l'utilisateur */
             ->where('UTI_ID', $validated['UTI_ID'])
-            ->select('UTI_ID', 'UTI_EMAIL', 'UTI_TELEPHONE', 'UTI_NOM', 'UTI_PRENOM', 'UTI_NOM_UTILISATEUR')
+            ->select('UTI_ID', 'UTI_EMAIL', 'UTI_TELEPHONE', 'UTI_NOM', 'UTI_PRENOM', 'UTI_NOM_UTILISATEUR', 'UTI_DATE_NAISSANCE', 'UTI_RUE', 'UTI_CODE_POSTAL', 'UTI_VILLE', 'UTI_LICENCE', 'UTI_MOT_DE_PASSE')
             ->first();
 
         if ($user) {
@@ -86,10 +86,15 @@ class RaidController extends Controller
                 'UTI_NOM' => $user->UTI_NOM,
                 'UTI_PRENOM' => $user->UTI_PRENOM,
                 'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+                'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+                'UTI_RUE' => $user->UTI_RUE,
+                'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+                'UTI_VILLE' => $user->UTI_VILLE,
+                'UTI_LICENCE' => $user->UTI_LICENCE,
+                'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
             ]);
         }
 
-        // gérer le fichier image correctement (ne pas insérer le temp path)
         if ($request->hasFile('RAI_IMAGE')) {
             $path = $request->file('RAI_IMAGE')->store('raids', 'public');
             $validated['RAI_IMAGE'] = $path;
