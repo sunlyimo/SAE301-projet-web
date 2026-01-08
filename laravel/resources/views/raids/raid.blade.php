@@ -50,7 +50,7 @@
                                 ● Inscriptions terminées
                             </span>
                         @endif
-                        
+                    </div>
                         <h3 class="text-xl font-black text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
                             {{ $raid->RAI_NOM }}
                         </h3>
@@ -76,7 +76,6 @@
                             </svg>
                             {{ $raid->total_course }} {{ $raid->total_course > 1 ? 'courses' : 'course' }}
                         </div>
-                    </div>
                     <div class="p-6 flex-grow space-y-4">
                         <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
                             <div class="flex items-center text-xs text-blue-700 font-bold uppercase mb-2">
@@ -116,45 +115,6 @@
                     </div>
                 </div>
 
-                <div class="p-6 flex-grow space-y-4">
-                    <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                        <div class="flex items-center text-xs text-blue-700 font-bold uppercase mb-2">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            Événement
-                        </div>
-                        <p class="text-sm font-bold text-gray-900">
-                            {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_DEBUT)->format('d/m/Y') }} 
-                            <span class="text-gray-400">→</span>
-                            {{ \Carbon\Carbon::parse($raid->RAI_RAID_DATE_FIN)->format('d/m/Y') }}
-                        </p>
-                    </div>
-
-                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
-                        <div class="flex items-center text-xs text-purple-700 font-bold uppercase mb-2">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                            </svg>
-                            Inscriptions
-                        </div>
-                        <p class="text-sm font-bold text-gray-900">
-                            {{ \Carbon\Carbon::parse($raid->RAI_INSCRI_DATE_DEBUT)->format('d/m/Y') }} 
-                            <span class="text-gray-400">→</span>
-                            {{ \Carbon\Carbon::parse($raid->RAI_INSCRI_DATE_FIN)->format('d/m/Y') }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="p-6 pt-0">
-                    <a href="{{ route('raids.courses', $raid->RAI_ID) }}" 
-                       class="block w-full py-3 bg-gradient-to-r from-black to-gray-800 text-white text-center rounded-xl font-bold text-sm hover:from-green-600 hover:to-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex justify-center items-center">
-                        Voir les courses
-                        <svg class=h"w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
-                    </a>
-                </div>
             </div>
         @empty
             <div class="col-span-full text-center py-12">
