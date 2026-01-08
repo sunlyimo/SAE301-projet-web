@@ -17,7 +17,7 @@ class RaidController extends Controller
     {
         $clubs = DB::table('VIK_CLUB')->orderBy('CLU_NOM')->pluck('CLU_NOM', 'CLU_ID');
 
-        $responsables = DB::table('VIK_UTILISATEUR')
+        $responsables = DB::table('vik_utilisateur')
             ->select('UTI_ID', 'UTI_EMAIL', 'UTI_TELEPHONE', DB::raw("CONCAT(UTI_PRENOM, ' ', UTI_NOM) as name"))
             ->orderBy('UTI_NOM')
             ->get();
@@ -32,7 +32,7 @@ class RaidController extends Controller
             'RAI_LIEU' => 'required|max:100',
             'RAI_WEB' => 'nullable',
             'CLU_ID' => 'required|exists:VIK_CLUB,CLU_ID',
-            'UTI_ID' => 'required|exists:VIK_UTILISATEUR,UTI_ID',
+            'UTI_ID' => 'required|exists:vik_utilisateur,UTI_ID',
             'RAI_RAID_DATE_DEBUT' => 'required|date',
             'RAI_RAID_DATE_FIN' => 'required|date|after_or_equal:RAI_RAID_DATE_DEBUT',
             'RAI_INSCRI_DATE_DEBUT' => 'required|date',
@@ -71,8 +71,8 @@ class RaidController extends Controller
             return back()->withErrors(['RAI_RAID_DATE_DEBUT' => 'La date de début du raid doit être postérieure à la date de clôture des inscriptions.'])->withInput();
         }
 
-        // Récupère les coordonnées depuis VIK_UTILISATEUR
-        $user = DB::table('VIK_UTILISATEUR')
+        // Récupère les coordonnées depuis vik_utilisateur
+        $user = DB::table('vik_utilisateur')
             ->where('UTI_ID', $validated['UTI_ID'])
             ->select('UTI_EMAIL', 'UTI_TELEPHONE')
             ->first();
@@ -159,7 +159,7 @@ class RaidController extends Controller
 
         $clubs = DB::table('VIK_CLUB')->orderBy('CLU_NOM')->pluck('CLU_NOM', 'CLU_ID');
 
-        $responsables = DB::table('VIK_UTILISATEUR')
+        $responsables = DB::table('vik_utilisateur')
             ->select('UTI_ID', 'UTI_EMAIL', 'UTI_TELEPHONE', DB::raw("CONCAT(UTI_PRENOM, ' ', UTI_NOM) as name"))
             ->orderBy('UTI_NOM')
             ->get();
@@ -184,7 +184,7 @@ class RaidController extends Controller
             'RAI_LIEU' => 'required|max:100',
             'RAI_WEB' => 'nullable',
             'CLU_ID' => 'required|exists:VIK_CLUB,CLU_ID',
-            'UTI_ID' => 'required|exists:VIK_UTILISATEUR,UTI_ID',
+            'UTI_ID' => 'required|exists:vik_utilisateur,UTI_ID',
             'RAI_RAID_DATE_DEBUT' => 'required|date|after_or_equal:RAI_INSCRI_DATE_FIN',
             'RAI_RAID_DATE_FIN' => 'required|date|after_or_equal:RAI_RAID_DATE_DEBUT',
             'RAI_INSCRI_DATE_DEBUT' => 'required|date',
@@ -207,7 +207,7 @@ class RaidController extends Controller
             'RAI_IMAGE.max' => 'La taille de l\'image ne doit pas dépasser 2 Mo.',
         ]);
 
-        $user = DB::table('VIK_UTILISATEUR')
+        $user = DB::table('vik_utilisateur')
             ->where('UTI_ID', $validated['UTI_ID'])
             ->select('UTI_EMAIL', 'UTI_TELEPHONE')
             ->first();
