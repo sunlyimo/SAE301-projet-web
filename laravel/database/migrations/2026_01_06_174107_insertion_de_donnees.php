@@ -20,7 +20,7 @@ return new class extends Migration
         Log::debug($pass);
         Log::debug("count:".strlen($pass));
         // Ensure admin user exists (create or update) with UTI_ID = 100
-        DB::table('VIK_UTILISATEUR')->updateOrInsert(
+        DB::table('vik_utilisateur')->updateOrInsert(
             ['UTI_ID' => 100],
             [
                 'UTI_NOM' => 'Admin',
@@ -38,7 +38,7 @@ return new class extends Migration
             ]
         );
 
-        DB::table('VIK_ADMINISTRATEUR')->updateOrInsert(
+        DB::table('vik_administrateur')->updateOrInsert(
             ['UTI_ID' => 100],
             [
                 'UTI_EMAIL' => 'admin.vikazim@mail.fr',
@@ -56,17 +56,17 @@ return new class extends Migration
             ]
         );
 
-        // Insère les autres données via SQL brut. NOTE: la ligne d'admin dans VIK_UTILISATEUR a été retirée
+        // Insère les autres données via SQL brut. NOTE: la ligne d'admin dans vik_utilisateur a été retirée
         DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
 
         // Tables de référence (insertOrIgnore pour idempotence)
-        DB::table('VIK_CLUB')->insertOrIgnore([
+        DB::table('vik_club')->insertOrIgnore([
             ['CLU_ID'=>1,'CLU_NOM'=>'Club Rouen','CLU_RUE'=>'1 Rue de la Paix','CLU_CODE_POSTAL'=>'76000','CLU_VILLE'=>'Rouen','created_at'=>now(),'updated_at'=>now()],
             ['CLU_ID'=>2,'CLU_NOM'=>'Club Caen','CLU_RUE'=>'10 Avenue du Stade','CLU_CODE_POSTAL'=>'14000','CLU_VILLE'=>'Caen','created_at'=>now(),'updated_at'=>now()],
             ['CLU_ID'=>3,'CLU_NOM'=>'Club Lyon','CLU_RUE'=>'5 Boulevard des Sports','CLU_CODE_POSTAL'=>'69000','CLU_VILLE'=>'Lyon','created_at'=>now(),'updated_at'=>now()],
         ]);
 
-        DB::table('VIK_COURSE_TYPE')->insertOrIgnore([
+        DB::table('vik_course_type')->insertOrIgnore([
             ['TYP_ID'=>1,'TYP_DESCRIPTION'=>'Course de vitesse'],
             ['TYP_ID'=>2,'TYP_DESCRIPTION'=>'Course d’endurance'],
             ['TYP_ID'=>3,'TYP_DESCRIPTION'=>'Course en relais'],
@@ -74,7 +74,7 @@ return new class extends Migration
             ['TYP_ID'=>5,'TYP_DESCRIPTION'=>'Course enfants'],
         ]);
 
-        DB::table('VIK_TRANCHE_DIFFICULTE')->insertOrIgnore([
+        DB::table('vik_tranche_difficulte')->insertOrIgnore([
             ['DIF_NIVEAU'=>1,'DIF_DESCRIPTION'=>'Débutant'],
             ['DIF_NIVEAU'=>2,'DIF_DESCRIPTION'=>'Intermédiaire'],
             ['DIF_NIVEAU'=>3,'DIF_DESCRIPTION'=>'Avancé'],
@@ -138,18 +138,18 @@ return new class extends Migration
         ];
 
         // add timestamps to users if the table has timestamp columns
-        if (Schema::hasColumn('VIK_UTILISATEUR', 'created_at') && Schema::hasColumn('VIK_UTILISATEUR', 'updated_at')) {
+        if (Schema::hasColumn('vik_utilisateur', 'created_at') && Schema::hasColumn('vik_utilisateur', 'updated_at')) {
             foreach ($users as &$u) {
                 $u['created_at'] = $u['created_at'] ?? now();
                 $u['updated_at'] = $u['updated_at'] ?? now();
             }
             unset($u);
         }
-        DB::table('VIK_UTILISATEUR')->insertOrIgnore($users);
+        DB::table('vik_utilisateur')->insertOrIgnore($users);
 
         // Reste des inserts dépendant des utilisateurs
         // COUREURS
-        $users50 = DB::table('VIK_UTILISATEUR')->whereBetween('UTI_ID', [1, 50])->get();
+        $users50 = DB::table('vik_utilisateur')->whereBetween('UTI_ID', [1, 50])->get();
         $coureurs = [];
         foreach ($users50 as $u) {
             $coureurs[] = [
@@ -169,12 +169,12 @@ return new class extends Migration
                 'CRR_PPS' => null,
             ];
         }
-        DB::table('VIK_COUREUR')->insertOrIgnore($coureurs);
+        DB::table('vik_coureur')->insertOrIgnore($coureurs);
 
         // RESPONSABLES CLUB (UTI_ID = 2 -> CLU_ID = 1)
-        $respClub = DB::table('VIK_UTILISATEUR')->where('UTI_ID', 2)->first();
+        $respClub = DB::table('vik_utilisateur')->where('UTI_ID', 2)->first();
         if ($respClub) {
-            DB::table('VIK_RESPONSABLE_CLUB')->insertOrIgnore([
+            DB::table('vik_responsable_club')->insertOrIgnore([
                 [
                     'UTI_ID' => $respClub->UTI_ID,
                     'UTI_EMAIL' => $respClub->UTI_EMAIL,
@@ -194,7 +194,7 @@ return new class extends Migration
         }
 
         // RESPONSABLES RAID (UTI_ID in 5,6)
-        $respRaidUsers = DB::table('VIK_UTILISATEUR')->whereIn('UTI_ID', [5, 6])->get();
+        $respRaidUsers = DB::table('vik_utilisateur')->whereIn('UTI_ID', [5, 6])->get();
         $respRaid = [];
         foreach ($respRaidUsers as $u) {
             $respRaid[] = [
@@ -212,10 +212,10 @@ return new class extends Migration
                 'UTI_MOT_DE_PASSE' => $u->UTI_MOT_DE_PASSE,
             ];
         }
-        DB::table('VIK_RESPONSABLE_RAID')->insertOrIgnore($respRaid);
+        DB::table('vik_responsable_raid')->insertOrIgnore($respRaid);
 
         // RESPONSABLES COURSE (UTI_ID in 7,8)
-        $respCourseUsers = DB::table('VIK_UTILISATEUR')->whereIn('UTI_ID', [7, 8])->get();
+        $respCourseUsers = DB::table('vik_utilisateur')->whereIn('UTI_ID', [7, 8])->get();
         $respCourse = [];
         foreach ($respCourseUsers as $u) {
             $respCourse[] = [
@@ -233,16 +233,16 @@ return new class extends Migration
                 'UTI_MOT_DE_PASSE' => $u->UTI_MOT_DE_PASSE,
             ];
         }
-        DB::table('VIK_RESPONSABLE_COURSE')->insertOrIgnore($respCourse);
+        DB::table('vik_responsable_course')->insertOrIgnore($respCourse);
 
         // RAIDS
-        DB::table('VIK_RAID')->insertOrIgnore([
+        DB::table('vik_raid')->insertOrIgnore([
             ['RAI_ID'=>1,'CLU_ID'=>1,'UTI_ID'=>5,'RAI_NOM'=>'Raid Normandie 2026','RAI_RAID_DATE_DEBUT'=>'2026-03-10 08:00:00','RAI_RAID_DATE_FIN'=>'2026-03-10 18:00:00','RAI_INSCRI_DATE_DEBUT'=>'2026-02-01 00:00:00','RAI_INSCRI_DATE_FIN'=>'2026-03-09 23:59:59','RAI_CONTACT'=>'contact@vikazim.fr','RAI_WEB'=>'www.vikazim.fr','RAI_LIEU'=>'Rouen','RAI_IMAGE'=>'raid1.png'],
             ['RAI_ID'=>2,'CLU_ID'=>2,'UTI_ID'=>6,'RAI_NOM'=>'Raid Caen 2026','RAI_RAID_DATE_DEBUT'=>'2026-04-15 09:00:00','RAI_RAID_DATE_FIN'=>'2026-04-15 17:00:00','RAI_INSCRI_DATE_DEBUT'=>'2026-03-01 00:00:00','RAI_INSCRI_DATE_FIN'=>'2026-04-14 23:59:59','RAI_CONTACT'=>'contact@caenclub.fr','RAI_WEB'=>'www.caenclub.fr','RAI_LIEU'=>'Caen','RAI_IMAGE'=>'raid2.png'],
         ]);
 
         // COURSES
-        DB::table('VIK_COURSE')->insertOrIgnore([
+        DB::table('vik_course')->insertOrIgnore([
             ['RAI_ID'=>1,'COU_ID'=>1,'TYP_ID'=>1,'DIF_NIVEAU'=>1,'UTI_ID'=>7,'COU_NOM'=>'Course Vitesse Rouen','COU_DATE_DEBUT'=>'2026-03-10 08:30:00','COU_DATE_FIN'=>'2026-03-10 10:30:00','COU_PRIX'=>15.00,'COU_PRIX_ENFANT'=>10.00,'COU_PARTICIPANT_MIN'=>5,'COU_PARTICIPANT_MAX'=>50,'COU_EQUIPE_MIN'=>1,'COU_EQUIPE_MAX'=>10,'COU_PARTICIPANT_PAR_EQUIPE_MAX'=>5,'COU_REPAS_PRIX'=>5.00,'COU_REDUCTION'=>0.0,'COU_LIEU'=>'Forêt de Rouen','COU_AGE_MIN'=>12,'COU_AGE_SEUL'=>16,'COU_AGE_ACCOMPAGNATEUR'=>18],
             ['RAI_ID'=>1,'COU_ID'=>2,'TYP_ID'=>2,'DIF_NIVEAU'=>2,'UTI_ID'=>8,'COU_NOM'=>'Course Endurance Rouen','COU_DATE_DEBUT'=>'2026-03-10 11:00:00','COU_DATE_FIN'=>'2026-03-10 14:00:00','COU_PRIX'=>20.00,'COU_PRIX_ENFANT'=>12.00,'COU_PARTICIPANT_MIN'=>5,'COU_PARTICIPANT_MAX'=>40,'COU_EQUIPE_MIN'=>2,'COU_EQUIPE_MAX'=>8,'COU_PARTICIPANT_PAR_EQUIPE_MAX'=>4,'COU_REPAS_PRIX'=>7.00,'COU_REDUCTION'=>0.0,'COU_LIEU'=>'Forêt de Rouen','COU_AGE_MIN'=>14,'COU_AGE_SEUL'=>18,'COU_AGE_ACCOMPAGNATEUR'=>20],
             ['RAI_ID'=>2,'COU_ID'=>1,'TYP_ID'=>3,'DIF_NIVEAU'=>3,'UTI_ID'=>7,'COU_NOM'=>'Course Relais Caen','COU_DATE_DEBUT'=>'2026-04-15 09:30:00','COU_DATE_FIN'=>'2026-04-15 12:30:00','COU_PRIX'=>25.00,'COU_PRIX_ENFANT'=>15.00,'COU_PARTICIPANT_MIN'=>6,'COU_PARTICIPANT_MAX'=>60,'COU_EQUIPE_MIN'=>2,'COU_EQUIPE_MAX'=>12,'COU_PARTICIPANT_PAR_EQUIPE_MAX'=>5,'COU_REPAS_PRIX'=>8.00,'COU_REDUCTION'=>0.0,'COU_LIEU'=>'Parc de Caen','COU_AGE_MIN'=>16,'COU_AGE_SEUL'=>20,'COU_AGE_ACCOMPAGNATEUR'=>22],
@@ -250,12 +250,12 @@ return new class extends Migration
         ]);
 
         // EQUIPES
-        DB::table('VIK_EQUIPE')->insertOrIgnore([
+        DB::table('vik_equipe')->insertOrIgnore([
             ['RAI_ID'=>1,'COU_ID'=>1,'EQU_ID'=>1,'UTI_ID'=>1],['RAI_ID'=>1,'COU_ID'=>1,'EQU_ID'=>2,'UTI_ID'=>3],['RAI_ID'=>1,'COU_ID'=>2,'EQU_ID'=>1,'UTI_ID'=>5],['RAI_ID'=>2,'COU_ID'=>1,'EQU_ID'=>1,'UTI_ID'=>9],['RAI_ID'=>2,'COU_ID'=>2,'EQU_ID'=>1,'UTI_ID'=>11]
         ]);
 
         // APPARTENANCE
-        DB::table('VIK_APPARTIENT')->insertOrIgnore([
+        DB::table('vik_appartient')->insertOrIgnore([
             ['UTI_ID'=>1,'RAI_ID'=>1,'COU_ID'=>1,'EQU_ID'=>1],['UTI_ID'=>2,'RAI_ID'=>1,'COU_ID'=>1,'EQU_ID'=>1],
             ['UTI_ID'=>3,'RAI_ID'=>1,'COU_ID'=>1,'EQU_ID'=>2],['UTI_ID'=>4,'RAI_ID'=>1,'COU_ID'=>1,'EQU_ID'=>2],
             ['UTI_ID'=>5,'RAI_ID'=>1,'COU_ID'=>2,'EQU_ID'=>1],['UTI_ID'=>6,'RAI_ID'=>1,'COU_ID'=>2,'EQU_ID'=>1],
@@ -264,7 +264,7 @@ return new class extends Migration
         ]);
 
         // RESULTATS
-        DB::table('VIK_RESULTAT')->insertOrIgnore([
+        DB::table('vik_resultat')->insertOrIgnore([
             ['RAI_ID'=>1,'COU_ID'=>1,'EQU_ID'=>1,'RES_RANG'=> '1','RES_TEMPS'=>'00:45:12','RES_POINT'=>100],
             ['RAI_ID'=>1,'COU_ID'=>1,'EQU_ID'=>2,'RES_RANG'=> '2','RES_TEMPS'=>'00:50:30','RES_POINT'=>90],
             ['RAI_ID'=>1,'COU_ID'=>2,'EQU_ID'=>1,'RES_RANG'=> '1','RES_TEMPS'=>'01:15:00','RES_POINT'=>100],
@@ -282,24 +282,24 @@ return new class extends Migration
         // Supprime uniquement les données que nous avons insérées
         DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
 
-        DB::table('VIK_RESULTAT')->whereIn('RAI_ID', [1,2])->delete();
-        DB::table('VIK_APPARTIENT')->whereIn('RAI_ID', [1,2])->delete();
-        DB::table('VIK_EQUIPE')->whereIn('RAI_ID', [1,2])->delete();
-        DB::table('VIK_COURSE')->whereIn('COU_ID', [1,2])->delete();
-        DB::table('VIK_RAID')->whereIn('RAI_ID', [1,2])->delete();
+        DB::table('vik_resultat')->whereIn('RAI_ID', [1,2])->delete();
+        DB::table('vik_appartient')->whereIn('RAI_ID', [1,2])->delete();
+        DB::table('vik_equipe')->whereIn('RAI_ID', [1,2])->delete();
+        DB::table('vik_course')->whereIn('COU_ID', [1,2])->delete();
+        DB::table('vik_raid')->whereIn('RAI_ID', [1,2])->delete();
 
-        DB::table('VIK_RESPONSABLE_COURSE')->whereIn('UTI_ID', [7,8])->delete();
-        DB::table('VIK_RESPONSABLE_RAID')->whereIn('UTI_ID', [5,6])->delete();
-        DB::table('VIK_RESPONSABLE_CLUB')->where('UTI_ID', 2)->delete();
+        DB::table('vik_responsable_course')->whereIn('UTI_ID', [7,8])->delete();
+        DB::table('vik_responsable_raid')->whereIn('UTI_ID', [5,6])->delete();
+        DB::table('vik_responsable_club')->where('UTI_ID', 2)->delete();
 
-        DB::table('VIK_COUREUR')->whereBetween('UTI_ID', [1,50])->delete();
-        DB::table('VIK_ADMINISTRATEUR')->where('UTI_ID', 100)->delete();
-        DB::table('VIK_UTILISATEUR')->whereBetween('UTI_ID', [1,50])->delete();
-        DB::table('VIK_UTILISATEUR')->where('UTI_ID', 100)->delete();
+        DB::table('vik_coureur')->whereBetween('UTI_ID', [1,50])->delete();
+        DB::table('vik_administrateur')->where('UTI_ID', 100)->delete();
+        DB::table('vik_utilisateur')->whereBetween('UTI_ID', [1,50])->delete();
+        DB::table('vik_utilisateur')->where('UTI_ID', 100)->delete();
 
-        DB::table('VIK_TRANCHE_DIFFICULTE')->whereIn('DIF_NIVEAU', [1,2,3,4,5])->delete();
-        DB::table('VIK_COURSE_TYPE')->whereIn('TYP_ID', [1,2,3,4,5])->delete();
-        DB::table('VIK_CLUB')->whereIn('CLU_ID', [1,2,3])->delete();
+        DB::table('vik_tranche_difficulte')->whereIn('DIF_NIVEAU', [1,2,3,4,5])->delete();
+        DB::table('vik_course_type')->whereIn('TYP_ID', [1,2,3,4,5])->delete();
+        DB::table('vik_club')->whereIn('CLU_ID', [1,2,3])->delete();
 
         DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
     }
