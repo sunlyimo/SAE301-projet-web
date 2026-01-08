@@ -399,16 +399,28 @@ class TeamController extends Controller
             abort(403, 'Vous n\'êtes pas autorisé à supprimer cette équipe.');
         }
 
-        // Supprimer d'abord tous les membres de l'équipe
+        // Retirer l'équipe de la liste des équipes validées en session si elle y était
+        $validatedTeamsKey = "validated_teams_{$rai_id}_{$cou_id}";
+        $validatedTeams = session($validatedTeamsKey, []);
+        $validatedTeams = array_diff($validatedTeams, [$equ_id]);
+        session([$validatedTeamsKey => array_values($validatedTeams)]);
+
+        // Supprimer les liens d'appartenance à l'équipe (les utilisateurs restent dans la base)
         Appartient::where('RAI_ID', $rai_id)
                   ->where('COU_ID', $cou_id)
                   ->where('EQU_ID', $equ_id)
                   ->delete();
 
+        // Supprimer tous les résultats associés à l'équipe
+        \DB::table('vik_resultat')->where('RAI_ID', $rai_id)
+                                  ->where('COU_ID', $cou_id)
+                                  ->where('EQU_ID', $equ_id)
+                                  ->delete();
+
         // Supprimer l'équipe
         $equipe->delete();
 
-        return redirect()->route('courses.my-courses')->with('success', 'Équipe supprimée avec succès.');
+        return redirect()->route('courses.manage-teams', [$rai_id, $cou_id])->with('success', 'Équipe supprimée avec succès.');
     }
 
     /**
