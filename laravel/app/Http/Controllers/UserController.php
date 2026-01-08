@@ -16,37 +16,23 @@ class UserController extends Controller
     public function show()
     {
 
-        $user = Auth::user();
-        $clubs = Club::all();
+        $user = Auth::user()->load('coureur');
+        $clubs = Club::orderBy('CLU_NOM')->get();
         $userId = $user->UTI_ID;
-        $equipesChef = Equipe::where('UTI_ID', $userId)->get();
-        $appartenances = Appartient::where('UTI_ID', $userId)->get();
-        $equipesMembre = collect();
-
-        foreach ($appartenances as $app) {
-            $team = Equipe::where('RAI_ID', $app->RAI_ID)
-                ->where('COU_ID', $app->COU_ID)
-                ->where('EQU_ID', $app->EQU_ID)
-                ->first();
-
-            if ($team) {
-                $equipesMembre->push($team);
-            }
-        }
-
-        $allTeams = $equipesChef->concat($equipesMembre)->unique(function ($item) {
-            return $item->RAI_ID . '-' . $item->COU_ID . '-' . $item->EQU_ID;
+        $allTeams = Equipe::with('course.raid', 'course.type')
+            ->where('UTI_ID', $userId)
+            ->orWhereHas('membres', function ($query) use ($userId) {
+                $query->where('vik_appartient.UTI_ID', $userId);
+            })
+            ->get()
+            ->sortByDesc(function($team) {
+                return optional($team->course)->COU_DATE_DEBUT ?? 0;
+            });
+        $uniqueCourses = $allTeams->map(function($team) {
+            return $team->course;
+        })->filter()->unique(function ($course) {
+            return $course->RAI_ID . '-' . $course->COU_ID;
         });
-
-        $allTeams = $allTeams->sortByDesc(function($team) {
-            return $team->course->COU_DATE_DEBUT ?? 0;
-        });
-
-        $uniqueCourses = $allTeams->map(fn($t) => $t->course)->unique(function ($course) {
-            return $course ? ($course->RAI_ID . '-' . $course->COU_ID) : null;
-        })->filter();
-
-
         return view('user.profile', compact('user', 'allTeams', 'uniqueCourses', 'clubs'));
     }
 
@@ -108,8 +94,6 @@ class UserController extends Controller
             ]);
             $data['UTI_MOT_DE_PASSE'] = Hash::make($request->new_password);
         }
-        
-        /** @var \App\Models\User $user Enleve une erreur*/
         $user->update($data);
 
         if ($user->coureur) {
