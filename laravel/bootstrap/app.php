@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'raid_respo' => \App\Http\Middleware\RaidResponsable::class,
             'course_respo' => \App\Http\Middleware\CourseResponsable::class,
+            'admin' => \App\Http\Middleware\Admin::class,
+            'club_respo' => \App\Http\Middleware\ClubResponsable::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

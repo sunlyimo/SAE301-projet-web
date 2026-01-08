@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
 
-class CourseResponsable
+class ClubResponsable
 {
     /**
      * Handle an incoming request.
@@ -16,10 +16,9 @@ class CourseResponsable
      */
     public function handle(Request $request, Closure $next)
     {
-        $exists = DB::table('vik_responsable_course')
+        $exists = DB::table('vik_responsable_club')
                     ->where('UTI_ID', auth()->id())
                     ->exists();
-
         if (!$exists) {
             abort(404);
         }

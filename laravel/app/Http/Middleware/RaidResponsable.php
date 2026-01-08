@@ -20,7 +20,7 @@ class RaidResponsable
                     ->where('UTI_ID', auth()->id())
                     ->exists();
         if (!$exists) {
-            return redirect('/')->with('error', "Accès réservé aux responsables de raid.");
+            abort(404);
         }
         return $next($request);
     }
