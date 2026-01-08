@@ -5,9 +5,51 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Raid;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class RaidController extends Controller
 {
+
+    private $rules = [
+        'RAI_NOM' => 'required|max:50',
+        'RAI_LIEU' => 'required|max:100',
+        'RAI_WEB' => 'nullable|url',
+        'CLU_ID' => 'required|exists:VIK_CLUB,CLU_ID',
+        'UTI_ID' => 'required|exists:VIK_UTILISATEUR,UTI_ID',
+        'RAI_RAID_DATE_DEBUT' => 'required|date|after_or_equal:RAI_INSCRI_DATE_FIN',
+        'RAI_RAID_DATE_FIN' => 'required|date|after_or_equal:RAI_RAID_DATE_DEBUT',
+        'RAI_INSCRI_DATE_DEBUT' => 'required|date',
+        'RAI_INSCRI_DATE_FIN' => 'required|date|after_or_equal:RAI_INSCRI_DATE_DEBUT',
+        'RAI_CONTACT' => 'required|email|max:100',
+        'RAI_TELEPHONE' => 'nullable|regex:/^[0-9\s\.\-\+\(\)]{10,20}$/|max:20',
+        'RAI_IMAGE' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ];
+    private $messages = [
+        'RAI_NOM.required' => 'Le nom du raid est obligatoire.',
+        'RAI_NOM.max' => 'La taille du nom doit être inférieure ou égale à 50 caractères. Veuillez entrer un nom plus court.',
+        'RAI_LIEU.max' => 'La taille du lieu doit être inférieure ou égale à 100 caractères. Veuillez entrer un lieu plus court.',
+        'RAI_LIEU.required' => 'Le lieu de départ est obligatoire.',
+        'RAI_WEB.url' => "L'URL du site web n'est pas valide.",
+        'RAI_CONTACT.email' => 'Veuillez entrer une adresse email valide (cette erreur ne devrait pas apparaître si vous avez sélectionné un responsable dans la liste).',
+        'RAI_RAID_DATE_DEBUT.after_or_equal' => 'La date de début du raid doit être postérieure à la date de clôture des inscriptions.',
+        'RAI_RAID_DATE_FIN.after_or_equal' => 'La date de fin du raid doit être postérieure ou égale à la date de début du raid.',
+        'RAI_INSCRI_DATE_FIN.after_or_equal' => 'La date de fin des inscriptions doit être postérieure ou égale à la date de début des inscriptions.',
+        'RAI_INSCRI_DATE_DEBUT.date' => 'La date de début des inscriptions doit être une date valide.',
+        'RAI_INSCRI_DATE_FIN.date' => 'La date de fin des inscriptions doit être une date valide.',
+        'RAI_RAID_DATE_DEBUT.required' => 'La date de début du raid est obligatoire.',
+        'RAI_RAID_DATE_FIN.required' => 'La date de fin du raid est obligatoire.',
+        'RAI_INSCRI_DATE_DEBUT.required' => 'La date de début des inscriptions est obligatoire.',
+        'RAI_INSCRI_DATE_FIN.required' => 'La date de fin des inscriptions est obligatoire.',
+        'RAI_IMAGE.image' => "Le fichier téléchargé doit être une image.",
+        'RAI_IMAGE.mimes' => "L'image doit être au format jpeg, png, jpg ou gif.",
+        'RAI_IMAGE.max' => "La taille de l'image ne doit pas dépasser 2 Mo.",
+        'CLU_ID.exists' => "Le club sélectionné n'existe pas.",
+        'UTI_ID.exists' => "Le responsable sélectionné n'existe pas.",
+        'CLU_ID.required' => "Pas de club renseigné.",
+        'UTI_ID.required' => "Pas de responsable renseigné.",
+        'RAI_CONTACT.required' => "L'adresse e-mail du contact est obligatoire."
+    ];
+
     public function index()
     {
         return view('raids.raid')
@@ -24,49 +66,43 @@ class RaidController extends Controller
             ->get();
 
 
-        return view('raid-create', compact('clubs', 'responsables'));
+        return view('raids.raid-create', compact('clubs', 'responsables'));
+    }
+
+    public function edit($raid_id)
+    {
+        $clubs = DB::table('VIK_CLUB')->orderBy('CLU_NOM')->pluck('CLU_NOM', 'CLU_ID');
+
+        $responsables = DB::table('VIK_UTILISATEUR')
+            ->select('UTI_ID', 'UTI_EMAIL', 'UTI_TELEPHONE', DB::raw("CONCAT(UTI_PRENOM, ' ', UTI_NOM) as name"))
+            ->orderBy('UTI_NOM')
+            ->get();
+
+        $raid = DB::table('vik_raid')->where('RAI_ID', $raid_id)->first();
+
+        return view('raids.raid-edit', compact('clubs', 'responsables', 'raid'));
+    }
+
+    public function update(Request $request, $raid_id)
+    {
+        $validated = $request->validate($this->rules, $this->messages);
+
+        if (!Auth::check() || !DB::table('vik_raid')->where('RAI_ID', $raid_id)->where('UTI_ID', Auth::id())->exists()) {
+            return redirect('/raids')->with('error', 'Vous n\'êtes pas autorisé à modifier ce raid.');
+        }
+
+        if ($request->hasFile('RAI_IMAGE')) {
+            $path = $request->file('RAI_IMAGE')->store('raids', 'public');
+            $validated['RAI_IMAGE'] = $path;
+        }
+
+        DB::table('vik_raid')->where('RAI_ID', $raid_id)->update($validated);
+        return redirect('/raids')->with('success', 'Raid mis à jour avec succès !');
     }
 
     public function store(Request $request) /* ajout d'un nouveau raid à la base de données */
     {
-        $validated = $request->validate([
-            'RAI_NOM' => 'required|max:50',
-            'RAI_LIEU' => 'required|max:100',
-            'RAI_WEB' => 'nullable|url',
-            'CLU_ID' => 'required|exists:VIK_CLUB,CLU_ID',
-            'UTI_ID' => 'required|exists:VIK_UTILISATEUR,UTI_ID',
-            'RAI_RAID_DATE_DEBUT' => 'required|date|after_or_equal:RAI_INSCRI_DATE_FIN',
-            'RAI_RAID_DATE_FIN' => 'required|date|after_or_equal:RAI_RAID_DATE_DEBUT',
-            'RAI_INSCRI_DATE_DEBUT' => 'required|date',
-            'RAI_INSCRI_DATE_FIN' => 'required|date|after_or_equal:RAI_INSCRI_DATE_DEBUT',
-            'RAI_CONTACT' => 'required|email|max:100',
-            'RAI_TELEPHONE' => 'nullable|regex:/^[0-9\s\.\-\+\(\)]{10,20}$/|max:20',
-            'RAI_IMAGE' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ], [
-            'RAI_NOM.required' => 'Le nom du raid est obligatoire.',
-            'RAI_NOM.max' => 'La taille du nom doit être inférieure ou égale à 50 caractères. Veuillez entrer un nom plus court.',
-            'RAI_LIEU.max' => 'La taille du lieu doit être inférieure ou égale à 100 caractères. Veuillez entrer un lieu plus court.',
-            'RAI_LIEU.required' => 'Le lieu de départ est obligatoire.',
-            'RAI_WEB.url' => "L'URL du site web n'est pas valide.",
-            'RAI_CONTACT.email' => 'Veuillez entrer une adresse email valide (cette erreur ne devrait pas apparaître si vous avez sélectionné un responsable dans la liste).',
-            'RAI_RAID_DATE_DEBUT.after_or_equal' => 'La date de début du raid doit être postérieure à la date de clôture des inscriptions.',
-            'RAI_RAID_DATE_FIN.after_or_equal' => 'La date de fin du raid doit être postérieure ou égale à la date de début du raid.',
-            'RAI_INSCRI_DATE_FIN.after_or_equal' => 'La date de fin des inscriptions doit être postérieure ou égale à la date de début des inscriptions.',
-            'RAI_INSCRI_DATE_DEBUT.date' => 'La date de début des inscriptions doit être une date valide.',
-            'RAI_INSCRI_DATE_FIN.date' => 'La date de fin des inscriptions doit être une date valide.',
-            'RAI_RAID_DATE_DEBUT.required' => 'La date de début du raid est obligatoire.',
-            'RAI_RAID_DATE_FIN.required' => 'La date de fin du raid est obligatoire.',
-            'RAI_INSCRI_DATE_DEBUT.required' => 'La date de début des inscriptions est obligatoire.',
-            'RAI_INSCRI_DATE_FIN.required' => 'La date de fin des inscriptions est obligatoire.',
-            'RAI_IMAGE.image' => "Le fichier téléchargé doit être une image.",
-            'RAI_IMAGE.mimes' => "L'image doit être au format jpeg, png, jpg ou gif.",
-            'RAI_IMAGE.max' => "La taille de l'image ne doit pas dépasser 2 Mo.",
-            'CLU_ID.exists' => "Le club sélectionné n'existe pas.",
-            'UTI_ID.exists' => "Le responsable sélectionné n'existe pas.",
-            'CLU_ID.required' => "Pas de club renseigné.",
-            'UTI_ID.required' => "Pas de responsable renseigné.",
-            'RAI_CONTACT.required' => "L'adresse e-mail du contact est obligatoire."
-        ]);
+        $validated = $request->validate($this->rules, $this->messages);
 
         echo '<script>alert("Validated Data:", ' . json_encode($validated) . ');</script>';
 

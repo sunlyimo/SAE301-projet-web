@@ -1,170 +1,144 @@
+
 @extends('layouts.app')
 <?php
 use Illuminate\Support\Facades\DB;
-
-if (auth()->check() && DB::table('VIK_RESPONSABLE_CLUB')->where('UTI_ID', auth()->id())->exists()) {
-    
-}
-else {
-    //abort(403, 'Accès refusé');
-}
 ?>
+
 @section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-8">
-
-            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-
-                <div class="card-header bg-primary bg-gradient text-white p-4 border-0">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-person-running fa-2x me-3"></i>
-                        <div>
-                            <h3 class="mb-0 fw-bold">Nouveau Raid</h3>
-                            <small class="text-white-50">Configuration de l'événement et de la logistique</small>
-                        </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <i class="fas fa-person-running text-3xl text-gray-900"></i>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Créer un nouveau Raid</h1>
+                        <p class="text-sm text-gray-600">Configuration de l'événement et informations de contact</p>
                     </div>
                 </div>
-
-                <div class="card-body p-4 p-md-5">
                     @if($errors->any())
-                    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
-                        <ul class="mb-0">
+                    <div class="mb-4 p-4 rounded-md bg-red-50 border border-red-200 text-red-800">
+                        <ul class="list-disc pl-5 mb-0">
                             @foreach($errors->all() as $error)
-                            <li><i class="fas fa-triangle-exclamation me-2"></i>{{ $error }}</li>
+                            <li class="flex items-start gap-2"><i class="fas fa-triangle-exclamation mt-1"></i>{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
                     @endif
-
                     <form action="{{ route('raids.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <div class="d-flex align-items-center mb-4">
-                            <span class="badge bg-primary rounded-pill me-2 p-2">1</span>
-                            <h5 class="mb-0 fw-bold text-primary section-title">Informations générales</h5>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="inline-flex items-center justify-center rounded-full bg-green-600 text-white px-3 py-1 text-sm font-semibold">1</span>
+                            <h5 class="mb-0 font-bold text-gray-900">Informations générales</h5>
                         </div>
 
-                        <div class="form-floating mb-4">
+                        <div class="mb-4">
+                            <label for="RAI_NOM" class="block text-sm font-medium text-gray-700">Nom de l'événement</label>
                             <input type="text" name="RAI_NOM" id="RAI_NOM" value="{{ old('RAI_NOM') }}"
-                                class="form-control @error('RAI_NOM') is-invalid @enderror" placeholder="Nom du raid">
-                            <label for="RAI_NOM">Nom de l'événement</label>
-                            @error('RAI_NOM') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                class="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-green-600 p-3 @error('RAI_NOM') border-red-400 @enderror" placeholder="Nom du raid">
+                            @error('RAI_NOM') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        <div class="g-3 mb-4">
-                            <div class="form-floating">
-                                <input type="text" name="RAI_LIEU" id="RAI_LIEU" value="{{ old('RAI_LIEU') }}" class="form-control" placeholder="Lieu">
-                                <label for="RAI_LIEU"><i class="fas fa-map-marker-alt me-1"></i> Lieu de départ</label>
-                            </div>
+                        <div class="mb-4">
+                            <label for="RAI_LIEU" class="block text-sm font-medium text-gray-700">Lieu de départ</label>
+                            <input type="text" name="RAI_LIEU" id="RAI_LIEU" value="{{ old('RAI_LIEU') }}" class="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-green-600 p-3" placeholder="Lieu">
                         </div>
 
-                        <div class="d-flex align-items-center mb-4 mt-5">
-                            <span class="badge bg-primary rounded-pill me-2 p-2">2</span>
-                            <h5 class="mb-0 fw-bold text-primary section-title">Dates clés</h5>
+                        <div class="flex items-center gap-3 mb-4 mt-6">
+                            <span class="inline-flex items-center justify-center rounded-full bg-green-600 text-white px-3 py-1 text-sm font-semibold">2</span>
+                            <h5 class="mb-0 font-bold text-gray-900">Dates clés</h5>
                         </div>
 
-                        <div class="row g-4 mb-4">
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 bg-light">
-                                    <label class="form-label fw-bold text-muted small text-uppercase">Événement</label>
-                                    <div class="mb-2">
-                                        <label class="small text-muted">Début</label>
-                                        <input type="datetime-local" name="RAI_RAID_DATE_DEBUT" class="form-control">
+                        <div class="grid gap-4 md:grid-cols-2 mb-4">
+                            <div>
+                                <div class="p-4 border rounded-lg bg-gray-50">
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase">Événement</label>
+                                    <div class="mt-2">
+                                        <label class="block text-sm text-gray-600">Début</label>
+                                        <input type="datetime-local" name="RAI_RAID_DATE_DEBUT" class="mt-1 block w-full rounded-md border-gray-200 p-2">
                                     </div>
-                                    <div>
-                                        <label class="small text-muted">Fin</label>
-                                        <input type="datetime-local" name="RAI_RAID_DATE_FIN" class="form-control">
+                                    <div class="mt-3">
+                                        <label class="block text-sm text-gray-600">Fin</label>
+                                        <input type="datetime-local" name="RAI_RAID_DATE_FIN" class="mt-1 block w-full rounded-md border-gray-200 p-2">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 bg-light text-primary border-primary border-opacity-25">
-                                    <label class="form-label fw-bold small text-uppercase">Inscriptions</label>
-                                    <div class="mb-2">
-                                        <label class="small text-muted">Ouverture</label>
-                                        <input type="datetime-local" name="RAI_INSCRI_DATE_DEBUT" class="form-control border-primary border-opacity-25">
+                            <div>
+                                <div class="p-4 border rounded-lg bg-gray-50">
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase">Inscriptions</label>
+                                    <div class="mt-2">
+                                        <label class="block text-sm text-gray-600">Ouverture</label>
+                                        <input type="datetime-local" name="RAI_INSCRI_DATE_DEBUT" class="mt-1 block w-full rounded-md border-gray-200 p-2">
                                     </div>
-                                    <div>
-                                        <label class="small text-muted">Clôture</label>
-                                        <input type="datetime-local" name="RAI_INSCRI_DATE_FIN" class="form-control border-primary border-opacity-25">
+                                    <div class="mt-3">
+                                        <label class="block text-sm text-gray-600">Clôture</label>
+                                        <input type="datetime-local" name="RAI_INSCRI_DATE_FIN" class="mt-1 block w-full rounded-md border-gray-200 p-2">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="d-flex align-items-center mb-4 mt-5">
-                            <span class="badge bg-primary rounded-pill me-2 p-2">3</span>
-                            <h5 class="mb-0 fw-bold text-primary section-title">Responsables</h5>
+                        <div class="flex items-center gap-3 mb-4 mt-6">
+                            <span class="inline-flex items-center justify-center rounded-full bg-green-600 text-white px-3 py-1 text-sm font-semibold">3</span>
+                            <h5 class="mb-0 font-bold text-gray-900">Responsables</h5>
                         </div>
 
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <select name="CLU_ID" id="CLU_ID" class="form-select">
-                                        <option value="">Choisir un club...</option>
-                                        @foreach($clubs ?? [] as $id => $name)
-                                        <option value="{{ $id }}" {{ old('CLU_ID') == $id ? 'selected' : '' }}>{{ $name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <label for="CLU_ID">Club Organisateur</label>
-                                </div>
+                        <div class="grid gap-4 md:grid-cols-2 mb-4">
+                            <div>
+                                <label for="CLU_ID" class="block text-sm font-medium text-gray-700">Club Organisateur</label>
+                                <select name="CLU_ID" id="CLU_ID" class="mt-1 block w-full rounded-md border-gray-200 p-3">
+                                    <option value="">Choisir un club...</option>
+                                    @foreach($clubs ?? [] as $id => $name)
+                                    <option value="{{ $id }}" {{ old('CLU_ID') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input list="responsable_list" id="responsable_input" class="form-control" placeholder="Rechercher un membre..." autocomplete="off" value="{{ old('responsable_name') }}">
-                                    <datalist id="responsable_list">
-                                        @foreach($responsables ?? [] as $resp)
-                                            <option value="{{ $resp->name }}"></option>
-                                        @endforeach
-                                    </datalist>
-                                    <input type="hidden" name="UTI_ID" id="UTI_ID" value="{{ old('UTI_ID') }}">
-                                    <label for="responsable_input">Responsable</label>
-                                </div>
+                            <div>
+                                <label for="responsable_input" class="block text-sm font-medium text-gray-700">Responsable</label>
+                                <input list="responsable_list" id="responsable_input" name="responsable_name" class="mt-1 block w-full rounded-md border-gray-200 p-3" placeholder="Rechercher un membre..." autocomplete="off" value="{{ old('responsable_name') }}">
+                                <datalist id="responsable_list">
+                                    @foreach($responsables ?? [] as $resp)
+                                        <option value="{{ $resp->name }}"></option>
+                                    @endforeach
+                                </datalist>
+                                <input type="hidden" name="UTI_ID" id="UTI_ID" value="{{ old('UTI_ID') }}">
                             </div>
                         </div>
 
-                        <div class="d-flex align-items-center mb-4 mt-5">
-                            <span class="badge bg-primary rounded-pill me-2 p-2">4</span>
-                            <h5 class="mb-0 fw-bold text-primary section-title">Contact</h5>
+                        <div class="flex items-center gap-3 mb-4 mt-6">
+                            <span class="inline-flex items-center justify-center rounded-full bg-green-600 text-white px-3 py-1 text-sm font-semibold">4</span>
+                            <h5 class="mb-0 font-bold text-gray-900">Contact</h5>
                         </div>
 
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="email" name="RAI_CONTACT" id="RAI_CONTACT" value="{{ old('RAI_CONTACT') }}"
-                                        class="form-control @error('RAI_CONTACT') is-invalid @enderror" readonly placeholder="Email">
-                                    <label for="RAI_CONTACT"><i class="fas fa-envelope me-1"></i> Email</label>
-                                    @error('RAI_CONTACT') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                                </div>
+                        <div class="grid gap-4 md:grid-cols-2 mb-4">
+                            <div>
+                                <label for="RAI_CONTACT" class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" name="RAI_CONTACT" id="RAI_CONTACT" value="{{ old('RAI_CONTACT') }}"
+                                    class="mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-green-600 p-3 @error('RAI_CONTACT') border-red-400 @enderror" readonly placeholder="Email">
+                                @error('RAI_CONTACT') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="url" name="RAI_WEB" id="RAI_WEB" value="{{ old('RAI_WEB') }}" class="form-control" placeholder="Site web">
-                                    <label for="RAI_WEB"><i class="fas fa-globe me-1"></i> Site internet (facultatif)</label>
-                                </div>
+                            <div>
+                                <label for="RAI_WEB" class="block text-sm font-medium text-gray-700">Site internet (facultatif)</label>
+                                <input type="url" name="RAI_WEB" id="RAI_WEB" value="{{ old('RAI_WEB') }}" class="mt-1 block w-full rounded-md border-gray-200 p-3" placeholder="Site web">
                             </div>
                         </div>
 
                         <div class="mb-5">
-                            <label class="form-label fw-bold text-muted small">IMAGE DE COUVERTURE</label>
-                            <div class="input-group">
-                                <input type="file" name="RAI_IMAGE" class="form-control py-3 rounded-3 shadow-sm">
+                            <label class="block text-sm font-medium text-gray-700">IMAGE DE COUVERTURE</label>
+                            <div class="mt-2">
+                                <input type="file" name="RAI_IMAGE" class="block w-full text-sm text-gray-700">
                             </div>
                         </div>
 
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm py-3 rounded-3">
-                                    <i class="fas fa-plus-circle me-2"></i>Enregistrer le Raid
+                        <div class="grid gap-3 md:grid-cols-3">
+                            <div class="md:col-span-2">
+                                <button type="submit" class="w-full bg-gray-900 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2">
+                                    <i class="fas fa-plus-circle"></i> Enregistrer le Raid
                                 </button>
                             </div>
-                            <div class="col-md-4">
-                                <a href="#" class="btn btn-outline-secondary btn-lg w-100 py-3 rounded-3">
-                                    Annuler
-                                </a>
+                            <div>
+                                <a href="#" class="w-full inline-block text-center border border-gray-300 text-gray-700 py-3 rounded-lg">Annuler</a>
                             </div>
                         </div>
                     </form>
