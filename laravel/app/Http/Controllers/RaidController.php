@@ -293,6 +293,6 @@ class RaidController extends Controller
             }
         }
 
-        return redirect()->route('raids.courses', $raid_id)->with('success', 'Raid modifié avec succès !');
+        return redirect()->route('raids.index', $raid_id)->with('success', 'Raid modifié avec succès !');
     }
 }
