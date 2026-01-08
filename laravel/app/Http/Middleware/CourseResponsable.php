@@ -31,6 +31,6 @@ class CourseResponsable
         if ($isOwner || $isRaidOwner) {
             return $next($request);
         }
-        return redirect('/')->with('error', "Vous n'êtes pas responsable de cette épreuve.");
+        abort(404);
     }
 }
