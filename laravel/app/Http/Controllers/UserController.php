@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Equipe;
+use App\Models\Course;
 use App\Models\Appartient;
 use App\Models\User;
 
@@ -16,37 +17,43 @@ class UserController extends Controller
     public function show()
     {
 
-        $user = Auth::user();
-        $clubs = Club::all();
+        $user = Auth::user()->load('coureur');
+        $clubs = Club::orderBy('CLU_NOM')->get();
         $userId = $user->UTI_ID;
-        $equipesChef = Equipe::where('UTI_ID', $userId)->get();
-        $appartenances = Appartient::where('UTI_ID', $userId)->get();
-        $equipesMembre = collect();
-
-        foreach ($appartenances as $app) {
-            $team = Equipe::where('RAI_ID', $app->RAI_ID)
-                ->where('COU_ID', $app->COU_ID)
-                ->where('EQU_ID', $app->EQU_ID)
-                ->first();
-
-            if ($team) {
-                $equipesMembre->push($team);
-            }
+        $allTeams = Equipe::where('UTI_ID', $userId)
+            ->orWhereHas('membres', function ($query) use ($userId) {
+                $query->where('vik_appartient.UTI_ID', $userId);
+            })
+            ->get();
+        $courseGroups = [];
+        foreach ($allTeams as $team) {
+            $rai = $team->getAttribute('RAI_ID');
+            $cou = $team->getAttribute('COU_ID');
+            if ($rai === null || $cou === null) continue;
+            $courseGroups[$rai][] = $cou;
         }
-
-        $allTeams = $equipesChef->concat($equipesMembre)->unique(function ($item) {
-            return $item->RAI_ID . '-' . $item->COU_ID . '-' . $item->EQU_ID;
+        $courses = collect();
+        foreach ($courseGroups as $rai => $couIds) {
+            $courses = $courses->merge(Course::with('raid', 'type')
+                ->where('RAI_ID', $rai)
+                ->whereIn('COU_ID', array_values(array_unique($couIds)))
+                ->get());
+        }
+        $coursesByKey = $courses->keyBy(function ($c) {
+            return $c->RAI_ID . '-' . $c->COU_ID;
         });
-
+        foreach ($allTeams as $team) {
+            $key = $team->getAttribute('RAI_ID') . '-' . $team->getAttribute('COU_ID');
+            $team->setRelation('course', $coursesByKey->get($key));
+        }
         $allTeams = $allTeams->sortByDesc(function($team) {
-            return $team->course->COU_DATE_DEBUT ?? 0;
+            return optional($team->course)->COU_DATE_DEBUT ?? 0;
         });
-
-        $uniqueCourses = $allTeams->map(fn($t) => $t->course)->unique(function ($course) {
-            return $course ? ($course->RAI_ID . '-' . $course->COU_ID) : null;
-        })->filter();
-
-
+        $uniqueCourses = $allTeams->map(function($team) {
+            return $team->course;
+        })->filter()->unique(function ($course) {
+            return $course->RAI_ID . '-' . $course->COU_ID;
+        });
         return view('user.profile', compact('user', 'allTeams', 'uniqueCourses', 'clubs'));
     }
 
@@ -108,8 +115,6 @@ class UserController extends Controller
             ]);
             $data['UTI_MOT_DE_PASSE'] = Hash::make($request->new_password);
         }
-        
-        /** @var \App\Models\User $user Enleve une erreur*/
         $user->update($data);
 
         if ($user->coureur) {

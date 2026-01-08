@@ -14,9 +14,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
 
-                <!-- Logo + Mobile button -->
                 <div class="flex items-center gap-4">
-                    <!-- Mobile button (left)-->
                     <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-900 hover:text-green-600 hover:bg-gray-100 focus:outline-none transition-colors">
                         <svg class="h-6 w-6" :class="{'hidden': mobileMenuOpen, 'block': !mobileMenuOpen }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -33,16 +31,15 @@
                         </span>
                     </a>
                 </div>
-
-                <!-- Menu Desktop -->
                 <div class="hidden md:flex items-center space-x-4">
                     @php
                     $links = [
                         'Accueil' => '/',
+                        'Clubs' => '/clubs',
+                        'Raids' => '/raids',
                         'Contact' => '/contact',
                         'À propos' => '/about',
-                        'Raids' => '/raids',
-                        'Clubs' => '/clubs'
+                        'Historique' => '/profile#historique'
                     ];
                     
                     use Illuminate\Support\Facades\DB;
@@ -62,7 +59,6 @@
                     @endforeach
                 </div>
 
-                <!-- Boutons Connexion/Profil Desktop -->
                 <div class="hidden md:flex items-center gap-6">
                     @guest
                     <a href="/login" class="text-sm font-semibold text-black hover:text-green-600 transition-colors duration-300">
@@ -89,7 +85,6 @@
             </div>
         </div>
 
-        <!-- Menu Mobile -->
         <div x-show="mobileMenuOpen" 
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 transform -translate-y-2"
@@ -106,7 +101,6 @@
             </a>
             @endforeach
 
-            <!-- Séparateur -->
             <div class="border-t border-gray-200 my-2"></div>
 
             @guest
@@ -122,6 +116,9 @@
             <a href="/profile" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-green-600 hover:bg-gray-50 transition-colors">
                 Voir mon profil
             </a>
+            <a href="/profile#historique" class="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-green-600 hover:bg-gray-50 transition-colors">
+                Historique
+            </a>
             <form method="POST" action="{{ route('logout') }}" class="px-3">
                 @csrf
                 <button type="submit" class="w-full my-2 px-3 py-2 rounded-xl text-base font-bold text-white bg-black hover:bg-green-600 transition-colors shadow-md text-left">
@@ -131,7 +128,6 @@
             @endauth
         </div>
         </div>
-
     <main class="flex-1">
         @yield('content')
     </main>
@@ -139,7 +135,6 @@
     <footer class="bg-gray-200 text-gray-900 py-12" style="padding: 50px 0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-start gap-12">
-                <!-- Logo and Social Media (Left) -->
                 <div class="flex flex-col items-start flex-shrink-0">
                     <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity mb-6">
                         <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-16 w-auto">
@@ -158,7 +153,6 @@
                     </div>
                 </div>
 
-                <!-- Liens utiles (Middle) -->
                 <div class="flex-1 flex justify-center">
                     <div>
                         <h3 class="text-lg font-bold mb-4 text-gray-900">Liens utiles</h3>
@@ -197,7 +191,6 @@
                     </div>
                 </div>
 
-                <!-- Nos contacts (Right) -->
                 <div class="flex-shrink-0 min-w-[250px]">
                     <h3 class="text-lg font-bold mb-4 text-gray-900">Nos contacts</h3>
                     <div class="space-y-4">
