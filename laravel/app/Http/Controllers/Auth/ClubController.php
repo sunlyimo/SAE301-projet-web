@@ -414,41 +414,58 @@ class ClubController extends Controller
 
     public function edit(Club $club)
     {
-        if (!Auth::check()) {
-            abort(403, 'Veuillez vous connecter.');
-        }
-
-        if (!Auth::user()->isAdmin() && !Auth::user()->isResponsableOf($club)) {
-            abort(403, 'Accès non autorisé. Seuls les administrateurs ou le responsable du club peuvent modifier ce club.');
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Accès non autorisé.');
         }
 
         $club->load('responsable');
 
-        return view('clubs.edit', compact('club'));
+        $availableUsers = User::whereDoesntHave('clubs')
+            ->whereDoesntHave('administrateur')
+            ->when($club->responsable, function ($query) use ($club) {
+                return $query->orWhere('UTI_ID', $club->responsable->UTI_ID);
+            })
+            ->get();
+
+        $userData = $availableUsers->map(function ($user) {
+            return [
+                'id' => $user->UTI_ID,
+                'nom' => $user->UTI_NOM,
+                'prenom' => $user->UTI_PRENOM,
+                'email' => $user->UTI_EMAIL,
+                'nom_utilisateur' => $user->UTI_NOM_UTILISATEUR,
+            ];
+        });
+
+        return view('clubs.edit', compact('club', 'availableUsers', 'userData'));
     }
 
     public function update(Request $request, Club $club)
     {
-        if (!Auth::check()) {
-            abort(403, 'Veuillez vous connecter.');
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Accès non autorisé.');
         }
 
-        if (!Auth::user()->isAdmin() && !Auth::user()->isResponsableOf($club)) {
-            abort(403, 'Accès non autorisé. Seuls les administrateurs ou le responsable du club peuvent modifier ce club.');
+        $club->load('responsable');
+
+        $rules = [
+            'CLU_NOM' => 'required|string|max:100',
+            'CLU_RUE' => 'required|string|max:255',
+            'CLU_CODE_POSTAL' => 'required|string|max:10',
+            'CLU_VILLE' => 'required|string|max:100',
+        ];
+
+        if ($request->filled('selected_responsable_id')) {
+            $rules['selected_responsable_id'] = 'required|exists:vik_utilisateur,UTI_ID';
+        } else {
+            $rules['RESP_NOM'] = 'required|string|max:50';
+            $rules['RESP_PRENOM'] = 'required|string|max:50';
+            $rules['RESP_EMAIL'] = 'required|email|max:100';
+            $rules['RESP_NOM_UTILISATEUR'] = 'required|string|max:255|unique:vik_responsable_club,UTI_NOM_UTILISATEUR';
         }
 
-        $request->validate([
-            'CLU_NOM' => 'required|string|max:50',
-            'CLU_RUE' => 'required|string|max:100',
-            'CLU_CODE_POSTAL' => 'required|string|max:6',
-            'CLU_VILLE' => 'required|string|max:50',
-            'RESP_NOM' => 'required|string|max:50',
-            'RESP_PRENOM' => 'required|string|max:50',
-            'RESP_EMAIL' => 'required|email|max:100',
-            'RESP_NOM_UTILISATEUR' => 'required|string|max:255|unique:vik_responsable_club,UTI_NOM_UTILISATEUR,' . $club->responsable->UTI_ID . ',UTI_ID',
-        ]);
+        $request->validate($rules);
 
-        // Mettre à jour le club
         $club->update([
             'CLU_NOM' => $request->CLU_NOM,
             'CLU_RUE' => $request->CLU_RUE,
@@ -456,28 +473,73 @@ class ClubController extends Controller
             'CLU_VILLE' => $request->CLU_VILLE,
         ]);
 
-        // Mettre à jour le responsable
-        if ($club->responsable) {
-            $club->responsable->update([
+        $selectedId = $request->selected_responsable_id;
+
+        if ($selectedId) {
+            // Utilisateur existant sélectionné
+            $user = User::findOrFail($selectedId);
+
+            if (!$club->responsable || $selectedId != $club->responsable->UTI_ID) {
+                // Vérifier que le nouvel utilisateur n'est pas déjà responsable
+                if (ResponsableClub::where('UTI_ID', $selectedId)->exists()) {
+                    return back()->withErrors(['selected_responsable_id' => 'Cet utilisateur est déjà responsable d\'un autre club.'])->withInput();
+                }
+
+                // Supprimer l'ancien responsable s'il existe
+                if ($club->responsable) {
+                    $club->responsable->delete();
+                }
+
+                // Créer un nouveau responsable avec les données de l'utilisateur
+                ResponsableClub::create([
+                    'UTI_ID' => $selectedId,
+                    'CLU_ID' => $club->CLU_ID,
+                    'UTI_NOM' => $user->UTI_NOM,
+                    'UTI_PRENOM' => $user->UTI_PRENOM,
+                    'UTI_EMAIL' => $user->UTI_EMAIL,
+                    'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+                    'UTI_RUE' => $user->UTI_RUE,
+                    'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+                    'UTI_VILLE' => $user->UTI_VILLE,
+                    'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+                    'UTI_LICENCE' => $user->UTI_LICENCE,
+                    'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+                    'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+                ]);
+
+                // Recharger la relation
+                $club->load('responsable');
+            }
+            // Si c'est le même, rien à faire
+        } else {
+            // Créer un nouvel utilisateur et responsable
+            // Générer un nouvel ID pour l'utilisateur
+            $newUserId = User::max('UTI_ID') + 1;
+
+            // Créer l'utilisateur
+            $user = User::create([
+                'UTI_ID' => $newUserId,
                 'UTI_NOM' => $request->RESP_NOM,
                 'UTI_PRENOM' => $request->RESP_PRENOM,
                 'UTI_EMAIL' => $request->RESP_EMAIL,
                 'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
             ]);
 
-            // Mettre à jour également dans la table vik_utilisateur si l'utilisateur existe
-            $user = User::where('UTI_ID', $club->responsable->UTI_ID)->first();
-            if ($user) {
-                $user->update([
-                    'UTI_NOM' => $request->RESP_NOM,
-                    'UTI_PRENOM' => $request->RESP_PRENOM,
-                    'UTI_EMAIL' => $request->RESP_EMAIL,
-                    'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
-                ]);
-            }
+            // Créer le responsable
+            ResponsableClub::create([
+                'UTI_ID' => $newUserId,
+                'CLU_ID' => $club->CLU_ID,
+                'UTI_NOM' => $request->RESP_NOM,
+                'UTI_PRENOM' => $request->RESP_PRENOM,
+                'UTI_EMAIL' => $request->RESP_EMAIL,
+                'UTI_NOM_UTILISATEUR' => $request->RESP_NOM_UTILISATEUR,
+            ]);
+
+            // Recharger la relation
+            $club->load('responsable');
         }
 
-        return redirect()->route('clubs.index')->with('success', 'Le club a été modifié avec succès.');
+        return redirect()->route('clubs.index')->with('success', 'Club mis à jour avec succès.');
     }
 
     public function destroy(Club $club)
@@ -489,26 +551,34 @@ class ClubController extends Controller
         // Charger la relation responsable
         $club->load('responsable');
 
-        // Si le club a un responsable, le convertir en utilisateur normal
+        // Si le club a un responsable, le supprimer de la table vik_responsable_club
         if ($club->responsable) {
-            // Créer un utilisateur normal avec les données du responsable
-            User::create([
-                'UTI_NOM' => $club->responsable->UTI_NOM,
-                'UTI_PRENOM' => $club->responsable->UTI_PRENOM,
-                'UTI_EMAIL' => $club->responsable->UTI_EMAIL,
-                'UTI_DATE_NAISSANCE' => $club->responsable->UTI_DATE_NAISSANCE,
-                'UTI_MOT_DE_PASSE' => $club->responsable->UTI_MOT_DE_PASSE ?: bcrypt('password123'), // Mot de passe par défaut si null
-                'UTI_NOM_UTILISATEUR' => $club->responsable->UTI_NOM_UTILISATEUR,
-                'UTI_RUE' => $club->responsable->UTI_RUE,
-                'UTI_CODE_POSTAL' => $club->responsable->UTI_CODE_POSTAL,
-                'UTI_VILLE' => $club->responsable->UTI_VILLE,
-                'UTI_TELEPHONE' => $club->responsable->UTI_TELEPHONE,
-                'UTI_LICENCE' => $club->responsable->UTI_LICENCE,
-            ]);
-
-            // Supprimer le responsable de la table vik_responsable_club
             $club->responsable->delete();
         }
+
+        // Supprimer les données associées aux raids du club
+        $raidIds = $club->raids()->pluck('RAI_ID');
+        $coureurIds = DB::table('vik_coureur')->where('CLU_ID', $club->CLU_ID)->pluck('UTI_ID');
+
+        if ($raidIds->isNotEmpty()) {
+            // Supprimer les résultats
+            DB::table('vik_resultat')->whereIn('RAI_ID', $raidIds)->delete();
+            // Supprimer les appartenances
+            DB::table('vik_appartient')->whereIn('RAI_ID', $raidIds)->orWhereIn('UTI_ID', $coureurIds)->delete();
+        }
+
+        // Supprimer les coureurs associés au club
+        DB::table('vik_coureur')->where('CLU_ID', $club->CLU_ID)->delete();
+
+        if ($raidIds->isNotEmpty()) {
+            // Supprimer les équipes
+            DB::table('vik_equipe')->whereIn('RAI_ID', $raidIds)->delete();
+            // Supprimer les courses
+            DB::table('vik_course')->whereIn('RAI_ID', $raidIds)->delete();
+        }
+
+        // Supprimer les raids associés au club
+        $club->raids()->delete();
 
         // Supprimer le club
         $club->delete();

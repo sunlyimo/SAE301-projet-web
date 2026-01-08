@@ -22,6 +22,11 @@ class Club extends Model
     {
         return $this->hasOne(\App\Models\ResponsableClub::class, 'CLU_ID', 'CLU_ID');
     }
+
+    public function raids()
+    {
+        return $this->hasMany(\App\Models\Raid::class, 'CLU_ID', 'CLU_ID');
+    }
 }
 
 
