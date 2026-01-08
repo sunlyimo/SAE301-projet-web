@@ -2,7 +2,7 @@
 <?php
 use Illuminate\Support\Facades\DB;
 
-if (auth()->check() && DB::table('VIK_RESPONSABLE_CLUB')->where('UTI_ID', auth()->id())->exists()) {
+if (auth()->check() && DB::table('vik_responsable_club')->where('UTI_ID', auth()->id())->exists()) {
     
 }
 else {
