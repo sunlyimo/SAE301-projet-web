@@ -14,35 +14,28 @@
         <p class="text-gray-500">Validation de votre participation.</p>
     </div>
 
-    {{-- Carte unique centrée --}}
     <div class="max-w-2xl mx-auto">
         <div class="bg-white p-10 rounded-3xl shadow-2xl border-2 border-transparent hover:border-black transition-all duration-300 relative overflow-hidden group">
             
-            {{-- Badge Décoratif --}}
             <div class="absolute top-0 right-0 bg-yellow-400 text-black text-xs font-bold px-4 py-2 rounded-bl-xl uppercase tracking-widest">
                 Chef d'équipe
             </div>
             
-            {{-- Icône --}}
             <div class="mb-8 text-yellow-500 flex justify-center transform group-hover:scale-110 transition-transform duration-300">
                 <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
             
             <h2 class="text-3xl font-black text-center mb-6 uppercase text-gray-900">Confirmer ma participation</h2>
 
-            {{-- Action --}}
         <form action="{{ route('courses.team.create', [$course->RAI_ID, $course->COU_ID]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             
             <div class="space-y-4 mb-6 text-left">
-                {{-- Champ Nom d'équipe --}}
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nom de l'équipe</label>
                     <input type="text" name="EQU_NOM" required placeholder="Ex: Les Vikings Rapides" 
                         class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 focus:border-black outline-none font-bold">
                 </div>
-
-                {{-- Champ Image --}}
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Blason / Logo (Optionnel)</label>
                     <input type="file" name="EQU_IMAGE" accept="image/*"

@@ -13,7 +13,6 @@
         @csrf
         @method('PATCH')
 
-        {{-- Section 1 : Informations Générales --}}
         <section class="space-y-6">
             <h2 class="text-xl font-bold border-b pb-2 text-yellow-600 uppercase tracking-widest text-sm">Informations Générales</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -45,7 +44,6 @@
             </div>
         </section>
 
-        {{-- Section 2 : Dates --}}
         <section class="space-y-6">
             <h2 class="text-xl font-bold border-b pb-2 text-yellow-600 uppercase tracking-widest text-sm">Timing</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -95,7 +93,6 @@
             </div>
         </section>
 
-        {{-- Section 4 : Tarifs --}}
         <section class="space-y-6">
             <h2 class="text-xl font-bold border-b pb-2 text-yellow-600 uppercase tracking-widest text-sm">Tarifs</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -126,7 +123,6 @@
             </div>
         </section>
 
-        {{-- Section 5 : Capacité & Équipes --}}
         <section class="space-y-6">
             <h2 class="text-xl font-bold border-b pb-2 text-yellow-600 uppercase tracking-widest text-sm">Capacité & Équipes</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
