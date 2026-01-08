@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Equipe;
 use App\Models\Appartient;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -127,5 +128,18 @@ class UserController extends Controller
         }
 
         return back()->with('success', 'Profil mis à jour avec succès.');
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+        
+        $users = User::where('UTI_NOM_UTILISATEUR', 'LIKE', "%{$query}%")
+                    ->orWhere('UTI_NOM', 'LIKE', "%{$query}%")
+                    ->orWhere('UTI_PRENOM', 'LIKE', "%{$query}%")
+                    ->limit(10)
+                    ->get(['UTI_ID', 'UTI_NOM', 'UTI_PRENOM', 'UTI_NOM_UTILISATEUR']);
+
+        return response()->json($users);
     }
 }
