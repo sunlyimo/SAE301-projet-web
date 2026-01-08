@@ -27,8 +27,6 @@ Route::get('/repair', function() {
     return "le cache a été vidé";
 });
 
-Route::resource('clubs', ClubController::class);
-
 Route::get('/raids', [RaidController::class, 'index'])->name('raids.index');
 Route::get('/raids/{raid_id}/courses', [CourseController::class, 'coursesByRaid'])->name('raids.courses');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
@@ -43,6 +41,8 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::resource('clubs', ClubController::class);
 
     Route::get('/profile', [UserController::class, 'show'])->name('user.profile');
     Route::patch('/profile', [UserController::class, 'update'])->name('user.update');
@@ -97,8 +97,6 @@ Route::post('/logs/{disk}/{file}/delete', function(string $disk, string $file) {
   Storage::disk($disk)->delete($file);
   return Redirect::back();
 }) -> name("logs.delete");
-
-Route::resource('clubs', ClubController::class);
 
 // Route pour afficher la page de création réussie
 Route::get('/clubs/created/{club}/{token}', [ClubController::class, 'showCreated'])->name('clubs.created');
