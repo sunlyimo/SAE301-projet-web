@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="h-14"></div>
-<div class="max-w-6xl mx-auto px-6 mt-20 mb-16">
+<div class="max-w-6xl mx-auto px-6 mt-10 mb-16">
 
     @if(session('success'))
         <div id="success-message" class="fixed top-10 right-10 z-50 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl animate-fade-in">
@@ -58,7 +58,7 @@
 
                         {{-- Bouton crayon / valider --}}
                         <button type="button" @click="editing = !editing"
-                                class="text-black hover:text-green-600 transition-colors p-1">
+                                class="text-black hover:text-green-600 transition-colors p-1 cursor-pointer">
                             <svg x-show="!editing" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
@@ -90,7 +90,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Nom
-                                <button type="button" onclick="enableField('UTI_NOM')" class="text-black hover:text-green-600 transition-colors">
+                                <button type="button" onclick="enableField('UTI_NOM')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -105,7 +105,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Prénom
-                                <button type="button" onclick="enableField('UTI_PRENOM')" class="text-black hover:text-green-600 transition-colors">
+                                <button type="button" onclick="enableField('UTI_PRENOM')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -137,7 +137,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Email
-                                <button type="button" onclick="enableField('UTI_EMAIL')" class="text-black hover:text-green-600 transition-colors">
+                                <button type="button" onclick="enableField('UTI_EMAIL')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -152,7 +152,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Rue
-                                <button type="button" onclick="enableField('UTI_RUE')" class="text-black hover:text-green-600 transition-colors">
+                                <button type="button" onclick="enableField('UTI_RUE')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -167,7 +167,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Code Postal
-                                <button type="button" onclick="enableField('UTI_CODE_POSTAL')" class="text-black hover:text-green-600 transition-colors">
+                                <button type="button" onclick="enableField('UTI_CODE_POSTAL')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -182,7 +182,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Ville
-                                <button type="button" onclick="enableField('UTI_VILLE')" class="text-black hover:text-green-600 transition-colors">
+                                <button type="button" onclick="enableField('UTI_VILLE')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -197,7 +197,7 @@
                         <div class="flex flex-col gap-2 group">
                             <label class="text-sm font-bold text-gray-500 uppercase tracking-wide flex justify-between">
                                 Téléphone
-                                <button type="button" onclick="enableField('UTI_TELEPHONE')" class="text-black hover:text-green-600 transition-colors">
+                                <button type="button" onclick="enableField('UTI_TELEPHONE')" class="text-black hover:text-green-600 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                     </svg>
@@ -251,7 +251,7 @@
                             name="CLU_ID"
                             x-ref="club"
                             :required="licenceActive"
-                            class="w-full mt-1 p-3 bg-gray-50 border rounded-xl">
+                            class="w-full mt-1 p-3 bg-gray-50 border rounded-xl cursor-pointer">
                             <option value="">-- Choisissez un club --</option>
                             @foreach($clubs as $club)
                                 <option value="{{ $club->CLU_ID }}"
@@ -304,7 +304,7 @@
                 changePassword = !changePassword;
                 if(!changePassword) resetFields();
             "
-                        class="mb-4 px-6 py-3 bg-black text-white rounded-xl shadow hover:bg-green-600 transition-colors">
+                        class="mb-4 px-6 py-3 bg-black text-white rounded-xl shadow hover:bg-green-600 transition-colors cursor-pointer">
                     Changer le mot de passe
                 </button>
 
@@ -318,7 +318,7 @@
                                class="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                placeholder="Entrez votre ancien mot de passe">
                         <button type="button" @click="show = !show"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
                                 aria-label="Afficher / masquer le mot de passe">
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -353,7 +353,7 @@
                                class="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                placeholder="Entrez votre nouveau mot de passe">
                         <button type="button" @click="show = !show"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
                                 aria-label="Afficher / masquer le mot de passe">
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -388,7 +388,7 @@
                                class="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                placeholder="Confirmez le nouveau mot de passe">
                         <button type="button" @click="show = !show"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
                                 aria-label="Afficher / masquer le mot de passe">
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -418,14 +418,14 @@
 
 
             <div class="mt-16 flex justify-center">
-                <button type="submit" class="bg-black font-bold text-white px-16 py-4 rounded-xl text-lg shadow-xl hover:bg-green-600 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 uppercase tracking-tighter">
+                <button type="submit" class="bg-black font-bold text-white px-16 py-4 rounded-xl text-lg shadow-xl hover:bg-green-600 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 uppercase tracking-tighter cursor-pointer">
                     Enregistrer les modifications
                 </button>
             </div>
         </form>
     </div>
     <div class="mt-24 border-t border-gray-100 pt-12">
-        <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center justify-center gap-2">
             Historique des Courses
         </h2>
 
@@ -472,17 +472,17 @@
     </div>
 
     <div class="mt-16 border-t border-gray-100 pt-12">
-        <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center gap-2">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tight flex items-center justify-center gap-2">
             Mes Équipes
         </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="flex flex-wrap justify-center gap-6 mb-10">
             @forelse($allTeams as $equipe)
                 @php
                     $isChef = ($equipe->UTI_ID == Auth::id());
                 @endphp
 
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all group flex flex-col h-full">
+                <div class="w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] max-w-sm bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all group flex flex-col h-full">
 
                     <div class="flex items-center gap-4 mb-4">
                         <div class="w-12 h-12 rounded-xl bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200">
