@@ -32,6 +32,7 @@ Route::post('/contact', [ContactController::class, 'send'])->name('contact.send'
 Route::get('/raids', [RaidController::class, 'index'])->name('raids.index');
 Route::get('/raids/{raid_id}/courses', [CourseController::class, 'coursesByRaid'])->name('raids.courses');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+Route::resource('clubs', ClubController::class);
 
 Route::get('/repair', function() {
     Artisan::call('view:clear');
@@ -54,8 +55,6 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-    Route::resource('clubs', ClubController::class);
 
     // Profil
     Route::get('/profile', [UserController::class, 'show'])->name('user.profile');
@@ -112,7 +111,7 @@ Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/accept', [ClubC
 Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/refuse', [ClubController::class, 'refuseInvitation'])->name('responsable.invitation.refuse');
 Route::post('/responsable/invitation/{club_id}/{user_id}/{token}/admin-accept', [ClubController::class, 'adminAcceptInvitation'])->name('responsable.invitation.admin-accept')->middleware('auth');
 
-// Notifications Admin
+// Admin Notifications
 Route::get('/admin/refusal-notification/{club_id}/{token}', [ClubController::class, 'showAdminRefusalNotification'])->name('admin.refusal-notification');
 Route::post('/admin/recreate-club/{club_id}/{token}', [ClubController::class, 'recreateClub'])->name('admin.recreate-club');
 Route::get('/clubs/created/{club}/{token}', [ClubController::class, 'showCreated'])->name('clubs.created');
