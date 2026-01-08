@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Equipe extends Model
 {
     protected $table = 'vik_equipe';
-    // Clé composite obligatoire pour ta structure
     protected $primaryKey = ['RAI_ID', 'COU_ID', 'EQU_ID'];
     public $incrementing = false;
     public $timestamps = false;
@@ -45,7 +44,7 @@ class Equipe extends Model
                    ->where('vik_appartient.EQU_ID', $this->getAttribute('EQU_ID'))
                    ->where('vik_appartient.RAI_ID', $this->getAttribute('RAI_ID'))
                    ->where('vik_appartient.COU_ID', $this->getAttribute('COU_ID'))
-                   ->select('vik_utilisateur.*') // On ne garde que les infos user
+                   ->select('vik_utilisateur.*')
                    ->get();
     }
 
@@ -55,5 +54,13 @@ class Equipe extends Model
                        ->where('COU_ID', $this->getAttribute('COU_ID'))
                        ->where('EQU_ID', $this->getAttribute('EQU_ID'))
                        ->first();
+    }
+
+    /**
+     * Relation avec la course à laquelle l'équipe participe.
+     */
+    public function course()
+    {
+        return $this->belongsTo(Course::class, ['RAI_ID', 'COU_ID'], ['RAI_ID', 'COU_ID']);
     }
 }
