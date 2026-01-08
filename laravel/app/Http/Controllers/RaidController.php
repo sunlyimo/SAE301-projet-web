@@ -53,11 +53,7 @@ class RaidController extends Controller
     public function index()
     {
         return view('raids.raid')
-<<<<<<< HEAD
         ->with('raids', Raid::getAllRaids());
-=======
-            ->with('raids', Raid::getFuturRaid());
->>>>>>> creation_raid
     }
 
     public function create() /* affichage du formulaire */
