@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
@@ -14,18 +15,19 @@ class RaidResponsable
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next) : Response
     {
-        $userId = auth()->id();
-        $raiId = $request->input('RAI_ID') ?? $request->route('rai_id');
-        if ($raiId) {
-            $isRaidOwner = DB::table('vik_raid')
-                ->where('RAI_ID', $raiId)
-                ->where('UTI_ID', $userId)
-                ->exists();
-            if (!$isRaidOwner) {
-                abord(404);
+        $exists = DB::table('vik_responsable_raid')
+            ->where('UTI_ID', auth()->id())
+            ->exists();
+        Log::warning("id=".auth()->id());
+        if (!$exists) {
+            if($exists = DB::table('vik_administrateur')
+                ->where('UTI_ID', auth()->id())
+                ->exists()) {
+            return $next($request);
             }
+            abort(404);
         }
         return $next($request);
     }

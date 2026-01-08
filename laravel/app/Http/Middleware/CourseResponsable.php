@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
@@ -16,21 +17,18 @@ class CourseResponsable
      */
     public function handle(Request $request, Closure $next)
     {
-        $userId = auth()->id();
-        $raiId = $request->route('rai_id');
-        $couId = $request->route('cou_id');
-        $isOwner = DB::table('vik_course')
-            ->where('RAI_ID', $raiId)
-            ->where('COU_ID', $couId)
-            ->where('UTI_ID', $userId)
+        $exists = DB::table('vik_responsable_course')
+            ->where('UTI_ID', auth()->id())
             ->exists();
-        $isRaidOwner = DB::table('vik_raid')
-            ->where('RAI_ID', $raiId)
-            ->where('UTI_ID', $userId)
-            ->exists();
-        if ($isOwner || $isRaidOwner) {
-            return $next($request);
+        Log::warning("id=".auth()->id());
+        if (!$exists) {
+            if($exists = DB::table('vik_administrateur')
+                    ->where('UTI_ID', auth()->id())
+                    ->exists()) {
+                return $next($request);
+            }
+            abort(404);
         }
-        abort(404);
+        return $next($request);
     }
 }
