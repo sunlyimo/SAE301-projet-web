@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
     // Résultats
     Route::get('/courses/{rai_id}/{cou_id}/resultats', [ResultatController::class, 'index'])->name('resultats.index');
     Route::post('/courses/{rai_id}/{cou_id}/resultats', [ResultatController::class, 'store'])->name('resultats.store');
+    Route::post('/courses/{rai_id}/{cou_id}/resultats/import', [ResultatController::class, 'importCsv'])->name('resultats.import');
 
 
     Route::middleware('course_respo')->group(function () {
