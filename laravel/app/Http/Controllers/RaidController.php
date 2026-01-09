@@ -14,7 +14,7 @@ class RaidController extends Controller
         'RAI_NOM' => 'required|max:50',
         'RAI_LIEU' => 'required|max:100',
         'RAI_WEB' => 'nullable|url',
-        'CLU_ID' => 'required|exists:VIK_CLUB,CLU_ID',
+        'CLU_ID' => 'required|exists:vik_club,CLU_ID',
         'UTI_ID' => 'required|exists:VIK_UTILISATEUR,UTI_ID',
         'RAI_RAID_DATE_DEBUT' => 'required|date|after_or_equal:RAI_INSCRI_DATE_FIN',
         'RAI_RAID_DATE_FIN' => 'required|date|after_or_equal:RAI_RAID_DATE_DEBUT',
@@ -51,7 +51,7 @@ class RaidController extends Controller
     ];
 
     public function index(Request $request) {
-    $raids = Raid::all();
+    $raids = Raid::getFuturRaid();
     if ($request->wantsJson() || $request->query('format') === 'json') {
         return response()->json($raids);
     }
@@ -60,7 +60,7 @@ class RaidController extends Controller
 
     public function create() /* affichage du formulaire */
     {
-        $clubs = DB::table('VIK_CLUB')->orderBy('CLU_NOM')->pluck('CLU_NOM', 'CLU_ID');
+        $clubs = DB::table('vik_club')->orderBy('CLU_NOM')->pluck('CLU_NOM', 'CLU_ID');
 
         $responsables = DB::table('vik_utilisateur')
             ->select('UTI_ID', 'UTI_EMAIL', 'UTI_TELEPHONE', DB::raw("CONCAT(UTI_PRENOM, ' ', UTI_NOM) as name"))
@@ -77,7 +77,7 @@ class RaidController extends Controller
             'RAI_NOM' => 'required|max:50',
             'RAI_LIEU' => 'required|max:100',
             'RAI_WEB' => 'nullable',
-            'CLU_ID' => 'required|exists:VIK_CLUB,CLU_ID',
+            'CLU_ID' => 'required|exists:vik_club,CLU_ID',
             'UTI_ID' => 'required|exists:vik_utilisateur,UTI_ID',
             'RAI_RAID_DATE_DEBUT' => 'required|date',
             'RAI_RAID_DATE_FIN' => 'required|date|after_or_equal:RAI_RAID_DATE_DEBUT',
@@ -204,7 +204,7 @@ class RaidController extends Controller
             abort(403, 'Vous n\'êtes pas autorisé à modifier ce raid.');
         }
 
-        $clubs = DB::table('VIK_CLUB')->orderBy('CLU_NOM')->pluck('CLU_NOM', 'CLU_ID');
+        $clubs = DB::table('vik_club')->orderBy('CLU_NOM')->pluck('CLU_NOM', 'CLU_ID');
 
         $responsables = DB::table('vik_utilisateur')
             ->select('UTI_ID', 'UTI_EMAIL', 'UTI_TELEPHONE', DB::raw("CONCAT(UTI_PRENOM, ' ', UTI_NOM) as name"))
@@ -237,7 +237,7 @@ class RaidController extends Controller
             'RAI_NOM' => 'required|max:50',
             'RAI_LIEU' => 'required|max:100',
             'RAI_WEB' => 'nullable',
-            'CLU_ID' => 'required|exists:VIK_CLUB,CLU_ID',
+            'CLU_ID' => 'required|exists:vik_club,CLU_ID',
             'UTI_ID' => 'required|exists:vik_utilisateur,UTI_ID',
             'RAI_RAID_DATE_DEBUT' => 'required|date|after_or_equal:RAI_INSCRI_DATE_FIN',
             'RAI_RAID_DATE_FIN' => 'required|date|after_or_equal:RAI_RAID_DATE_DEBUT',
@@ -267,7 +267,7 @@ class RaidController extends Controller
             $validated['RAI_CONTACT'] = $user->UTI_EMAIL;
             $validated['RAI_TELEPHONE'] = $user->UTI_TELEPHONE;
 
-            DB::table('VIK_RESPONSABLE_RAID')->insertOrIgnore([
+            DB::table('vik_responsable_raid')->insertOrIgnore([
                 'UTI_ID' => $user->UTI_ID,
                 'UTI_EMAIL' => $user->UTI_EMAIL,
                 'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
