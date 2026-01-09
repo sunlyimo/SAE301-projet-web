@@ -106,7 +106,7 @@
                                         @csrf
                                         @method('PATCH')
                                         <label class="block">
-                                            <span class="text-xs font-bold text-gray-700 mb-1 block">Numéro Pass'compétition (RPPS) :</span>
+                                            <span class="text-xs font-bold text-gray-700 mb-1 block">Numéro Pass'compétition (PPS) :</span>
                                             <div class="flex items-center gap-2">
                                                 <input type="text"
                                                        name="rpps"
@@ -114,9 +114,9 @@
                                                        placeholder="Ex: 12345678901"
                                                        maxlength="11"
                                                        pattern="[0-9]{11}"
-                                                       class="flex-1 px-3 py-2 text-sm border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 {{ $inscriptionsOuvertes ? '' : 'bg-gray-100 cursor-not-allowed' }}"
-                                                       {{ $inscriptionsOuvertes && $isChef ? '' : 'readonly' }}>
-                                                @if($inscriptionsOuvertes && $isChef)
+                                                       class="flex-1 px-3 py-2 text-sm border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 {{ ($inscriptionsOuvertes || $isCourseResponsable) ? '' : 'bg-gray-100 cursor-not-allowed' }}"
+                                                       {{ ($inscriptionsOuvertes && $isChef) || $isCourseResponsable ? '' : 'readonly' }}>
+                                                @if(($inscriptionsOuvertes && $isChef) || $isCourseResponsable)
                                                     <button type="submit"
                                                             class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-xs font-bold rounded-lg transition-colors">
                                                         Enregistrer
@@ -158,7 +158,7 @@
                                 @endif
                             </div>
 
-                            {{-- Affichage du RPPS si pas de licence --}}
+                            {{-- Affichage du PPS si pas de licence --}}
                             @if(!$membre->utilisateur->UTI_LICENCE)
                                 <div class="mt-3 pt-3 border-t border-gray-200">
                                     <form action="{{ route('teams.update-rpps', [$equipe->RAI_ID, $equipe->COU_ID, $equipe->EQU_ID, $membre->utilisateur->UTI_ID]) }}" method="POST" class="space-y-2">
@@ -173,9 +173,9 @@
                                                        placeholder="Ex: 12345678901"
                                                        maxlength="11"
                                                        pattern="[0-9]{11}"
-                                                       class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $inscriptionsOuvertes ? '' : 'bg-gray-100 cursor-not-allowed' }}"
-                                                       {{ $inscriptionsOuvertes && $isChef ? '' : 'readonly' }}>
-                                                @if($inscriptionsOuvertes && $isChef)
+                                                       class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ ($inscriptionsOuvertes || $isCourseResponsable) ? '' : 'bg-gray-100 cursor-not-allowed' }}"
+                                                       {{ ($inscriptionsOuvertes && $isChef) || $isCourseResponsable ? '' : 'readonly' }}>
+                                                @if(($inscriptionsOuvertes && $isChef) || $isCourseResponsable)
                                                     <button type="submit"
                                                             class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors">
                                                         Enregistrer
