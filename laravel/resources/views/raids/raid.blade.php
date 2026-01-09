@@ -30,7 +30,36 @@
         <div class="w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] group bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col relative">
 
             @auth
-            @if(auth()->user()->UTI_ID == $raid->UTI_ID)
+            @php
+                $canEdit = false;
+                if (auth()->check()) {
+                    $userId = auth()->user()->UTI_ID;
+                    // owner of raid
+                    if ($userId == $raid->UTI_ID) {
+                        $canEdit = true;
+                    }
+                    // admin
+                    try {
+                        if (method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin()) {
+                            $canEdit = true;
+                        }
+                    } catch (\Throwable $e) {
+                        // ignore
+                    }
+                    // club responsable (check vik_responsable_club)
+                    if (!$canEdit && isset($raid->CLU_ID)) {
+                        $isClubResp = \Illuminate\Support\Facades\DB::table('vik_responsable_club')
+                            ->where('UTI_ID', $userId)
+                            ->where('CLU_ID', $raid->CLU_ID)
+                            ->exists();
+                        if ($isClubResp) {
+                            $canEdit = true;
+                        }
+                    }
+                }
+            @endphp
+
+            @if($canEdit)
             <div class="absolute top-4 right-4 z-20">
                 <a href="{{ route('raids.edit', ['raid_id' => $raid->RAI_ID]) }}"
                     class="flex items-center justify-center w-10 h-10 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full text-gray-700 hover:text-green-600 hover:border-green-600 shadow-sm transition-all"

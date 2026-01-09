@@ -55,6 +55,7 @@ class Raid extends Model
         ->selectRaw("
             vik_raid.RAI_ID,
             vik_raid.UTI_ID,
+            vik_raid.CLU_ID,
             RAI_NOM, 
             RAI_INSCRI_DATE_DEBUT, 
             RAI_INSCRI_DATE_FIN, 
@@ -67,7 +68,7 @@ class Raid extends Model
         ->leftJoin("vik_course","vik_course.RAI_ID","=","vik_raid.RAI_ID")
         ->leftJoin("vik_utilisateur","vik_utilisateur.UTI_ID","=","vik_raid.UTI_ID")
         ->groupBy(
-            "vik_raid.RAI_ID","vik_raid.UTI_ID","RAI_NOM", "RAI_INSCRI_DATE_DEBUT", 
+            "vik_raid.RAI_ID","vik_raid.UTI_ID","vik_raid.CLU_ID","RAI_NOM", "RAI_INSCRI_DATE_DEBUT", 
             "RAI_INSCRI_DATE_FIN", "RAI_RAID_DATE_DEBUT", 
             "RAI_RAID_DATE_FIN", "RAI_LIEU", "responsable_nom"
         )
