@@ -14,7 +14,7 @@ class Raid extends Model
         ->leftJoin("vik_course","vik_course.RAI_ID","=","vik_raid.RAI_ID")
         ->leftJoin("vik_utilisateur","vik_utilisateur.UTI_ID","=","vik_raid.UTI_ID")
         ->where("RAI_RAID_DATE_DEBUT", ">", now())
-        ->groupBy("vik_raid.RAI_ID","vik_raid.UTI_ID","RAI_NOM" , "RAI_INSCRI_DATE_DEBUT" ,"RAI_INSCRI_DATE_FIN" , "RAI_RAID_DATE_DEBUT" , "RAI_RAID_DATE_FIN" , "RAI_LIEU")
+        ->groupBy("vik_raid.RAI_ID", "vik_utilisateur.UTI_NOM","vik_raid.UTI_ID","RAI_NOM" , "RAI_INSCRI_DATE_DEBUT" ,"RAI_INSCRI_DATE_FIN" , "RAI_RAID_DATE_DEBUT" , "RAI_RAID_DATE_FIN" , "RAI_LIEU")
         ->get();
         return $raids;
     }
