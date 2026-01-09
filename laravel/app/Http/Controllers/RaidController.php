@@ -50,11 +50,13 @@ class RaidController extends Controller
         'RAI_CONTACT.required' => "L'adresse e-mail du contact est obligatoire."
     ];
 
-    public function index()
-    {
-        return view('raids.raid')
-        ->with('raids', Raid::getFuturRaid());
+    public function index(Request $request) {
+    $raids = Raid::all();
+    if ($request->wantsJson() || $request->query('format') === 'json') {
+        return response()->json($raids);
     }
+    return view('raids.raid', compact('raids'));
+}
 
     public function create() /* affichage du formulaire */
     {

@@ -14,7 +14,7 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function show()
+    public function show(Request $request)
     {
 
         $user = Auth::user()->load('coureur');
@@ -53,6 +53,10 @@ class UserController extends Controller
         })->filter()->unique(function ($course) {
             return $course->RAI_ID . '-' . $course->COU_ID;
         });
+        if ($request->wantsJson() || $request->query('format') === 'json') {
+                return response()->json($user);
+            }
+
         return view('user.profile', compact('user', 'allTeams', 'uniqueCourses', 'clubs'));
     }
 

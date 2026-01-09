@@ -1,0 +1,134 @@
+openapi: 3.0.0
+info:
+  title: "SAE3 Group 7"
+  description: "Documentation de l'API pour l'application Client-Serveur de gestion de raids. Cette API permet de manipuler les raids, les courses et les résultats."
+  version: "1.0.0"
+
+servers:
+  - url: "https://g7-devc3.unicaen.fr"
+    description: "Serveur de production (Groupe 7)"
+
+paths:
+  /raids:
+    get:
+      summary: "Récupérer la liste de tous les raids"
+      description: "Retourne un tableau JSON de tous les raids enregistrés. Utilisez ?format=json pour forcer le retour JSON."
+      parameters:
+        - name: format
+          in: query
+          description: "Format de réponse souhaité"
+          required: false
+          schema:
+            type: string
+            example: "json"
+      responses:
+        '200':
+          description: "Liste des raids récupérée avec succès"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Raid'
+
+  /courses:
+    get:
+      summary: "Liste de toutes les courses"
+      parameters:
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Tableau de toutes les courses"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+
+components:
+  schemas:
+    Raid:
+      type: object
+      properties:
+        RAI_ID:
+          type: integer
+          description: "ID unique du raid"
+        CLU_ID:
+          type: integer
+          description: "ID du club organisateur"
+        UTI_ID:
+          type: integer
+          description: "ID du responsable du raid"
+        RAI_NOM:
+          type: string
+        RAI_RAID_DATE_DEBUT:
+          type: string
+          format: date-time
+        RAI_RAID_DATE_FIN:
+          type: string
+          format: date-time
+        RAI_CONTACT:
+          type: string
+          format: email
+        RAI_WEB:
+          type: string
+        RAI_LIEU:
+          type: string
+        RAI_IMAGE:
+          type: string
+          nullable: true
+
+    Course:
+      type: object
+      properties:
+        COU_ID:
+          type: integer
+        RAI_ID:
+          type: integer
+        TYP_ID:
+          type: integer
+          description: "Type de course (Trail, VTT, etc.)"
+        DIF_NIVEAU:
+          type: integer
+          description: "Niveau de difficulté"
+        UTI_ID:
+          type: integer
+          description: "Responsable de la course"
+        COU_NOM:
+          type: string
+        COU_PRIX:
+          type: number
+          format: float
+        COU_PARTICIPANT_MAX:
+          type: integer
+        COU_LIEU:
+          type: string
+
+    Club:
+      type: object
+      properties:
+        CLU_ID:
+          type: integer
+        CLU_NOM:
+          type: string
+        CLU_VILLE:
+          type: string
+        CLU_CODE_POSTAL:
+          type: string
+
+    User:
+      type: object
+      properties:
+        UTI_ID:
+          type: integer
+        UTI_NOM:
+          type: string
+        UTI_PRENOM:
+          type: string
+        UTI_EMAIL:
+          type: string

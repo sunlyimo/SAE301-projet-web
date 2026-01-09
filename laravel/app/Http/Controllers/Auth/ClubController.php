@@ -16,13 +16,16 @@ use App\Mail\ResponsableInvitation as ResponsableInvitationMail;
 
 class ClubController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $clubs = Club::with('responsable')->get();
 
         // Collect club IDs that currently have a pending responsable invitation
         $pendingClubIds = ResponsableInvitationModel::where('status', 'pending')->pluck('club_id')->unique()->toArray();
 
+    if ($request->wantsJson() || $request->query('format') === 'json') {
+            return response()->json($clubs);
+        }
         return view('clubs.index', compact('clubs', 'pendingClubIds'));
     }
 

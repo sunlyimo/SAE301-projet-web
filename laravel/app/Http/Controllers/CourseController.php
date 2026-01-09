@@ -187,7 +187,9 @@ class CourseController extends Controller
         $course->delete();
 
         return redirect()->route('courses.my-courses')->with('success', 'Course supprimée avec succès.');
-    }    public function coursesByRaid($raid_id)
+    }    
+    
+    public function coursesByRaid($raid_id, Request $request)
     {
         $raid = \App\Models\Raid::findOrFail($raid_id);
         $courses = Course::where('RAI_ID', $raid_id)
@@ -204,6 +206,10 @@ class CourseController extends Controller
                                             ->where('RAI_ID', $course->RAI_ID)
                                             ->where('COU_ID', $course->COU_ID)
                                             ->count();
+        }
+
+        if ($request->wantsJson() || $request->query('format') === 'json') {
+            return response()->json($courses);
         }
 
         return view('courses.index', compact('courses', 'raid'));
