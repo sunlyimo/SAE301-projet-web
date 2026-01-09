@@ -302,6 +302,9 @@
     </script>
     @endif
 
+    {{-- Allow child views to inject page-specific scripts --}}
+    @yield('scripts')
+
 </body>
 
 </html>
