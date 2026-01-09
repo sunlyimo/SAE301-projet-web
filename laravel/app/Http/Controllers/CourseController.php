@@ -202,7 +202,7 @@ class CourseController extends Controller
                                                         ->where('COU_ID', $course->COU_ID)
                                                         ->count();
 
-            $course->participants_count = \DB::table('vik_appartient')
+            $course->participants_count = DB::table('vik_appartient')
                                             ->where('RAI_ID', $course->RAI_ID)
                                             ->where('COU_ID', $course->COU_ID)
                                             ->count();
