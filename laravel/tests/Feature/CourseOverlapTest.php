@@ -68,6 +68,22 @@ class CourseOverlapTest extends TestCase
         // Créer le responsable de course
         $this->createCourseResponsable($user);
 
+        // Créer le responsable de raid
+        \DB::table('vik_responsable_raid')->insert([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+        ]);
+
         // Créer un raid
         $raid = Raid::create([
             'CLU_ID' => $club->CLU_ID,
@@ -160,6 +176,22 @@ class CourseOverlapTest extends TestCase
 
         // Créer les responsables de course
         $this->createCourseResponsable($user1);
+
+        // Créer le responsable de raid
+        \DB::table('vik_responsable_raid')->insert([
+            'UTI_ID' => $user1->UTI_ID,
+            'UTI_NOM_UTILISATEUR' => $user1->UTI_NOM_UTILISATEUR,
+            'UTI_EMAIL' => $user1->UTI_EMAIL,
+            'UTI_NOM' => $user1->UTI_NOM,
+            'UTI_PRENOM' => $user1->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user1->UTI_DATE_NAISSANCE,
+            'UTI_RUE' => $user1->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user1->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user1->UTI_VILLE,
+            'UTI_TELEPHONE' => $user1->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user1->UTI_LICENCE,
+            'UTI_MOT_DE_PASSE' => $user1->UTI_MOT_DE_PASSE,
+        ]);
 
         // Créer un raid
         $raid = Raid::create([
@@ -281,6 +313,22 @@ class CourseOverlapTest extends TestCase
 
         // Créer le responsable de course
         $this->createCourseResponsable($user);
+
+        // Créer le responsable de raid
+        \DB::table('vik_responsable_raid')->insert([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+        ]);
 
         $raid = Raid::create([
             'CLU_ID' => $club->CLU_ID,

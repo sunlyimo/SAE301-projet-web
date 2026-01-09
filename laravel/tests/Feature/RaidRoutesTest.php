@@ -108,8 +108,26 @@ class RaidRoutesTest extends TestCase
         $data = $this->createRaidWithClub();
         $raid = $data['raid'];
         $user = $data['user'];
+        $club = $data['club'];
 
-        $response = $this->actingAs($user)->get(route('raids.edit', $raid->RAI_ID));
+        // Ajouter l'utilisateur comme responsable du club
+        \DB::table('vik_responsable_club')->insert([
+            'UTI_ID' => $user->UTI_ID,
+            'CLU_ID' => $club->CLU_ID,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('raids.edit', ['raid_id' => $raid->RAI_ID]));
         $response->assertStatus(200);
     }
 

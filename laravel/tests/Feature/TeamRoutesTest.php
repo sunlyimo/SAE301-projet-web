@@ -117,6 +117,23 @@ class TeamRoutesTest extends TestCase
         $this->seedReferenceData();
         $user = User::factory()->create();
         $this->makeUserCourseResponsable($user);
+
+        // Ajouter l'utilisateur comme responsable de raid
+        \DB::table('vik_responsable_raid')->insertOrIgnore([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+        ]);
+
         $raid = Raid::create([
             'RAI_NOM' => 'Test Raid',
             'CLU_ID' => Club::factory()->create()->CLU_ID,
@@ -162,6 +179,23 @@ class TeamRoutesTest extends TestCase
         $this->seedReferenceData();
         $user = User::factory()->create();
         $this->makeUserCourseResponsable($user);
+
+        // Ajouter l'utilisateur comme responsable de raid
+        \DB::table('vik_responsable_raid')->insertOrIgnore([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+        ]);
+
         $raid = Raid::create([
             'RAI_NOM' => 'Test Raid',
             'CLU_ID' => Club::factory()->create()->CLU_ID,
@@ -207,6 +241,23 @@ class TeamRoutesTest extends TestCase
         $this->seedReferenceData();
         $user = User::factory()->create();
         $this->makeUserCourseResponsable($user);
+
+        // Ajouter l'utilisateur comme responsable de raid
+        \DB::table('vik_responsable_raid')->insertOrIgnore([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+        ]);
+
         $raid = Raid::create([
             'RAI_NOM' => 'Test Raid',
             'CLU_ID' => Club::factory()->create()->CLU_ID,
@@ -252,6 +303,23 @@ class TeamRoutesTest extends TestCase
         $this->seedReferenceData();
         $user = User::factory()->create();
         $this->makeUserCourseResponsable($user);
+
+        // Ajouter l'utilisateur comme responsable de raid
+        \DB::table('vik_responsable_raid')->insertOrIgnore([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+        ]);
+
         $raid = Raid::create([
             'RAI_NOM' => 'Test Raid',
             'CLU_ID' => Club::factory()->create()->CLU_ID,
@@ -298,6 +366,23 @@ class TeamRoutesTest extends TestCase
         $this->seedReferenceData();
         $user = User::factory()->create();
         $this->makeUserCourseResponsable($user);
+
+        // Ajouter l'utilisateur comme responsable de raid
+        \DB::table('vik_responsable_raid')->insertOrIgnore([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+        ]);
+
         $raid = Raid::create([
             'RAI_NOM' => 'Test Raid',
             'CLU_ID' => Club::factory()->create()->CLU_ID,
@@ -343,6 +428,23 @@ class TeamRoutesTest extends TestCase
         $this->seedReferenceData();
         $user = User::factory()->create();
         $this->makeUserCourseResponsable($user);
+
+        // Ajouter l'utilisateur comme responsable de raid
+        \DB::table('vik_responsable_raid')->insertOrIgnore([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+        ]);
+
         $raid = Raid::create([
             'RAI_NOM' => 'Test Raid',
             'CLU_ID' => Club::factory()->create()->CLU_ID,
@@ -389,6 +491,23 @@ class TeamRoutesTest extends TestCase
         $this->seedReferenceData();
         $user = User::factory()->create();
         $this->makeUserCourseResponsable($user);
+
+        // Ajouter l'utilisateur comme responsable de raid
+        \DB::table('vik_responsable_raid')->insertOrIgnore([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+        ]);
+
         $raid = Raid::create([
             'RAI_NOM' => 'Test Raid',
             'CLU_ID' => Club::factory()->create()->CLU_ID,
@@ -434,6 +553,23 @@ class TeamRoutesTest extends TestCase
         $this->seedReferenceData();
         $user = User::factory()->create();
         $this->makeUserCourseResponsable($user);
+
+        // Ajouter l'utilisateur comme responsable de raid
+        \DB::table('vik_responsable_raid')->insertOrIgnore([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+        ]);
+
         $raid = Raid::create([
             'RAI_NOM' => 'Test Raid',
             'CLU_ID' => Club::factory()->create()->CLU_ID,
@@ -479,6 +615,23 @@ class TeamRoutesTest extends TestCase
         $this->seedReferenceData();
         $user = User::factory()->create();
         $this->makeUserCourseResponsable($user);
+
+        // Ajouter l'utilisateur comme responsable de raid
+        \DB::table('vik_responsable_raid')->insertOrIgnore([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+        ]);
+
         $raid = Raid::create([
             'RAI_NOM' => 'Test Raid',
             'CLU_ID' => Club::factory()->create()->CLU_ID,
@@ -517,6 +670,23 @@ class TeamRoutesTest extends TestCase
         $this->seedReferenceData();
         $user = User::factory()->create();
         $this->makeUserCourseResponsable($user);
+
+        // Ajouter l'utilisateur comme responsable de raid
+        \DB::table('vik_responsable_raid')->insertOrIgnore([
+            'UTI_ID' => $user->UTI_ID,
+            'UTI_EMAIL' => $user->UTI_EMAIL,
+            'UTI_NOM' => $user->UTI_NOM,
+            'UTI_PRENOM' => $user->UTI_PRENOM,
+            'UTI_DATE_NAISSANCE' => $user->UTI_DATE_NAISSANCE,
+            'UTI_MOT_DE_PASSE' => $user->UTI_MOT_DE_PASSE,
+            'UTI_NOM_UTILISATEUR' => $user->UTI_NOM_UTILISATEUR,
+            'UTI_RUE' => $user->UTI_RUE,
+            'UTI_CODE_POSTAL' => $user->UTI_CODE_POSTAL,
+            'UTI_VILLE' => $user->UTI_VILLE,
+            'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
+            'UTI_LICENCE' => $user->UTI_LICENCE,
+        ]);
+
         $raid = Raid::create([
             'RAI_NOM' => 'Test Raid',
             'CLU_ID' => Club::factory()->create()->CLU_ID,

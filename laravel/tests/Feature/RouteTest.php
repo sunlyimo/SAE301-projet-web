@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RouteTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test que la page d'accueil retourne un statut 200.
      */

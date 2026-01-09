@@ -35,7 +35,6 @@ Route::get('/contact', [ContactController::class, 'show'])->name('contact.show')
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 Route::get('/raids', [RaidController::class, 'index'])->name('raids.index');
-Route::get('/raids/{raid_id}/edit', [RaidController::class, 'edit'])->name('raids.edit');
 Route::put('/raids/{raid_id}', [RaidController::class, 'update'])->name('raids.update');
 Route::get('/raids/{raid_id}/courses', [CourseController::class, 'coursesByRaid'])->name('raids.courses');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
