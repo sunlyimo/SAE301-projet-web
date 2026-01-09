@@ -267,7 +267,7 @@ class RaidController extends Controller
             $validated['RAI_CONTACT'] = $user->UTI_EMAIL;
             $validated['RAI_TELEPHONE'] = $user->UTI_TELEPHONE;
 
-            DB::table('VIK_RESPONSABLE_RAID')->insertOrIgnore([
+            DB::table('vik_responsable_raid')->insertOrIgnore([
                 'UTI_ID' => $user->UTI_ID,
                 'UTI_EMAIL' => $user->UTI_EMAIL,
                 'UTI_TELEPHONE' => $user->UTI_TELEPHONE,
