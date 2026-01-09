@@ -51,7 +51,7 @@ class RaidController extends Controller
     ];
 
     public function index(Request $request) {
-    $raids = Raid::all();
+    $raids = Raid::getFuturRaid();
     if ($request->wantsJson() || $request->query('format') === 'json') {
         return response()->json($raids);
     }
