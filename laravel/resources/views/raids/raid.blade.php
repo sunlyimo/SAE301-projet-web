@@ -7,7 +7,7 @@
     <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-200 pb-6">
         <div>
             <h1 class="text-4xl font-black text-gray-800 tracking-tight uppercase">Les Raids</h1>
-            <p class="text-gray-500 mt-2">Tous les raids à venir.</p>
+            <p class="text-gray-500 mt-2">Tous les raids.</p>
         </div>
 
         @php
