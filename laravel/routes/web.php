@@ -123,9 +123,9 @@ Route::middleware('auth')->group(function () {
       Route::post('/raids', [RaidController::class, 'store'])->name('raids.store');
       Route::get('/raids/{raid_id}/edit', [RaidController::class, 'edit'])->name('raids.edit');
       Route::patch('/raids/{raid_id}', [RaidController::class, 'update'])->name('raids.update');
-      Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+      
     });
-
+  Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     Route::middleware(RaidResponsable::class)->group(function () {
     });
 
