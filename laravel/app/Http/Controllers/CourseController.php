@@ -38,7 +38,11 @@ class CourseController extends Controller
     public function create(Request $request)
     {
         $types = TypeCourse::all();
-        $users = User::orderBy('UTI_NOM_UTILISATEUR')->get();
+        // Only users with a licence should be selectable as course responsables
+        $users = User::whereNotNull('UTI_LICENCE')
+                     ->where('UTI_LICENCE', '<>', '')
+                     ->orderBy('UTI_NOM_UTILISATEUR')
+                     ->get();
         $raids = \App\Models\Raid::where('UTI_ID', auth()->id())->get();
 
         $selectedRaidId = $request->query('raid_id');
@@ -98,7 +102,11 @@ class CourseController extends Controller
                         ->firstOrFail();
 
         $types = TypeCourse::all();
-        $users = User::orderBy('UTI_NOM_UTILISATEUR')->get();
+        // Only users with a licence should be selectable as course responsables
+        $users = User::whereNotNull('UTI_LICENCE')
+                 ->where('UTI_LICENCE', '<>', '')
+                 ->orderBy('UTI_NOM_UTILISATEUR')
+                 ->get();
 
         // Vérifier les permissions de l'utilisateur
         $isAdmin = DB::table('vik_administrateur')->where('UTI_ID', auth()->id())->exists();
