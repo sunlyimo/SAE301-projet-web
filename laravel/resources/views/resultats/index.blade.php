@@ -163,36 +163,35 @@
         <div class="p-8">
             <div class="bg-blue-50 border-l-4 border-blue-600 p-4 mb-6 rounded-r-xl">
                 <h3 class="font-black text-blue-900 text-sm uppercase tracking-wider mb-2">Format du fichier CSV</h3>
-                <p class="text-sm text-blue-800 mb-3">Le fichier CSV doit contenir les colonnes suivantes (dans n'importe quel ordre):</p>
+                <p class="text-sm text-blue-800 mb-3">Le fichier CSV doit contenir les colonnes suivantes (séparées par des points-virgules):</p>
                 <div class="bg-white p-3 rounded-xl font-mono text-xs border border-blue-200">
-                    <div class="grid grid-cols-4 gap-2 font-bold text-blue-900 mb-2">
-                        <span>equ_id</span>
-                        <span>rang</span>
-                        <span>temps</span>
-                        <span>points</span>
+                    <div class="font-bold text-blue-900 mb-2">
+                        EQUIPE;TEMPS;PTS
                     </div>
-                    <div class="grid grid-cols-4 gap-2 text-gray-600">
-                        <span>1</span>
-                        <span>1</span>
-                        <span>00:45:30</span>
-                        <span>100</span>
+                    <div class="text-gray-600 mb-1">
+                        Les Balises Furtives;02:45:00;199
                     </div>
-                    <div class="grid grid-cols-4 gap-2 text-gray-600">
-                        <span>2</span>
-                        <span>2</span>
-                        <span>00:52:15</span>
-                        <span>90</span>
+                    <div class="text-gray-600">
+                        Les Traqueurs du Nord;03:01:25;145
                     </div>
                 </div>
-                <p class="text-xs text-blue-700 mt-3">
-                    <strong>Note:</strong> Le format du temps doit être HH:MM:SS (ex: 00:45:30)
-                </p>
-                <a href="{{ asset('exemple_import_resultats.csv') }}" download class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-bold text-xs mt-2 transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    Télécharger un fichier CSV exemple
-                </a>
+                <div class="mt-3 space-y-2 text-xs text-blue-700">
+                    <p>
+                        <strong>EQUIPE:</strong> Le nom exact de l'équipe (doit correspondre au nom dans la base de données)
+                    </p>
+                    <p>
+                        <strong>TEMPS:</strong> Format HH:MM:SS (ex: 02:45:00)
+                    </p>
+                    <p>
+                        <strong>PTS:</strong> Nombre de points obtenus
+                    </p>
+                    <p class="text-blue-600 font-bold">
+                        ⚠️ Le séparateur doit être un point-virgule (;), pas une virgule
+                    </p>
+                    <p class="text-gray-600">
+                        Note: Le rang est calculé automatiquement en fonction des points (ordre décroissant)
+                    </p>
+                </div>
             </div>
 
             <form action="{{ route('resultats.import', [$course->RAI_ID, $course->COU_ID]) }}" method="POST" enctype="multipart/form-data">

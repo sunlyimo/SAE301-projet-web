@@ -81,9 +81,9 @@ class ResultatController extends Controller
         $file = $request->file('csv_file');
         $path = $file->getRealPath();
 
-        // Lire le fichier et parser avec des virgules comme délimiteur
+        // Lire le fichier et parser avec des point-virgules comme délimiteur
         $csv = array_map(function($line) {
-            return str_getcsv($line, ',');
+            return str_getcsv($line, ';');
         }, file($path));
 
         // Vérifier que le CSV n'est pas vide
@@ -94,22 +94,9 @@ class ResultatController extends Controller
         // Récupérer les en-têtes (première ligne)
         $headers = array_map('trim', $csv[0]);
 
-        // Vérifier que le fichier utilise bien des virgules comme séparateur
-        // Si la première ligne n'a qu'une seule colonne, c'est probablement un autre délimiteur
-        if (count($headers) === 1 && strpos($headers[0], ':') !== false) {
-            return back()->with('error', 'Format CSV invalide. Le fichier doit utiliser des virgules (,) comme séparateur, pas des deux-points (:).');
-        }
-
+        // Vérifier que le fichier a au moins une colonne
         if (count($headers) === 1) {
-            return back()->with('error', 'Format CSV invalide. Le fichier doit utiliser des virgules (,) comme séparateur entre les colonnes.');
-        }
-
-        // Vérifier que les colonnes nécessaires existent
-        $requiredColumns = ['equ_id', 'rang', 'temps', 'points'];
-        $missingColumns = array_diff($requiredColumns, array_map('strtolower', $headers));
-
-        if (!empty($missingColumns)) {
-            return back()->with('error', 'Colonnes manquantes dans le CSV: ' . implode(', ', $missingColumns));
+            return back()->with('error', 'Format CSV invalide. Le fichier doit utiliser des points-virgules (;) comme séparateur entre les colonnes.');
         }
 
         // Créer un mapping des colonnes
@@ -118,8 +105,22 @@ class ResultatController extends Controller
             $columnIndexes[strtolower(trim($header))] = $index;
         }
 
+        // Vérifier que les colonnes nécessaires existent
+        $requiredColumns = ['equipe', 'temps', 'pts'];
+        $missingColumns = array_diff($requiredColumns, array_keys($columnIndexes));
+
+        if (!empty($missingColumns)) {
+            return back()->with('error', 'Colonnes manquantes dans le CSV: ' . implode(', ', $missingColumns) . '. Colonnes disponibles: ' . implode(', ', array_keys($columnIndexes)));
+        }
+
         $imported = 0;
         $errors = [];
+
+        // Récupérer toutes les équipes de la course
+        $equipes = Equipe::where('RAI_ID', $rai_id)
+                        ->where('COU_ID', $cou_id)
+                        ->get()
+                        ->keyBy('EQU_NOM');
 
         // Traiter chaque ligne (sauf la première qui contient les en-têtes)
         for ($i = 1; $i < count($csv); $i++) {
@@ -131,19 +132,15 @@ class ResultatController extends Controller
             }
 
             try {
-                $equId = trim($row[$columnIndexes['equ_id']] ?? '');
-                $rang = trim($row[$columnIndexes['rang']] ?? '');
+                $nomEquipe = trim($row[$columnIndexes['equipe']] ?? '');
                 $temps = trim($row[$columnIndexes['temps']] ?? '');
-                $points = intval(trim($row[$columnIndexes['points']] ?? 0));
+                $points = intval(trim($row[$columnIndexes['pts']] ?? 0));
 
-                // Vérifier que l'équipe existe
-                $equipe = Equipe::where('RAI_ID', $rai_id)
-                                ->where('COU_ID', $cou_id)
-                                ->where('EQU_ID', $equId)
-                                ->first();
+                // Trouver l'équipe par son nom
+                $equipe = $equipes->get($nomEquipe);
 
                 if (!$equipe) {
-                    $errors[] = "Ligne " . ($i + 1) . ": Équipe ID $equId introuvable.";
+                    $errors[] = "Ligne " . ($i + 1) . ": Équipe '$nomEquipe' introuvable pour cette course.";
                     continue;
                 }
 
@@ -160,18 +157,32 @@ class ResultatController extends Controller
                     [
                         'RAI_ID' => $rai_id,
                         'COU_ID' => $cou_id,
-                        'EQU_ID' => $equId
+                        'EQU_ID' => $equipe->EQU_ID
                     ],
                     [
-                        'RES_RANG'  => $rang,
                         'RES_TEMPS' => $temps,
-                        'RES_POINT' => $points
+                        'RES_POINT' => $points,
+                        'RES_RANG' => 0 // Sera calculé après
                     ]
                 );
 
                 $imported++;
             } catch (\Exception $e) {
                 $errors[] = "Ligne " . ($i + 1) . ": " . $e->getMessage();
+            }
+        }
+
+        // Calculer les rangs en fonction des points (ordre décroissant)
+        if ($imported > 0) {
+            $resultats = Resultat::where('RAI_ID', $rai_id)
+                                ->where('COU_ID', $cou_id)
+                                ->orderByDesc('RES_POINT')
+                                ->get();
+
+            $rang = 1;
+            foreach ($resultats as $resultat) {
+                $resultat->RES_RANG = $rang++;
+                $resultat->save();
             }
         }
 
