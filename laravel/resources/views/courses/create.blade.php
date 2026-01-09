@@ -230,19 +230,36 @@
             const selectedOption = this.options[this.selectedIndex];
             const startDate = selectedOption.getAttribute('data-start');
             const endDate = selectedOption.getAttribute('data-end');
-            
+
             const debutInput = document.querySelector('input[name="COU_DATE_DEBUT"]');
             const finInput = document.querySelector('input[name="COU_DATE_FIN"]');
-            
+
+            // Helper: convert server datetime string to a local `datetime-local` value
+            function toLocalDateTimeValue(dateStr) {
+                if (!dateStr) return '';
+                // Normalize space to 'T' if present (e.g. '2026-01-10 18:00:00' -> '2026-01-10T18:00:00')
+                let normalized = dateStr.replace(' ', 'T');
+                // Some values may already be ISO; ensure we can parse
+                const d = new Date(normalized);
+                if (isNaN(d.getTime())) {
+                    // Last resort: try removing seconds
+                    normalized = normalized.split(':').slice(0,2).join(':');
+                    const d2 = new Date(normalized);
+                    if (isNaN(d2.getTime())) return '';
+                    return `${d2.getFullYear()}-${String(d2.getMonth()+1).padStart(2,'0')}-${String(d2.getDate()).padStart(2,'0')}T${String(d2.getHours()).padStart(2,'0')}:${String(d2.getMinutes()).padStart(2,'0')}`;
+                }
+                // Build local YYYY-MM-DDTHH:MM (use local components to avoid timezone shift)
+                return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+            }
+
             if (startDate && endDate) {
-                // Convert to datetime-local format (YYYY-MM-DDTHH:MM)
-                const start = new Date(startDate).toISOString().slice(0, 16);
-                const end = new Date(endDate).toISOString().slice(0, 16);
-                
-                debutInput.min = start;
-                debutInput.max = end;
-                finInput.min = start;
-                finInput.max = end;
+                const start = toLocalDateTimeValue(startDate);
+                const end = toLocalDateTimeValue(endDate);
+
+                if (start) debutInput.min = start;
+                if (end) debutInput.max = end;
+                if (start) finInput.min = start;
+                if (end) finInput.max = end;
             } else {
                 debutInput.removeAttribute('min');
                 debutInput.removeAttribute('max');
