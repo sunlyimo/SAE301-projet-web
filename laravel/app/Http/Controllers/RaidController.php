@@ -287,57 +287,16 @@ class RaidController extends Controller
 
         $raid->update($validated);
 
-        // Gérer les responsables de club
+        // When changing the responsable of a raid, only ensure the new responsable
+        // is present in `vik_responsable_raid`. Do not modify `vik_responsable_club` here.
         $nouveauResponsableId = $validated['UTI_ID'];
 
-        // Si le responsable a changé
         if ($ancienResponsableId != $nouveauResponsableId) {
-            // Vérifier si l'ancien responsable n'est plus responsable d'aucun raid
-            $ancienEstEncoreResponsable = DB::table('vik_raid')
-                ->where('UTI_ID', $ancienResponsableId)
-                ->where('RAI_ID', '!=', $raid_id) // Exclure le raid actuel qui vient d'être modifié
-                ->exists();
-
-            // Si l'ancien responsable n'est plus responsable d'aucun raid, le supprimer de vik_responsable_club
-            if (!$ancienEstEncoreResponsable) {
-                DB::table('vik_responsable_club')
-                    ->where('UTI_ID', $ancienResponsableId)
-                    ->delete();
-            }
-
-            // Ajouter le nouveau responsable à vik_responsable_club s'il n'y est pas déjà
-            $nouveauDejaResponsableClub = DB::table('vik_responsable_club')
-                ->where('UTI_ID', $nouveauResponsableId)
-                ->exists();
-
-            if (!$nouveauDejaResponsableClub) {
-                // Récupérer les informations de l'utilisateur pour les insérer dans vik_responsable_club
-                $userInfo = DB::table('vik_utilisateur')
-                    ->where('UTI_ID', $nouveauResponsableId)
-                    ->first();
-
-                if ($userInfo) {
-                    $userData = (array) $userInfo;
-                    unset($userData['created_at']);
-                    unset($userData['updated_at']);
-                    $userData['CLU_ID'] = $validated['CLU_ID']; // Utiliser le CLU_ID validé
-
-                    DB::table('vik_responsable_club')->updateOrInsert(
-                        ['UTI_ID' => $nouveauResponsableId],
-                        $userData
-                    );
-                }
-            }
-
-            // Gérer les responsables de raid
-            // L'ancien responsable reste toujours responsable de raid s'il gère d'autres raids
-            // Le nouveau responsable devient responsable de raid s'il ne l'est pas déjà
             $nouveauDejaResponsableRaid = DB::table('vik_responsable_raid')
                 ->where('UTI_ID', $nouveauResponsableId)
                 ->exists();
 
             if (!$nouveauDejaResponsableRaid) {
-                // Récupérer les informations de l'utilisateur pour les insérer dans vik_responsable_raid
                 $userInfo = DB::table('vik_utilisateur')
                     ->where('UTI_ID', $nouveauResponsableId)
                     ->first();
