@@ -10,11 +10,23 @@ class Raid extends Model
 {
     public static function getFuturRaid() {
         $raids = DB::table("vik_raid")
-        ->selectRaw("vik_raid.RAI_ID, vik_utilisateur.UTI_NOM, vik_raid.UTI_ID, RAI_NOM , RAI_INSCRI_DATE_DEBUT , RAI_INSCRI_DATE_FIN , RAI_RAID_DATE_DEBUT , RAI_RAID_DATE_FIN, RAI_LIEU, count(cou_id) as total_course")
+        ->selectRaw(
+            "vik_raid.RAI_ID, vik_raid.UTI_ID, RAI_NOM, RAI_INSCRI_DATE_DEBUT, RAI_INSCRI_DATE_FIN, RAI_RAID_DATE_DEBUT, RAI_RAID_DATE_FIN, RAI_LIEU, count(cou_id) as total_course, CONCAT(vik_utilisateur.UTI_PRENOM, ' ', vik_utilisateur.UTI_NOM) as responsable_nom"
+        )
         ->leftJoin("vik_course","vik_course.RAI_ID","=","vik_raid.RAI_ID")
         ->leftJoin("vik_utilisateur","vik_utilisateur.UTI_ID","=","vik_raid.UTI_ID")
         ->where("RAI_RAID_DATE_DEBUT", ">", now())
-        ->groupBy("vik_raid.RAI_ID", "vik_utilisateur.UTI_NOM","vik_raid.UTI_ID","RAI_NOM" , "RAI_INSCRI_DATE_DEBUT" ,"RAI_INSCRI_DATE_FIN" , "RAI_RAID_DATE_DEBUT" , "RAI_RAID_DATE_FIN" , "RAI_LIEU")
+        ->groupBy(
+            "vik_raid.RAI_ID",
+            "vik_raid.UTI_ID",
+            "RAI_NOM",
+            "RAI_INSCRI_DATE_DEBUT",
+            "RAI_INSCRI_DATE_FIN",
+            "RAI_RAID_DATE_DEBUT",
+            "RAI_RAID_DATE_FIN",
+            "RAI_LIEU",
+            "responsable_nom"
+        )
         ->get();
         return $raids;
     }
