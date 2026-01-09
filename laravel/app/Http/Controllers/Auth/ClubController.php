@@ -41,7 +41,12 @@ class ClubController extends Controller
 
         // Récupérer les utilisateurs qui ne sont pas déjà responsables d'un club
         $responsableIds = ResponsableClub::pluck('UTI_ID')->filter()->unique()->toArray();
-        $availableUsers = User::whereNotIn('UTI_ID', $responsableIds)->get();
+        // Only show users who have a licence when creating a club
+        $availableUsers = User::whereNotIn('UTI_ID', $responsableIds)
+            ->whereNotNull('UTI_LICENCE')
+            ->where('UTI_LICENCE', '<>', '')
+            ->orderBy('UTI_NOM')
+            ->get();
 
         return view('clubs.create', compact('availableUsers'));
     }
@@ -447,11 +452,17 @@ class ClubController extends Controller
 
         $club->load('responsable');
 
+        // Only show users who have a licence, but keep the current responsable selectable
         $availableUsers = User::whereDoesntHave('clubs')
             ->whereDoesntHave('administrateur')
-            ->when($club->responsable, function ($query) use ($club) {
-                return $query->orWhere('UTI_ID', $club->responsable->UTI_ID);
+            ->where(function($q) use ($club) {
+                $q->whereNotNull('UTI_LICENCE')
+                  ->where('UTI_LICENCE', '<>', '');
+                if ($club->responsable) {
+                    $q->orWhere('UTI_ID', $club->responsable->UTI_ID);
+                }
             })
+            ->orderBy('UTI_NOM')
             ->get();
 
         $userData = $availableUsers->map(function ($user) {
