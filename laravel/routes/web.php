@@ -37,6 +37,7 @@ Route::post('/contact', [ContactController::class, 'send'])->name('contact.send'
 Route::get('/raids', [RaidController::class, 'index'])->name('raids.index');
 Route::put('/raids/{raid_id}', [RaidController::class, 'update'])->name('raids.update');
 Route::get('/raids/{raid_id}/courses', [CourseController::class, 'coursesByRaid'])->name('raids.courses');
+Route::get('/raids/{raid_id}/edit', [RaidController::class, 'edit'])->name('raids.edit');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/clubs/created/{club}/{token}', [ClubController::class, 'showCreated'])->name('clubs.created');
 Route::get('/admin/refusal-notification/{club_id}/{token}', [ClubController::class, 'showAdminRefusalNotification'])->name('admin.refusal-notification');
