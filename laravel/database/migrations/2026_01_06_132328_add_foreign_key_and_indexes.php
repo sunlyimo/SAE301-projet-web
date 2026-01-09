@@ -86,8 +86,8 @@ return new class extends Migration
             $table->index('UTI_ID', 'i_fk_vik_raid_vik_responsable_raid');
             $table->index('CLU_ID', 'i_fk_vik_raid_vik_club');
 
-            $table->foreign('UTI_ID', 'fk_vik_raid_vik_utilisateur_raid')
-                  ->references('UTI_ID')->on('vik_utilisateur_raid');
+            $table->foreign('UTI_ID', 'fk_vik_raid_vik_responsable_raid')
+                  ->references('UTI_ID')->on('vik_responsable_raid');
             $table->foreign('CLU_ID', 'fk_vik_raid_vik_club')
                   ->references('CLU_ID')->on('vik_club');
         });
