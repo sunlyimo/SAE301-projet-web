@@ -407,12 +407,32 @@ class ClubController extends Controller
 
     public function show(Club $club)
     {
-        $club->load('responsable');
+        $club->load('responsable', 'coureurs');
 
         // Determine if there's still a pending invitation for this club
         $pending = ResponsableInvitationModel::where('club_id', $club->CLU_ID)->where('status', 'pending')->exists();
 
         return view('clubs.show', compact('club', 'pending'));
+    }
+
+    /**
+     * Affiche la liste des adhérents du club dont l'utilisateur connecté est responsable
+     */
+    public function myMembers()
+    {
+        if (!Auth::check() || !Auth::user()->isResponsable()) {
+            abort(403, 'Accès non autorisé.');
+        }
+
+        $club = Auth::user()->getClub();
+        if (!$club) {
+            abort(404, 'Vous n\'êtes responsable d\'aucun club.');
+        }
+
+        // Charger les coureurs
+        $members = $club->coureurs()->orderBy('UTI_NOM')->get();
+
+        return view('clubs.members', compact('club', 'members'));
     }
 
     public function edit(Club $club)

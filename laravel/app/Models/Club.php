@@ -27,6 +27,14 @@ class Club extends Model
     {
         return $this->hasMany(\App\Models\Raid::class, 'CLU_ID', 'CLU_ID');
     }
+
+    /**
+     * Membres (coureurs) du club
+     */
+    public function coureurs()
+    {
+        return $this->hasMany(\App\Models\Coureur::class, 'CLU_ID', 'CLU_ID');
+    }
 }
 
 

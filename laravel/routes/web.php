@@ -81,6 +81,9 @@ Route::middleware('auth')->group(function () {
   Route::get('/my-raids', [RaidController::class, 'myRaids'])->name('raids.my-raids');
   Route::get('/my-courses', [CourseController::class, 'myCourses'])->name('courses.my-courses');
 
+  // Mes adhérents (responsable uniquement)
+  Route::get('/mes-adherents', [ClubController::class, 'myMembers'])->name('clubs.members');
+
   Route::get('/teams/{rai_id}/{cou_id}/{equ_id}', [TeamController::class, 'show'])->name('teams.show');
   Route::post('/teams/{rai_id}/{cou_id}/{equ_id}/add', [TeamController::class, 'addMember'])->name('teams.add');
   Route::delete('/teams/{rai_id}/{cou_id}/{equ_id}/remove/{uti_id}', [TeamController::class, 'removeMember'])->name('teams.remove');

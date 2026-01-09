@@ -55,6 +55,14 @@
                         if ($course) {
                             $links['Mes Courses'] = '/my-courses';
                         }
+                        // Mes adhérents pour les responsables
+                        try {
+                            if (auth()->user() && auth()->user()->isResponsable()) {
+                                $links['Mes adhérents'] = '/mes-adherents';
+                            }
+                        } catch (\Throwable $e) {
+                            // ignore helper errors while building nav
+                        }
                     }
                     @endphp
 
