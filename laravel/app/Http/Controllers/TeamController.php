@@ -151,7 +151,7 @@ class TeamController extends Controller
             $chefOverlap = $this->checkCourseOverlap($equipe->UTI_ID, $rai_id, $cou_id);
         }
 
-        return view('teams.show', compact('equipe', 'isChef', 'chefParticipe', 'course', 'nbParticipants', 'inscriptionsOuvertes', 'raid', 'chefOverlap'));
+        return view('teams.show', compact('equipe', 'isChef', 'chefParticipe', 'course', 'nbParticipants', 'inscriptionsOuvertes', 'raid', 'chefOverlap', 'isCourseResponsable'));
     }
 
     public function addMember(Request $request, $rai_id, $cou_id, $equ_id)
@@ -401,22 +401,38 @@ class TeamController extends Controller
                         ->where('EQU_ID', $equ_id)
                         ->firstOrFail();
 
-        // Vérifier que l'utilisateur connecté est le chef de l'équipe
-        if ($equipe->UTI_ID != Auth::id()) {
-            abort(403, "Seul le chef d'équipe peut modifier les informations des participants.");
+        // Vérifier si l'utilisateur est le chef d'équipe
+        $isChef = ($equipe->UTI_ID == Auth::id());
+
+        // Vérifier si l'utilisateur est responsable de cette course
+        $isCourseResponsable = \App\Models\Course::where('RAI_ID', $rai_id)
+                                                ->where('COU_ID', $cou_id)
+                                                ->where('UTI_ID', Auth::id())
+                                                ->exists();
+
+        // Vérifier si l'utilisateur est administrateur
+        $isAdmin = \DB::table('vik_administrateur')
+                     ->where('UTI_ID', Auth::id())
+                     ->exists();
+
+        // L'utilisateur doit être soit le chef, soit le responsable de course, soit admin
+        if (!$isChef && !$isCourseResponsable && !$isAdmin) {
+            abort(403, "Seul le chef d'équipe ou le responsable de course peut modifier les informations des participants.");
         }
 
         // Récupérer le Raid pour vérifier les dates d'inscription
         $raid = \App\Models\Raid::findOrFail($rai_id);
         $now = now();
 
-        // Vérifier si la période d'inscription est active
-        if ($now->lt($raid->RAI_INSCRI_DATE_DEBUT)) {
-            return back()->withErrors(['rpps' => "Les inscriptions n'ont pas encore commencé."]);
-        }
+        // Vérifier si la période d'inscription est active (sauf pour le responsable de course et admin)
+        if (!$isCourseResponsable && !$isAdmin) {
+            if ($now->lt($raid->RAI_INSCRI_DATE_DEBUT)) {
+                return back()->withErrors(['rpps' => "Les inscriptions n'ont pas encore commencé."]);
+            }
 
-        if ($now->gt($raid->RAI_INSCRI_DATE_FIN)) {
-            return back()->withErrors(['rpps' => "Les inscriptions sont terminées."]);
+            if ($now->gt($raid->RAI_INSCRI_DATE_FIN)) {
+                return back()->withErrors(['rpps' => "Les inscriptions sont terminées."]);
+            }
         }
 
         // Vérifier que l'utilisateur fait partie de l'équipe
