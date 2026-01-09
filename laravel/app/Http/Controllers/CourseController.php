@@ -121,7 +121,7 @@ class CourseController extends Controller
             $raids = \App\Models\Raid::where('RAI_ID', $rai_id)->get();
         }
 
-        return view('courses.edit', compact('course', 'types', 'raids', 'users'));
+        return view('courses.edit', compact('course', 'types', 'raids', 'users', 'isRaidResponsable', 'isAdmin'));
     }
 
     /**

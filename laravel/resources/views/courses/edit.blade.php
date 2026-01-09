@@ -130,10 +130,32 @@
 
             <div class="space-y-2">
                 <label class="text-xs font-bold text-gray-400 uppercase">Responsable actuel</label>
-                <div class="w-full p-4 bg-gray-100 rounded-2xl border-2 border-gray-200 font-bold text-gray-700">
-                    {{ $course->responsable ? $course->responsable->UTI_PRENOM . ' ' . $course->responsable->UTI_NOM : 'Non défini' }}
-                </div>
-                <input type="hidden" name="responsable_id" value="{{ $course->UTI_ID }}">
+                @if((isset($isAdmin) && $isAdmin) || (isset($isRaidResponsable) && $isRaidResponsable))
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
+                            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" 
+                               list="users_list" 
+                               id="responsable_search" 
+                               placeholder="Commencez à taper un pseudo..." 
+                               autocomplete="off"
+                               class="w-full p-4 pl-12 bg-white rounded-2xl border-2 focus:ring-0 outline-none transition-all font-bold text-gray-800 placeholder-gray-300 @error('responsable_id') border-red-500 @else border-yellow-200 focus:border-yellow-500 @enderror"
+                               value="{{ $course->responsable ? ($course->responsable->UTI_NOM_UTILISATEUR . ' (' . $course->responsable->UTI_PRENOM . ' ' . $course->responsable->UTI_NOM . ')') : '' }}">
+                    </div>
+                    <datalist id="users_list">
+                        @foreach($users as $user)
+                            <option data-id="{{ $user->UTI_ID }}" value="{{ $user->UTI_NOM_UTILISATEUR }} ({{ $user->UTI_PRENOM }} {{ $user->UTI_NOM }})">
+                        @endforeach
+                    </datalist>
+
+                    <input type="hidden" name="responsable_id" id="responsable_id" value="{{ old('responsable_id', $course->UTI_ID) }}">
+                @else
+                    <div class="w-full p-4 bg-gray-100 rounded-2xl border-2 border-gray-200 font-bold text-gray-700">
+                        {{ $course->responsable ? $course->responsable->UTI_PRENOM . ' ' . $course->responsable->UTI_NOM : 'Non défini' }}
+                    </div>
+                    <input type="hidden" name="responsable_id" value="{{ $course->UTI_ID }}">
+                @endif
             </div>
         </section>
 
@@ -178,4 +200,28 @@
         </button>
     </form>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    var searchInput = document.getElementById('responsable_search');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            var input = e.target;
+            var list = document.getElementById('users_list');
+            var hiddenInput = document.getElementById('responsable_id');
+            for (var i = 0; i < list.options.length; i++) {
+                if (list.options[i].value === input.value) {
+                    hiddenInput.value = list.options[i].getAttribute('data-id');
+                    input.classList.remove('border-yellow-200', 'focus:border-yellow-500');
+                    input.classList.add('border-green-500', 'focus:border-green-600');
+                    return;
+                }
+            }
+            hiddenInput.value = "";
+            input.classList.remove('border-green-500', 'focus:border-green-600');
+            input.classList.add('border-yellow-200', 'focus:border-yellow-500');
+        });
+    }
+</script>
 @endsection

@@ -57,7 +57,7 @@
                         }
                         // Mes adhérents pour les responsables
                         try {
-                            if (auth()->user() && auth()->user()->isResponsable()) {
+                            if (auth()->user() && (auth()->user()->isResponsable() || auth()->user()->isAdmin())) {
                                 $links['Mes adhérents'] = '/mes-adherents';
                             }
                         } catch (\Throwable $e) {
